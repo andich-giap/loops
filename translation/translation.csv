@@ -1,0 +1,40 @@
+key;en;ru
+CANCEL;Cancel;Отмена
+CREATE;Create;Создать
+CREATE_NEW_PROJECT;Create New Project;Создать Новый Проект
+NAME;Name;Имя
+OPEN;Open;Открыть
+PROJECT;Project;Проект
+STORAGE_LOCATION;Storage Location;Место хранения
+SELECT;Select;Выбрать
+SELECT_FOLDER;Select Folder;Выбрать Папку
+CREATE_NEW_PAGE;Create new Page;Создать новую Страницу
+DELETE_PAGE;Delete Page;Удалить Страницу
+DELETE;Delete;Удалить
+CLOSE;Close;Закрыть
+CUT;Cut;Вырезать
+COPY;Copy;Копировать
+PASTE;Paste;Вставить
+RENAME;Rename;Переименовать
+NUMBERING;Numbering;Нумерация
+PROPERTIES;Properties;Свойства
+NEW_PAGE;New Page;Новая Страница
+DESIGNATION;Designation;Принадлежность
+DESCRIPTION;Description;Описание
+TYPE;Type;Тип
+GRAPHICS;Graphics;Графика
+SCHEMATIC_SINGLE_LINE;Schematic Single-line;Однополюсная схема соединений
+SCHEMATIC_MULTI_LINE;Schematic Multi-line;Многополюсная схема соединений
+PID;P&ID;P&ID
+REPORT;Report;Отчёт
+NUMBER;Number;Номер
+VIEW;View;Вид
+PROPERTY_NAME;Property Name;Имя Свойства
+VALUE;Value;Значение
+COLOR;Color;Цвет
+CLOSED;Closed;Закрыто
+SEGMENT_LENGTH;Segment Length;Длина Сегмента
+DECORATION;Decoration;Оформление;
+DECORATION_SIZE;Decoration Size;Размер Оформления
+WIDTH;Width;Толщина
+POLY_LINE_2D;Polyline;Полилиния

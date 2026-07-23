@@ -1,0 +1,12 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://csvrt4x5w11m0"]
+
+[ext_resource type="Shader" uid="uid://ck0y5g1dh82mi" path="res://grid/grid_dots.tres" id="1_x1f8i"]
+
+[resource]
+resource_local_to_scene = true
+shader = ExtResource("1_x1f8i")
+shader_parameter/ColorParameter = Color(0, 0, 0, 1)
+shader_parameter/Size = Vector2(1152, 648)
+shader_parameter/Interval = 32.28346456692913
+shader_parameter/DotRadius = 1.0
+shader_parameter/Alpha = 0.50000002375

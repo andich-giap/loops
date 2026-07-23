@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bsl8w74ut4jx4"]
+
+[ext_resource type="Script" uid="uid://yhojk62c6rau" path="res://scenes/loops_workspace/scenes/new_designation_dialog/new_designation_dialog.gd" id="1_yhlbp"]
+
+[node name="NewDesignationDialog" type="ConfirmationDialog" unique_id=1631700389]
+oversampling_override = 1.0
+initial_position = 4
+size = Vector2i(200, 200)
+visible = true
+script = ExtResource("1_yhlbp")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1126426681]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 196.0
+offset_bottom = 162.0
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer" unique_id=351300977]
+layout_mode = 2
+selected = 0
+item_count = 6
+popup/item_0/text = "=="
+popup/item_0/id = 0
+popup/item_1/text = "="
+popup/item_1/id = 1
+popup/item_2/text = "++"
+popup/item_2/id = 2
+popup/item_3/text = "+"
+popup/item_3/id = 3
+popup/item_4/text = "&"
+popup/item_4/id = 4
+popup/item_5/text = "#"
+popup/item_5/id = 5
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer" unique_id=239926599]
+layout_mode = 2
+placeholder_text = "Name"
+
+[node name="DescriptionTextEdit" type="TextEdit" parent="VBoxContainer" unique_id=729744680]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Description"
+
+[connection signal="canceled" from="." to="." method="_on_canceled"]
+[connection signal="text_changed" from="VBoxContainer/NameLineEdit" to="." method="_on_name_line_edit_text_changed"]

@@ -1,0 +1,126 @@
+[gd_scene format=3 uid="uid://q4ood0wh1d5b"]
+
+[ext_resource type="Texture2D" uid="uid://di85w4in8gymw" path="res://addons/loops/assets/icons/plus.svg" id="1_8kbpq"]
+[ext_resource type="Script" uid="uid://cyx2kv18psuvq" path="res://scenes/loops_workspace/loops_main.gd" id="1_o0xt2"]
+[ext_resource type="Texture2D" uid="uid://rxqbeifkov5o" path="res://addons/loops/assets/icons/clockwise-rotation.svg" id="3_snwq4"]
+[ext_resource type="Script" uid="uid://dwvbdurgdmmjt" path="res://scenes/loops_workspace/loops_tree.gd" id="4_k4q18"]
+[ext_resource type="Script" uid="uid://br4bka6dfms7e" path="res://scenes/loops_workspace/designations_manager.gd" id="5_3pang"]
+[ext_resource type="Script" uid="uid://cm1iyc6s6obiy" path="res://scenes/loops_workspace/designations_tree.gd" id="5_i2134"]
+
+[node name="LoopsMain" type="Control" unique_id=1186360508]
+custom_minimum_size = Vector2(500, 250)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_o0xt2")
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=1702341853]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 1
+
+[node name="LoopsManager" type="VBoxContainer" parent="TabContainer" unique_id=1482793831]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="TabContainer/LoopsManager" unique_id=613451703]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/LoopsManager/PanelContainer" unique_id=295228286]
+layout_mode = 2
+
+[node name="NewLoopButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=752051920]
+layout_mode = 2
+text = "New Loop"
+icon = ExtResource("1_8kbpq")
+
+[node name="NewDeviceButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=1698682300]
+layout_mode = 2
+text = "New Device"
+icon = ExtResource("1_8kbpq")
+
+[node name="ReloadButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=1114023350]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Reload"
+icon = ExtResource("3_snwq4")
+
+[node name="PanelContainer2" type="PanelContainer" parent="TabContainer/LoopsManager" unique_id=917843752]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="TabContainer/LoopsManager/PanelContainer2" unique_id=1376463710]
+layout_mode = 2
+
+[node name="LoopsTree" type="Tree" parent="TabContainer/LoopsManager/PanelContainer2/Panel" unique_id=262782061]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+column_titles_visible = true
+allow_reselect = true
+hide_root = true
+select_mode = 2
+scroll_hint_mode = 1
+script = ExtResource("4_k4q18")
+
+[node name="DesignationsManager" type="VBoxContainer" parent="TabContainer" unique_id=581654684]
+layout_mode = 2
+script = ExtResource("5_3pang")
+metadata/_tab_index = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="TabContainer/DesignationsManager" unique_id=619011564]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/DesignationsManager/PanelContainer" unique_id=2027085852]
+layout_mode = 2
+
+[node name="NewDesignationButton" type="Button" parent="TabContainer/DesignationsManager/PanelContainer/HBoxContainer" unique_id=1024992378]
+layout_mode = 2
+text = "New Designation"
+icon = ExtResource("1_8kbpq")
+
+[node name="ReloadButton" type="Button" parent="TabContainer/DesignationsManager/PanelContainer/HBoxContainer" unique_id=986955011]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Reload"
+icon = ExtResource("3_snwq4")
+
+[node name="PanelContainer2" type="PanelContainer" parent="TabContainer/DesignationsManager" unique_id=456479246]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="TabContainer/DesignationsManager/PanelContainer2" unique_id=779856772]
+layout_mode = 2
+
+[node name="DesignationsTree" type="Tree" parent="TabContainer/DesignationsManager/PanelContainer2/Panel" unique_id=87376025]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+column_titles_visible = true
+allow_reselect = true
+hide_root = true
+select_mode = 2
+scroll_hint_mode = 1
+script = ExtResource("5_i2134")
+
+[connection signal="pressed" from="TabContainer/LoopsManager/PanelContainer/HBoxContainer/NewLoopButton" to="." method="_on_new_loop_button_pressed"]
+[connection signal="pressed" from="TabContainer/LoopsManager/PanelContainer/HBoxContainer/NewDeviceButton" to="." method="_on_new_device_button_pressed"]
+[connection signal="pressed" from="TabContainer/LoopsManager/PanelContainer/HBoxContainer/ReloadButton" to="." method="_on_reload_button_pressed"]
+[connection signal="pressed" from="TabContainer/DesignationsManager/PanelContainer/HBoxContainer/NewDesignationButton" to="TabContainer/DesignationsManager" method="_on_new_designation_button_pressed"]
+[connection signal="pressed" from="TabContainer/DesignationsManager/PanelContainer/HBoxContainer/ReloadButton" to="." method="_on_reload_button_pressed"]

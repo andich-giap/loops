@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ProjectData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="1_ou7k0"]
+[ext_resource type="Resource" path="res://resources/projects/123_loops_contents/pages/_1.tres" id="2_3w7cp"]
+[ext_resource type="Script" path="res://scripts/project_data.gd" id="2_5r175"]
+[ext_resource type="Resource" path="res://resources/projects/123_loops_contents/pages/_2.tres" id="3_2uw4c"]
+
+[resource]
+script = ExtResource("2_5r175")
+name = &"123"
+pages = Dictionary[StringName, ExtResource("1_ou7k0")]({
+&"_1": ExtResource("2_3w7cp"),
+&"_2": ExtResource("3_2uw4c")
+})

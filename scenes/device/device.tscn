@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://c8df84i8fhq15"]
+
+[ext_resource type="Script" uid="uid://cocjvbg7u05mm" path="res://scenes/device/scripts/device.gd" id="1_72pwh"]
+[ext_resource type="Script" uid="uid://c0cs0ts8lqmhd" path="res://scripts/resources/device_data.gd" id="2_mpkvn"]
+[ext_resource type="Script" uid="uid://cjud10agcd6qr" path="res://scenes/device/scripts/device_graphics.gd" id="3_qfi86"]
+[ext_resource type="Script" uid="uid://k0bptm6bv7wt" path="res://scenes/device/scripts/gizmo_manager.gd" id="3_u4d4t"]
+[ext_resource type="Script" uid="uid://c7sguwyav11yt" path="res://scenes/device/scripts/gizmo.gd" id="4_x28xn"]
+
+[sub_resource type="Resource" id="Resource_qfi86"]
+script = ExtResource("2_mpkvn")
+suffix = 4
+tag = &"TT4"
+metadata/_custom_type_script = "uid://c0cs0ts8lqmhd"
+
+[node name="Device" type="Node2D" unique_id=1156639673]
+script = ExtResource("1_72pwh")
+device_data = SubResource("Resource_qfi86")
+metadata/_custom_type_script = "uid://cocjvbg7u05mm"
+
+[node name="TagLabel" type="Label" parent="." unique_id=2008861015]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -13.0
+offset_right = 7.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "TT"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="SuffixLabel" type="Label" parent="." unique_id=2030292633]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -3.0
+offset_right = 3.0
+offset_bottom = 13.0
+grow_horizontal = 2
+text = "4"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_lock_ = true
+
+[node name="GizmoManager" type="Node2D" parent="." unique_id=114487777]
+script = ExtResource("3_u4d4t")
+metadata/_custom_type_script = "uid://k0bptm6bv7wt"
+
+[node name="Gizmo" type="Control" parent="GizmoManager" unique_id=14495439]
+physics_interpolation_mode = 0
+custom_minimum_size = Vector2(6, 6)
+layout_mode = 3
+anchors_preset = 0
+offset_left = -3.0
+offset_top = 16.0
+offset_right = 3.0
+offset_bottom = 22.0
+mouse_default_cursor_shape = 13
+script = ExtResource("4_x28xn")
+type = 2
+metadata/_custom_type_script = "uid://c7sguwyav11yt"
+
+[node name="DeviceGraphics" type="Node2D" parent="." unique_id=701520131]
+script = ExtResource("3_qfi86")
+metadata/_custom_type_script = "uid://cjud10agcd6qr"

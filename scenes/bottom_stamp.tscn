@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://ho0u4ei14ogy"]
+
+[node name="Control" type="Control" unique_id=1485243936]
+layout_mode = 3
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1275839221]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=270060916]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer" unique_id=987980712]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/PanelContainer" unique_id=613800426]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/VBoxContainer/PanelContainer" unique_id=1014975922]
+layout_mode = 2
+text = "123"
+alignment = 1

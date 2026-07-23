@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="PageData" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/designations_data.gd" id="1_k75xc"]
+[ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="2_hgwp6"]
+
+[sub_resource type="Resource" id="Resource_a7r50"]
+script = ExtResource("1_k75xc")
+designations = Dictionary[int, Array]({
+0: [],
+1: [],
+2: [],
+3: [],
+4: [],
+5: []
+})
+
+[resource]
+script = ExtResource("2_hgwp6")
+designation = SubResource("Resource_a7r50")
+name = &"1"
+description = "ОД"
+project_data = Object(WeakRef,"script":null)
+
