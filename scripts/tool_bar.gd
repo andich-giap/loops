@@ -6,7 +6,6 @@ signal tool_activated(active_tool: StringName)
 signal tool_deactivated()
 signal graphics_added(graphics: Node2D)
 @export var button_group: ButtonGroup
-@export var default_poly_line_2d_width: float = 1.0
 var active_tool: StringName = &""
 
 
@@ -24,7 +23,6 @@ func _on_button_group_button_pressed(button: BaseButton) -> void:
 		&"DrawLine":
 			var poly_line_2d: PolyLine2D = PolyLine2D.new()
 			poly_line_2d.is_active = true
-			poly_line_2d.width = default_poly_line_2d_width
 			graphics_added.emit(poly_line_2d)
 			poly_line_2d.finished_drawing.connect(
 				unpress_button,

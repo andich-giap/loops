@@ -71,8 +71,9 @@ offset_bottom = 958.8189
 mouse_filter = 2
 theme_type_variation = &"PageLayout"
 
-[node name="Grid" type="Panel" parent="SubViewport/PageLayoutLayer/Layout" unique_id=271831548]
+[node name="Grid" type="PanelContainer" parent="SubViewport/PageLayoutLayer/Layout" unique_id=601200190]
 material = ExtResource("2_35qq2")
+propagate_maximum_size = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

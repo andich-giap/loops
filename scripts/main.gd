@@ -56,8 +56,7 @@ func open_project() -> void:
 
 
 func close_project() -> void:
-	if current_project:
-		current_project.close()
+	current_project.close()
 
 
 func save() -> void:

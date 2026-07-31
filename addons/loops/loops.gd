@@ -5,6 +5,7 @@ extends EditorPlugin
 const LOOPS_MAIN: PackedScene = preload("uid://q4ood0wh1d5b")
 var loops_main_instance: Node
 
+
 func _enable_plugin() -> void:
 	pass
 

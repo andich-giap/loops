@@ -1,6 +1,6 @@
 @tool
 class_name Grid
-extends Panel
+extends PanelContainer
 
 
 static var is_orthogonal: bool = true

@@ -6,19 +6,20 @@ extends Line2D
 signal finished_drawing
 signal changed
 signal deleted
-const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [param new_point_position].
-const DEBUG_CURSOR_SIZE: float = 5.0
-const MM_TO_PX_CURVE: Curve = preload("uid://b2r64od1gruqa")
 enum DecorationType {
 	LINE,
 	CIRCLE,
 }
-@export var color: Color = Color.WHITE
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 10.0:
+const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [param new_point_position].
+const DEBUG_CURSOR_SIZE: float = 5.0
+const MM_TO_PX_CURVE: Curve = preload("uid://b2r64od1gruqa")
+static var default_width: float = 1.0
+@export var color: Color = Color.RED
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 3.0:
 	set = set_segment_step
 @export var decoration: DecorationType:
 	set = set_decoration
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 0.5:
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 5.0:
 	set = set_decoration_size
 @export_storage var bounding_box: Rect2
 @export_storage var page_data: WeakRef
@@ -35,6 +36,8 @@ var _initial_point_position: Vector2
 
 func _init() -> void:
 	width_curve = MM_TO_PX_CURVE
+	width = default_width
+	default_color = color
 
 
 func _input(event: InputEvent) -> void:
@@ -61,12 +64,7 @@ func _input(event: InputEvent) -> void:
 			queue_redraw()
 			
 			# Set bounding_box
-			if bounding_box.has_area():
-				bounding_box = bounding_box.expand(points[active_point])
-			elif points.size() >= 2:
-				bounding_box.position = points[0]
-				for point: Vector2 in points:
-					bounding_box = bounding_box.expand(point)
+			update_bounding_box()
 		
 		if mouse_button_event.button_index == MOUSE_BUTTON_RIGHT \
 			and mouse_button_event.is_released():
@@ -341,3 +339,12 @@ func _get_place_position() -> Vector2:
 		else:
 			place_position = Vector2(place_position.x, _initial_point_position.y)
 	return place_position
+
+
+func update_bounding_box() -> void:
+	if bounding_box.has_area():
+		bounding_box = bounding_box.expand(points[active_point])
+	elif points.size() >= 2:
+		bounding_box.position = points[0]
+		for point: Vector2 in points:
+			bounding_box = bounding_box.expand(point)

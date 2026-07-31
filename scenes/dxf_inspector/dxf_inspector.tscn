@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://bj3pyd453gwlr"]
+
+[ext_resource type="Script" uid="uid://cw6wtvelgg0dj" path="res://scenes/dxf_inspector/dxf_inspector_main.gd" id="1_6xb1d"]
+[ext_resource type="Texture2D" uid="uid://be68hw5jfh7hw" path="res://addons/at-icons/node2d/arrow_counter_clockwise.svg" id="2_g27pv"]
+
+[node name="DxfInspector" type="PanelContainer" unique_id=1714747910]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_6xb1d")
+
+[node name="Tree" type="Tree" parent="." unique_id=1718443526]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+hide_root = true
+select_mode = 2
+
+[node name="Control" type="Control" parent="." unique_id=634543275]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ReloadButton" type="Button" parent="Control" unique_id=89784339]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -32.0
+offset_bottom = 32.0
+grow_horizontal = 0
+icon = ExtResource("2_g27pv")
+icon_alignment = 1

@@ -3,6 +3,21 @@
 [ext_resource type="Script" path="res://scripts/resources/designations_data.gd" id="1_nlsgr"]
 [ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="2_e25x3"]
 
+[sub_resource type="PackedScene" id="PackedScene_nlsgr"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [],
+"names": PackedStringArray("ContentsLayer", "follow_viewport_enabled", "CanvasLayer"),
+"node_count": 1,
+"node_ids": PackedInt32Array(1034811757),
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0),
+"variants": [true],
+"version": 3
+}
+
 [sub_resource type="Resource" id="Resource_lt18v"]
 script = ExtResource("1_nlsgr")
 designations = Dictionary[int, Array]({
@@ -20,5 +35,6 @@ designation = SubResource("Resource_lt18v")
 name = &"2"
 type = 2
 description = "СВС"
+contents = SubResource("PackedScene_nlsgr")
 project_data = Object(WeakRef,"script":null)
 

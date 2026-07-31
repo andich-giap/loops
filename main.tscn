@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://bmd6gye0j45p6" path="res://addons/at-icons/node2d/arrow_axes_2d.svg" id="12_getpj"]
 [ext_resource type="Texture2D" uid="uid://i0hitxbibsgi" path="res://addons/at-icons/node2d/grid_fine.svg" id="13_ryguw"]
 [ext_resource type="Script" uid="uid://mwsb3c0j00t3" path="res://scripts/pages_tab_container.gd" id="14_2cqfq"]
+[ext_resource type="PackedScene" uid="uid://bj3pyd453gwlr" path="res://scenes/dxf_inspector/dxf_inspector.tscn" id="17_82xsv"]
 [ext_resource type="Script" uid="uid://c1lh8qy081sh" path="res://scripts/properties_dialog.gd" id="19_cegan"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h2yge"]
@@ -111,27 +112,32 @@ icon = ExtResource("13_ryguw")
 [node name="HSplitContainer" type="HSplitContainer" parent="Panel/VBoxContainer" unique_id=334671143]
 layout_mode = 2
 size_flags_vertical = 3
-split_offsets = PackedInt32Array(229)
-split_offset = 229
+split_offsets = PackedInt32Array(209)
+split_offset = 209
 
-[node name="PageManager" type="PanelContainer" parent="Panel/VBoxContainer/HSplitContainer" unique_id=287605555]
+[node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/HSplitContainer" unique_id=141244455]
+layout_mode = 2
+current_tab = 0
+
+[node name="PageManager" type="PanelContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer" unique_id=287605555]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 theme_type_variation = &"PageManager"
 script = ExtResource("1_ig7tw")
+metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager" unique_id=1578241142]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" unique_id=1578241142]
 layout_mode = 2
 
-[node name="Tree" type="Tree" parent="Panel/VBoxContainer/HSplitContainer/PageManager/VBoxContainer" unique_id=65815448]
+[node name="Tree" type="Tree" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/VBoxContainer" unique_id=65815448]
 layout_mode = 2
 size_flags_vertical = 3
 allow_rmb_select = true
 hide_root = true
 select_mode = 2
 
-[node name="ContextMenu" type="PopupMenu" parent="Panel/VBoxContainer/HSplitContainer/PageManager" unique_id=148700386]
+[node name="ContextMenu" type="PopupMenu" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" unique_id=148700386]
 transparent_bg = false
 oversampling_override = 1.0
 size = Vector2i(200, 258)
@@ -168,7 +174,7 @@ item_12/separator = true
 item_13/text = "PROPERTIES"
 item_13/id = 13
 
-[node name="NewPageDialog" type="ConfirmationDialog" parent="Panel/VBoxContainer/HSplitContainer/PageManager" unique_id=475991424]
+[node name="NewPageDialog" type="ConfirmationDialog" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" unique_id=475991424]
 oversampling_override = 1.0
 title = "NEW_PAGE"
 initial_position = 4
@@ -177,76 +183,82 @@ ok_button_text = "CREATE"
 cancel_button_text = "CANCEL"
 script = ExtResource("11_dg77c")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog" unique_id=1812245014]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog" unique_id=1812245014]
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 596.0
 offset_bottom = 176.0
 
-[node name="Designation" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=70969866]
+[node name="Designation" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=70969866]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="DesignationLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Designation" unique_id=659868336]
+[node name="DesignationLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Designation" unique_id=659868336]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "DESIGNATION"
 
-[node name="DesignationLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Designation" unique_id=1721470441]
+[node name="DesignationLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Designation" unique_id=1721470441]
 custom_minimum_size = Vector2(119.54, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="Name" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=1569435214]
+[node name="Name" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=1569435214]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="NameLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Name" unique_id=484033855]
+[node name="NameLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Name" unique_id=484033855]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "NUMBER"
 
-[node name="NameLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Name" unique_id=836754597]
+[node name="NameLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Name" unique_id=836754597]
 custom_minimum_size = Vector2(119.54, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 text = "1"
 
-[node name="Description" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=247580991]
+[node name="Description" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=247580991]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="DescriptionLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Description" unique_id=1882180470]
+[node name="DescriptionLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Description" unique_id=1882180470]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "DESCRIPTION"
 
-[node name="DescriptionLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Description" unique_id=1674085266]
+[node name="DescriptionLineEdit" type="LineEdit" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Description" unique_id=1674085266]
 custom_minimum_size = Vector2(119.54, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
-[node name="Type" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=1073292107]
+[node name="Type" type="HBoxContainer" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer" unique_id=1073292107]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="TypeLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Type" unique_id=503378390]
+[node name="TypeLabel" type="Label" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Type" unique_id=503378390]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Type"
 
-[node name="TypeOptionButton" type="OptionButton" parent="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Type" unique_id=235474127]
+[node name="TypeOptionButton" type="OptionButton" parent="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Type" unique_id=235474127]
 custom_minimum_size = Vector2(119.54, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
+
+[node name="DxfInspector" parent="Panel/VBoxContainer/HSplitContainer/TabContainer" unique_id=1714747910 instance=ExtResource("17_82xsv")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="PagesTabContainer" type="TabContainer" parent="Panel/VBoxContainer/HSplitContainer" unique_id=1190913167]
 unique_name_in_owner = true
@@ -377,16 +389,17 @@ use_native_dialog = true
 [connection signal="tool_deactivated" from="Panel/VBoxContainer/HBoxContainer/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_set_can_select" binds= [true]]
 [connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/ModesBar/Ortho" to="Panel/VBoxContainer/HBoxContainer/ModesBar" method="_on_ortho_toggled"]
 [connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/ModesBar/Grid" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_grid_toggled"]
-[connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/PageManager" to="." method="_on_page_manager_page_opened"]
-[connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/PageManager" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="open_page"]
-[connection signal="project_tree_item_selected" from="Panel/VBoxContainer/HSplitContainer/PageManager" to="." method="_on_page_manager_project_tree_item_selected"]
-[connection signal="gui_input" from="Panel/VBoxContainer/HSplitContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_tree_gui_input"]
-[connection signal="item_activated" from="Panel/VBoxContainer/HSplitContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_tree_item_activated"]
-[connection signal="item_edited" from="Panel/VBoxContainer/HSplitContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_tree_item_edited"]
-[connection signal="item_mouse_selected" from="Panel/VBoxContainer/HSplitContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_tree_item_mouse_selected"]
-[connection signal="index_pressed" from="Panel/VBoxContainer/HSplitContainer/PageManager/ContextMenu" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_context_menu_index_pressed"]
-[connection signal="page_created" from="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_new_page_dialog_page_created"]
-[connection signal="text_changed" from="Panel/VBoxContainer/HSplitContainer/PageManager/NewPageDialog/VBoxContainer/Name/NameLineEdit" to="Panel/VBoxContainer/HSplitContainer/PageManager" method="_on_name_line_edit_text_changed"]
+[connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="." method="_on_page_manager_page_opened"]
+[connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="open_page"]
+[connection signal="project_tree_item_selected" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="." method="_on_page_manager_project_tree_item_selected"]
+[connection signal="gui_input" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_tree_gui_input"]
+[connection signal="item_activated" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_tree_item_activated"]
+[connection signal="item_edited" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_tree_item_edited"]
+[connection signal="item_mouse_selected" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/VBoxContainer/Tree" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_tree_item_mouse_selected"]
+[connection signal="index_pressed" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/ContextMenu" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_context_menu_index_pressed"]
+[connection signal="page_created" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_new_page_dialog_page_created"]
+[connection signal="text_changed" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager/NewPageDialog/VBoxContainer/Name/NameLineEdit" to="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" method="_on_name_line_edit_text_changed"]
+[connection signal="item_activated" from="Panel/VBoxContainer/HSplitContainer/TabContainer/DxfInspector/Tree" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_dxf_inspector_tree_item_selected" flags=18]
 [connection signal="tab_changed" from="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" to="." method="_on_pages_tab_container_tab_changed"]
 [connection signal="new_project_created" from="CreateNewProjectDialog" to="." method="_on_create_new_project_dialog_new_project_created"]
 [connection signal="pressed" from="CreateNewProjectDialog/VBoxContainer/HBoxContainer/Button" to="CreateNewProjectDialog/VBoxContainer/HBoxContainer/Button/FileDialog" method="set_visible" binds= [true]]
@@ -398,3 +411,5 @@ use_native_dialog = true
 [connection signal="confirmed" from="PropertiesDialog/ChooseItemToEditDialog" to="PropertiesDialog" method="_on_script_tree_item_activated"]
 [connection signal="item_activated" from="PropertiesDialog/ChooseItemToEditDialog/ScriptsTree" to="PropertiesDialog" method="_on_script_tree_item_activated"]
 [connection signal="file_selected" from="OpenProjectFileDialog" to="." method="_on_open_project_file_dialog_file_selected"]
+
+[editable path="Panel/VBoxContainer/HSplitContainer/TabContainer/DxfInspector"]
