@@ -14,8 +14,7 @@ var is_selected: bool = false:
 func _ready() -> void:
 	expand_to_text_length = true
 	flat = true
-	if not text and is_placing:
-		text = "TEXT"
+	placeholder_text = "TEXT"
 
 
 func _input(event: InputEvent) -> void:
