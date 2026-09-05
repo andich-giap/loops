@@ -15,7 +15,6 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT and can_select:
-			
 			if mouse_button_event.is_pressed():
 				is_selecting = true
 				selection_rect.position = get_local_mouse_position()
@@ -80,6 +79,7 @@ func add_to_selection(node: Node) -> void:
 	node.add_to_group("selection")
 	if node.has_method("add_to_selection"):
 		node.call("add_to_selection")
+
 
 func get_node_rect(node: Node) -> Rect2:
 	var rect: Rect2

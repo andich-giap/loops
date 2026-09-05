@@ -90,10 +90,12 @@ func save() -> void:
 		unsaved_contents.erase(_page_data)
 
 
-func add_graphics(graphics: Node2D) -> void:
+func add_graphics(graphics: Node) -> void:
 	page_data.is_saved = false
 	if graphics is PolyLine2D:
 		add_poly_line_2d(graphics as PolyLine2D)
+	if graphics is LLineEdit:
+		add_l_line_edit(graphics as LLineEdit)
 	contents_layer.add_child(graphics)
 	graphics.owner = contents_layer
 
@@ -104,9 +106,14 @@ func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
 
 
+func add_l_line_edit(l_line_edit: LLineEdit) -> void:
+	l_line_edit.page_data = weakref(page_data)
+	l_line_edit.changed.connect(_on_page_data_content_changed)
+	l_line_edit.deleted.connect(_on_page_data_content_changed)
+
+
 func _on_page_data_content_changed() -> void:
 	page_data.is_saved = false
-	
 
 
 func pack_contents() -> PackedScene:

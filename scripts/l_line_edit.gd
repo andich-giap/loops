@@ -2,8 +2,47 @@ class_name LLineEdit
 extends LineEdit
 
 
+signal changed
+signal deleted
+signal finished_placing
+@export_storage var page_data: WeakRef
+var is_placing: bool = true
 var is_selected: bool = false:
 	set = set_is_selected
+
+
+func _ready() -> void:
+	expand_to_text_length = true
+	flat = true
+	if not text and is_placing:
+		text = "TEXT"
+
+
+func _input(event: InputEvent) -> void:
+	if is_placing:
+		if event is InputEventMouseMotion:
+			position = _get_place_position()
+		if event is InputEventMouseButton:
+			var mouse_button_event: InputEventMouseButton = event
+			if mouse_button_event.is_released() \
+				and mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
+				is_placing = false
+				finished_placing.emit()
+				changed.emit()
+	if event.is_action(&"delete"):
+		deleted.emit()
+		queue_free()
+
+
+func _get_place_position() -> Vector2:
+	var interval: Vector2 = Vector2(Units.mm_to_px(Grid.interval), Units.mm_to_px(Grid.interval))
+	var place_position: Vector2
+	var global_mouse_position: Vector2 = get_global_mouse_position()
+	if Grid.grid_visible:
+		place_position = snapped(global_mouse_position, interval)
+	else:
+		place_position = global_mouse_position
+	return place_position
 
 
 func add_to_selection() -> void:

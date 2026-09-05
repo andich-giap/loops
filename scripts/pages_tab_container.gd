@@ -31,7 +31,7 @@ func _open_page_in_new_tab(page_data: PageData) -> void:
 	set_last_opened_page()
 
 
-func _on_tool_bar_graphics_added(graphics: Node2D) -> void:
+func _on_tool_bar_graphics_added(graphics: Node) -> void:
 	var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
 	if not current_page_viewport or not current_page_viewport.page_data:
 		graphics.queue_free()
