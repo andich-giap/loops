@@ -86,6 +86,9 @@ func get_node_rect(node: Node) -> Rect2:
 	if node is PolyLine2D:
 		var poly_line_2d: PolyLine2D = node
 		return poly_line_2d.bounding_box
+	if node is LLineEdit:
+		var l_line_edit: LLineEdit = node
+		rect = l_line_edit.get_rect()
 	return rect
 
 

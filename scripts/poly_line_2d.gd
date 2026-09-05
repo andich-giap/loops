@@ -253,6 +253,7 @@ func add_to_selection() -> void:
 
 func remove_from_selection() -> void:
 	is_selected = false
+	remove_from_group(&"selection")
 	queue_redraw()
 
 

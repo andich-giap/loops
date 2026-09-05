@@ -5,8 +5,20 @@ extends LineEdit
 signal changed
 signal deleted
 signal finished_placing
+const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
+		&"text",
+		&"alignment",
+]
+var THEME_OVERRIDABLE_PROPERTIES: Dictionary[StringName, Array] = {
+	&"theme_color_override": [
+		&"font_color",
+	],
+	&"theme_font_size_override": [
+		&"font_size"
+	],
+}
 @export_storage var page_data: WeakRef
-var is_placing: bool = true
+var is_placing: bool = false
 var is_selected: bool = false:
 	set = set_is_selected
 
@@ -15,6 +27,7 @@ func _ready() -> void:
 	expand_to_text_length = true
 	flat = true
 	placeholder_text = "TEXT"
+	theme_type_variation = &"LLineEdit"
 
 
 func _input(event: InputEvent) -> void:
@@ -46,22 +59,22 @@ func _get_place_position() -> Vector2:
 
 func add_to_selection() -> void:
 	is_selected = true
+	add_theme_color_override(&"font_color", ProjectColor.selection_values[ProjectColor.Selection.TEXT])
 	queue_redraw()
 
 
 func remove_from_selection() -> void:
 	is_selected = false
+	remove_theme_color_override(&"font_color")
+	remove_from_group(&"selection")
 	queue_redraw()
 
 
 func get_editable_properties() -> Array[Dictionary]:
-	var editable_properties_names: Array[StringName] = [
-		&"text",
-		&"alignment",
-	]
+
 	var editable_properties: Array[Dictionary]
 	for property: Dictionary in get_property_list():
-		if not editable_properties_names.has(property["name"]):
+		if not EDITABLE_PROPERTIES_NAMES.has(property["name"]):
 			continue
 		editable_properties.append(property)
 	return editable_properties
@@ -87,3 +100,11 @@ func set_is_selected(_is_selected: bool) -> void:
 		#if not gizmos.is_empty():
 			#_remove_gizmos()
 	queue_redraw()
+
+
+func _draw() -> void:
+	var is_debug: bool = get_tree().debug_collisions_hint
+	if is_debug:
+		var rect: Rect2 = get_rect()
+		rect.position -= position
+		draw_rect(rect, ProjectColor.debug_values[ProjectColor.Debug.AREA])

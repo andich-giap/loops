@@ -10,6 +10,7 @@ enum Selection {
 	AREA,
 	DASH,
 	LINE,
+	TEXT,
 }
 static var debug_values: Dictionary[Debug, Color] = {
 	Debug.AREA: Color(0.0, 0.675, 0.69, 0.239),
@@ -19,4 +20,5 @@ static var selection_values: Dictionary[Selection, Color] = {
 	Selection.AREA: Color(0.0, 0.675, 0.69, 0.239),
 	Selection.DASH: Color(0.112, 0.484, 0.826, 0.314),
 	Selection.LINE: Color(0.0, 0.439, 0.85, 1.0),
+	Selection.TEXT: Color(0.0, 0.439, 0.85, 1.0),
 }
