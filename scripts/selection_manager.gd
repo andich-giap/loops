@@ -50,14 +50,36 @@ func set_is_selecting(_is_selecting: bool) -> void:
 			continue
 		var node_rect: Rect2 = get_node_rect(node)
 		if node_rect.intersects(selection_rect.abs()):
-			node.add_to_group("selection")
-			if node.has_method("add_to_selection"):
-				node.call("add_to_selection")
+			if node is PolyLine2D:
+				var poly_line_2d: PolyLine2D = node
+				var intersection: Array[PackedVector2Array] = Geometry2D.intersect_polyline_with_polygon(
+					poly_line_2d.points,
+					rect2_to_packed_vector2_array(selection_rect)
+					)
+				if not intersection.is_empty():
+					add_to_selection(node)
+					selected_nodes.append(node)
+				continue
+			add_to_selection(node)
 			selected_nodes.append(node)
 	if not selected_nodes.is_empty():
 		selected.emit(selected_nodes)
 	selection_rect.size = Vector2.ZERO
 
+
+static func rect2_to_packed_vector2_array(rect: Rect2) -> PackedVector2Array:
+	return PackedVector2Array([
+		rect.position,
+		Vector2(rect.end.x, rect.position.y),
+		rect.end,
+		Vector2(rect.position.x, rect.end.y)
+	])
+
+
+func add_to_selection(node: Node) -> void:
+	node.add_to_group("selection")
+	if node.has_method("add_to_selection"):
+		node.call("add_to_selection")
 
 func get_node_rect(node: Node) -> Rect2:
 	var rect: Rect2
