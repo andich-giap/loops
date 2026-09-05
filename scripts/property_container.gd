@@ -71,6 +71,20 @@ func _ready() -> void:
 			color_picker_button.color_changed.connect(_on_value_node_value_changed)
 			if has_multiple_values:
 				color_picker_button.self_modulate = Color(1.0, 1.0, 1.0, 0.5)
+		TYPE_STRING:
+			var line_edit: LineEdit = LineEdit.new()
+			line_edit.text = str(value)
+			value_node = line_edit
+			line_edit.text_changed.connect(_on_value_node_value_changed)
+			if has_multiple_values:
+				line_edit.text = "..."
+		TYPE_STRING_NAME:
+			var line_edit: LineEdit = LineEdit.new()
+			line_edit.text = str(value)
+			value_node = line_edit
+			line_edit.text_changed.connect(_on_value_node_value_changed)
+			if has_multiple_values:
+				line_edit.text = "..."
 		_:
 			printerr("Property of type %s is not supported" % type)
 			return

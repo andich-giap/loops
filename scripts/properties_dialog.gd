@@ -27,7 +27,7 @@ func activate() -> void:
 	if selection.is_empty():
 		return
 	properties_per_class = get_properties(selection)
-	if properties_per_class.size() == 1:
+	if not properties_per_class.size() == 1:
 		scripts_tree.clear()
 		var tree_root: TreeItem
 		tree_root = scripts_tree.create_item()
@@ -39,6 +39,8 @@ func activate() -> void:
 		scripts_tree.set_selected(scripts_tree.get_root().get_child(0), 0)
 		choose_item_to_edit_dialog.visible = true
 		return
+	var script: Script = properties_per_class.keys()[0]
+	instanciate_properties_of_script(script)
 	visible = true
 
 
