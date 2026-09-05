@@ -260,7 +260,7 @@ func remove_from_selection() -> void:
 func _add_gizmos() -> void:
 	for _point: int in range(points.size()):
 		var gizmo: Gizmo = Gizmo.new()
-		gizmo.poly_line_2d = self
+		gizmo.graphics_node = self
 		owner.add_child(gizmo)
 		gizmos.append(gizmo)
 
