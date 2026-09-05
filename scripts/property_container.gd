@@ -16,6 +16,7 @@ var is_enum: bool = false
 var enum_values: Dictionary
 var is_changed: bool = false
 var has_multiple_values: bool = false
+var theme_callable: StringName
 
 
 func _ready() -> void:

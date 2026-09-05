@@ -49,7 +49,7 @@ func unpress_button() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action(&"ui_cancel"):
+	if event.is_action(&"ui_cancel") and active_tool:
 		_active_graphics.queue_free()
 		unpress_button()
 

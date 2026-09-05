@@ -10,10 +10,10 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"alignment",
 ]
 var THEME_OVERRIDABLE_PROPERTIES: Dictionary[StringName, Array] = {
-	&"theme_color_override": [
-		&"font_color",
+	&"_theme_color_override": [
+		&"text_color",
 	],
-	&"theme_font_size_override": [
+	&"_theme_font_size_override": [
 		&"font_size"
 	],
 }
@@ -65,19 +65,22 @@ func add_to_selection() -> void:
 
 func remove_from_selection() -> void:
 	is_selected = false
-	remove_theme_color_override(&"font_color")
+	add_theme_color_override(&"font_color", get_theme_color(&"text_color"))
 	remove_from_group(&"selection")
 	queue_redraw()
 
 
 func get_editable_properties() -> Array[Dictionary]:
-
 	var editable_properties: Array[Dictionary]
 	for property: Dictionary in get_property_list():
 		if not EDITABLE_PROPERTIES_NAMES.has(property["name"]):
 			continue
 		editable_properties.append(property)
 	return editable_properties
+
+
+func get_theme_editable_properties() -> Dictionary[StringName, Array]:
+	return THEME_OVERRIDABLE_PROPERTIES
 
 
 func set_is_selected(_is_selected: bool) -> void:
