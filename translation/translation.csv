@@ -34,7 +34,9 @@ VALUE;Value;Значение
 COLOR;Color;Цвет
 CLOSED;Closed;Закрыто
 SEGMENT_LENGTH;Segment Length;Длина Сегмента
-DECORATION;Decoration;Оформление;
+DECORATION;Decoration;Оформление
 DECORATION_SIZE;Decoration Size;Размер Оформления
 WIDTH;Width;Толщина
 POLY_LINE_2D;Polyline;Полилиния
+L_LINE_EDIT;Text;Текст
+TEXT;Text;Текст
