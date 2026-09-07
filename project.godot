@@ -35,11 +35,12 @@ naming/script_name_casing=2
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dxf_inspector/plugin.cfg")
+enabled=PackedStringArray("res://addons/at-icons/plugin.cfg", "res://addons/dxf_inspector/plugin.cfg")
 
 [file_customization]
 
 folder_colors={
+"res://gym/": "green",
 "res://resources/": "yellow",
 "res://scripts/data/": "teal",
 "res://scripts/resources/": "yellow"

@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://b65ryda45mopc" path="res://addons/at-icons/node2d/pencil.svg" id="10_074og"]
 [ext_resource type="Script" uid="uid://oqj5cno1at35" path="res://scripts/tool_bar.gd" id="10_cegan"]
 [ext_resource type="Texture2D" uid="uid://bprhcoty4m42s" path="res://addons/at-icons/node3d/cross.svg" id="10_efxa6"]
+[ext_resource type="Texture2D" uid="uid://bky6dhn4j7mk6" path="res://addons/at-icons/node2d/text.svg" id="10_getpj"]
 [ext_resource type="Script" uid="uid://nvokjlsotfvf" path="res://scripts/dialogs/create_new_page_dialog.gd" id="11_dg77c"]
 [ext_resource type="Script" uid="uid://jlu1uqlk2x18" path="res://scripts/modes_bar.gd" id="11_getpj"]
 [ext_resource type="Texture2D" uid="uid://bmd6gye0j45p6" path="res://addons/at-icons/node2d/arrow_axes_2d.svg" id="12_getpj"]
@@ -20,6 +21,7 @@
 [ext_resource type="Script" uid="uid://mwsb3c0j00t3" path="res://scripts/pages_tab_container.gd" id="14_2cqfq"]
 [ext_resource type="PackedScene" uid="uid://bj3pyd453gwlr" path="res://scenes/dxf_inspector/dxf_inspector.tscn" id="17_82xsv"]
 [ext_resource type="Script" uid="uid://c1lh8qy081sh" path="res://scripts/properties_dialog.gd" id="19_cegan"]
+[ext_resource type="Script" uid="uid://cemf6cgro6mag" path="res://scripts/l_line_edit.gd" id="22_ryguw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h2yge"]
 content_margin_left = 6.0
@@ -78,32 +80,40 @@ popup/item_0/text = "PAGE_MANAGER"
 popup/item_0/icon = ExtResource("8_ycdy4")
 popup/item_0/id = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=369414160]
+[node name="Toolbar" type="HBoxContainer" parent="Panel/VBoxContainer" unique_id=369414160]
 layout_mode = 2
 
-[node name="DrawToolBar" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer" unique_id=1137861337]
+[node name="DrawToolBar" type="HBoxContainer" parent="Panel/VBoxContainer/Toolbar" unique_id=1137861337]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("10_cegan")
 button_group = SubResource("ButtonGroup_40gth")
 
-[node name="DrawLine" type="Button" parent="Panel/VBoxContainer/HBoxContainer/DrawToolBar" unique_id=574728309]
+[node name="DrawLine" type="Button" parent="Panel/VBoxContainer/Toolbar/DrawToolBar" unique_id=574728309]
 layout_mode = 2
+tooltip_text = "POLY_LINE_2D"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_40gth")
 icon = ExtResource("10_074og")
 
-[node name="ModesBar" type="HBoxContainer" parent="Panel/VBoxContainer/HBoxContainer" unique_id=2027064136]
+[node name="AddText" type="Button" parent="Panel/VBoxContainer/Toolbar/DrawToolBar" unique_id=1795879269]
+layout_mode = 2
+tooltip_text = "L_LINE_EDIT"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_40gth")
+icon = ExtResource("10_getpj")
+
+[node name="ModesBar" type="HBoxContainer" parent="Panel/VBoxContainer/Toolbar" unique_id=2027064136]
 layout_mode = 2
 script = ExtResource("11_getpj")
 
-[node name="Ortho" type="Button" parent="Panel/VBoxContainer/HBoxContainer/ModesBar" unique_id=1443752837]
+[node name="Ortho" type="Button" parent="Panel/VBoxContainer/Toolbar/ModesBar" unique_id=1443752837]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("12_getpj")
 
-[node name="Grid" type="Button" parent="Panel/VBoxContainer/HBoxContainer/ModesBar" unique_id=708512966]
+[node name="Grid" type="Button" parent="Panel/VBoxContainer/Toolbar/ModesBar" unique_id=708512966]
 layout_mode = 2
 toggle_mode = true
 button_pressed = true
@@ -112,8 +122,8 @@ icon = ExtResource("13_ryguw")
 [node name="HSplitContainer" type="HSplitContainer" parent="Panel/VBoxContainer" unique_id=334671143]
 layout_mode = 2
 size_flags_vertical = 3
-split_offsets = PackedInt32Array(209)
-split_offset = 209
+split_offsets = PackedInt32Array(283)
+split_offset = 283
 
 [node name="TabContainer" type="TabContainer" parent="Panel/VBoxContainer/HSplitContainer" unique_id=141244455]
 layout_mode = 2
@@ -384,11 +394,25 @@ access = 2
 filters = PackedStringArray("*.tres", "*.res")
 use_native_dialog = true
 
-[connection signal="graphics_added" from="Panel/VBoxContainer/HBoxContainer/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_tool_bar_graphics_added"]
-[connection signal="tool_activated" from="Panel/VBoxContainer/HBoxContainer/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_set_can_select" unbinds=1 binds= [false]]
-[connection signal="tool_deactivated" from="Panel/VBoxContainer/HBoxContainer/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_set_can_select" binds= [true]]
-[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/ModesBar/Ortho" to="Panel/VBoxContainer/HBoxContainer/ModesBar" method="_on_ortho_toggled"]
-[connection signal="toggled" from="Panel/VBoxContainer/HBoxContainer/ModesBar/Grid" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_grid_toggled"]
+[node name="LLineEdit" type="LineEdit" parent="." unique_id=816946910]
+anchors_preset = -1
+offset_top = -0.312
+offset_right = 280.0
+offset_bottom = 11.688
+grow_vertical = 0
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 5
+placeholder_text = "12321dasdasfddasfdassafsaffdsfdasfdsafsdafdsafdsafdsfsdaffdsafdsafd331332132131232312332132131312132132"
+expand_to_text_length = true
+script = ExtResource("22_ryguw")
+metadata/_custom_type_script = "uid://cemf6cgro6mag"
+
+[connection signal="graphics_added" from="Panel/VBoxContainer/Toolbar/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_tool_bar_graphics_added"]
+[connection signal="tool_activated" from="Panel/VBoxContainer/Toolbar/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_set_can_select" unbinds=1 binds= [false]]
+[connection signal="tool_deactivated" from="Panel/VBoxContainer/Toolbar/DrawToolBar" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_set_can_select" binds= [true]]
+[connection signal="toggled" from="Panel/VBoxContainer/Toolbar/ModesBar/Ortho" to="Panel/VBoxContainer/Toolbar/ModesBar" method="_on_ortho_toggled"]
+[connection signal="toggled" from="Panel/VBoxContainer/Toolbar/ModesBar/Grid" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="_on_grid_toggled"]
 [connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="." method="_on_page_manager_page_opened"]
 [connection signal="page_opened" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="Panel/VBoxContainer/HSplitContainer/PagesTabContainer" method="open_page"]
 [connection signal="project_tree_item_selected" from="Panel/VBoxContainer/HSplitContainer/TabContainer/PageManager" to="." method="_on_page_manager_project_tree_item_selected"]
