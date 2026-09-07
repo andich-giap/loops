@@ -19,7 +19,7 @@ enum Type {
 @export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY) var radius_vector: Vector2:
 	get = get_radius_vector
 var is_grabbed: bool = false
-var poly_line_2d: PolyLine2D
+var graphics_node: Node
 
 
 func _init() -> void:
@@ -37,7 +37,7 @@ func _gui_input(event: InputEvent) -> void:
 				is_grabbed = false
 				released.emit()
 	if event is InputEventMouseMotion and is_grabbed:
-		var place_position: Vector2 = poly_line_2d._get_place_position()
+		var place_position: Vector2 = graphics_node.call(&"_get_place_position")
 		position = place_position - radius_vector / 1.5
 		position_changed.emit(place_position)
 		queue_redraw()
