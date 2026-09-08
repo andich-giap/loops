@@ -23,11 +23,11 @@ func _gui_input(event: InputEvent) -> void:
 				if selection_rect.size.is_zero_approx():
 					selection_rect.position = get_local_mouse_position() - Vector2(single_click_size, single_click_size) / 2.0
 					selection_rect.size = Vector2(single_click_size, single_click_size)
-					var selected_nodes: Array[Node] = get_selection(selection_rect)
-					if selected_nodes.is_empty() \
-						and clear_on_new_selection \
-						and not (mouse_button_event.get_modifiers_mask() & KEY_MASK_SHIFT) == KEY_MASK_SHIFT:
-						clear_selection()
+				var selected_nodes: Array[Node] = get_selection(selection_rect)
+				if selected_nodes.is_empty() \
+					or (clear_on_new_selection \
+					and not (mouse_button_event.get_modifiers_mask() & KEY_MASK_SHIFT) == KEY_MASK_SHIFT):
+					clear_selection()
 				is_selecting = false
 				queue_redraw()
 				return
@@ -35,16 +35,6 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and is_selecting:
 		selection_rect.end = get_local_mouse_position()
 		queue_redraw()
-	
-	#if selection_rect.size == Vector2.ZERO \
-		#and can_select \
-		#and event.is_released():
-		#print(event.as_text())
-		#var mouse_button_event: InputEventMouseButton = event
-		#if mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
-			#print(1)
-			#selection_rect.position = get_local_mouse_position() - Vector2(single_click_size, single_click_size) / 2.0
-			#selection_rect.size = Vector2(single_click_size, single_click_size)
 
 
 func _draw() -> void:
