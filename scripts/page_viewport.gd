@@ -108,7 +108,6 @@ func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 
 func add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.page_data = weakref(page_data)
-	l_line_edit.is_placing = true
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 

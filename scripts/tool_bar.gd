@@ -33,6 +33,7 @@ func _on_button_group_button_pressed(button: BaseButton) -> void:
 			)
 		&"AddText":
 			var l_line_edit: LLineEdit = LLineEdit.new()
+			l_line_edit.is_placing = true
 			l_line_edit.finished_placing.connect(
 				unpress_button,
 				CONNECT_ONE_SHOT
