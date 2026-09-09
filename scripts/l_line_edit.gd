@@ -34,6 +34,8 @@ func _ready() -> void:
 	editable = false
 	grow_vertical = Control.GROW_DIRECTION_BEGIN
 	changed.connect(_on_changed)
+	text_submitted.connect(_on_text_submitted)
+	focus_exited.connect(_on_focus_exited)
 
 
 func _on_changed() -> void:
@@ -55,6 +57,22 @@ func _input(event: InputEvent) -> void:
 		deleted.emit()
 		_remove_gizmos()
 		queue_free()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if mouse_button_event.double_click:
+			editable = true
+			edit()
+
+
+func _on_text_submitted(_new_text: String) -> void:
+	editable = false
+
+
+func _on_focus_exited() -> void:
+	editable = false
 
 
 func _get_place_position() -> Vector2:
@@ -108,9 +126,8 @@ func set_is_selected(_is_selected: bool) -> void:
 		var gizmo_grab_size: Vector2 = Vector2(Units.mm_to_px(gizmo.radius), Units.mm_to_px(gizmo.radius)) / 1.5
 		gizmo.set_begin(gizmo_position - gizmo_grab_size)
 		gizmo.set_end(gizmo_position + gizmo_grab_size)
-		gizmo.position_changed.connect(_on_gizmo_position_changed)
-		#gizmo.grabbed.connect(_on_gizmo_grabbed.bind(point))
-		#gizmo.released.connect(_on_gizmo_released)
+		if not gizmo.position_changed.is_connected(_on_gizmo_position_changed):
+			gizmo.position_changed.connect(_on_gizmo_position_changed)
 	else:
 		if not gizmos.is_empty():
 			_remove_gizmos()
