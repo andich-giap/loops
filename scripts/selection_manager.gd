@@ -3,7 +3,7 @@ extends Control
 
 
 signal selected(selected_nodes: Array[Node])
-var can_select: bool = true
+static var can_select: bool = true
 var is_selecting: bool = false:
 	set = set_is_selecting
 var selection_rect: Rect2

@@ -13,11 +13,8 @@ config_version=5
 config/name="Loops"
 run/main_scene="uid://3vplj1htyh6"
 config/features=PackedStringArray("4.7", "Forward Plus")
-config/icon="res://icon.svg"
-
-[autoload]
-
-Global="*uid://d3j2sumgnls2v"
+config/icon="uid://cfjp657nj5t35"
+config/windows_native_icon="res://drawing_compass.ico"
 
 [debug]
 

@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cdhf0aptl3bu3"]
+
+[ext_resource type="Script" uid="uid://jlu1uqlk2x18" path="res://features/editor_context/tool_bar/modes_bar/modes_bar.gd" id="1_ej1d1"]
+[ext_resource type="Texture2D" uid="uid://bmd6gye0j45p6" path="res://addons/at-icons/node2d/arrow_axes_2d.svg" id="2_q0jjc"]
+[ext_resource type="Texture2D" uid="uid://i0hitxbibsgi" path="res://addons/at-icons/node2d/grid_fine.svg" id="3_bkgmf"]
+
+[node name="ModesBar" type="HBoxContainer" unique_id=1352189373]
+script = ExtResource("1_ej1d1")
+
+[node name="Ortho" type="Button" parent="." unique_id=1676596567]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("2_q0jjc")
+
+[node name="Grid" type="Button" parent="." unique_id=1282106548]
+layout_mode = 2
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("3_bkgmf")

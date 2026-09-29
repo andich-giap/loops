@@ -2,9 +2,9 @@ class_name PageManager
 extends PanelContainer
 
 
-signal project_tree_item_selected(project_data: ProjectData, item: TreeItem)
-signal page_opened(page_data: PageData)
-signal page_added(page_data: PageData)
+signal project_selected(project_data: ProjectData, item: TreeItem)
+signal open_page_requested(page_data: PageData)
+signal create_page_requested(page_data: PageData)
 var root: TreeItem
 var project_context_items: Array[StringName] = [
 	"CREATE",
@@ -15,7 +15,7 @@ var project_context_items: Array[StringName] = [
 	"NUMBERING",
 	"PROPERTIES",
 ]
-@onready var tree: Tree = $VBoxContainer/Tree
+@onready var tree: Tree = %PagesTree
 @onready var context_menu: PopupMenu = $ContextMenu
 @onready var new_page_dialog: CreateNewPageDialog = $NewPageDialog
 
@@ -26,7 +26,7 @@ func _ready() -> void:
 
 func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
 	var selected_item: TreeItem = tree.get_item_at_position(mouse_position)
-	project_tree_item_selected.emit(get_project_from_child(selected_item), selected_item)
+	project_selected.emit(get_project_from_child(selected_item), selected_item)
 	if not mouse_button_index == MOUSE_BUTTON_RIGHT:
 		return
 	var metadata: Resource = tree.get_selected().get_metadata(0)
@@ -50,7 +50,7 @@ func _on_context_menu_index_pressed(index: int) -> void:
 			new_page_dialog.activate(last_child_page_data)
 		"OPEN":
 			if tree_item.get_metadata(0) is PageData:
-				page_opened.emit(tree_item.get_metadata(0))
+				open_page_requested.emit(tree_item.get_metadata(0))
 		"CLOSE":
 			if tree_item.get_metadata(0) is ProjectData:
 				var project_data: ProjectData = tree_item.get_metadata(0)
@@ -133,7 +133,7 @@ func _on_new_page_dialog_page_created(page_data: PageData) -> void:
 		parent_tree_item = selected_tree_item.get_parent()
 	add_page(parent_tree_item, page_data)
 	current_project.add_page(page_data)
-	page_added.emit(page_data)
+	create_page_requested.emit(page_data)
 
 
 func get_project_from_child(child: TreeItem) -> ProjectData:
@@ -149,7 +149,7 @@ func _on_tree_item_activated() -> void:
 	var selected_tree_item: TreeItem = tree.get_selected()
 	var metadata: Variant = selected_tree_item.get_metadata(0)
 	if selected_tree_item.get_metadata(0) is PageData:
-		page_opened.emit(metadata)
+		open_page_requested.emit(metadata)
 
 
 func _on_project_data_closed(project_data: ProjectData) -> void:

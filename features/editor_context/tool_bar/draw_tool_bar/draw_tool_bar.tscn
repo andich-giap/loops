@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bchcrsaxd56ht"]
+
+[ext_resource type="Script" uid="uid://oqj5cno1at35" path="res://features/editor_context/tool_bar/draw_tool_bar/tool_bar.gd" id="1_ru3ek"]
+[ext_resource type="Texture2D" uid="uid://b65ryda45mopc" path="res://addons/at-icons/node2d/pencil.svg" id="2_r4xr4"]
+[ext_resource type="Texture2D" uid="uid://bky6dhn4j7mk6" path="res://addons/at-icons/node2d/text.svg" id="3_daerg"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_40gth"]
+
+[node name="DrawToolBar" type="HBoxContainer" unique_id=737868671]
+script = ExtResource("1_ru3ek")
+button_group = SubResource("ButtonGroup_40gth")
+
+[node name="DrawLine" type="Button" parent="." unique_id=576955418]
+layout_mode = 2
+tooltip_text = "POLY_LINE_2D"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_40gth")
+icon = ExtResource("2_r4xr4")
+
+[node name="AddText" type="Button" parent="." unique_id=1182738604]
+layout_mode = 2
+tooltip_text = "L_LINE_EDIT"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_40gth")
+icon = ExtResource("3_daerg")

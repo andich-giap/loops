@@ -1,10 +1,10 @@
 @tool
-class_name DXFInspector
+class_name DXFPlugin
 extends EditorPlugin
 
 
 const DXF_INSPECTOR: PackedScene = preload("uid://bj3pyd453gwlr")
-var dxf_inspector_main: DXFInspectorMain
+var dxf_inspector: DXFInspector
 
 
 func _enable_plugin() -> void:
@@ -21,12 +21,12 @@ func _enter_tree() -> void:
 	_make_visible(false)
 	#for icon_name: StringName in EditorInterface.get_editor_theme().get_icon_list("EditorIcons"):
 		#var icon: Texture2D = EditorInterface.get_editor_theme().get_icon(icon_name, "EditorIcons")
-		#dxf_inspector_main.add_icon(icon, icon_name)
+		#dxf_inspector.add_icon(icon, icon_name)
 
 
 func _exit_tree() -> void:
-	if dxf_inspector_main:
-		dxf_inspector_main.queue_free()
+	if dxf_inspector:
+		dxf_inspector.queue_free()
 
 
 func _has_main_screen():
@@ -42,18 +42,18 @@ func _get_plugin_icon():
 
 
 func _make_visible(visible):
-	if dxf_inspector_main:
-		dxf_inspector_main.visible = visible
+	if dxf_inspector:
+		dxf_inspector.visible = visible
 
 
 func _init_main_scene() -> void:
-	dxf_inspector_main = DXF_INSPECTOR.instantiate()
-	EditorInterface.get_editor_main_screen().add_child(dxf_inspector_main)
-	dxf_inspector_main.reload_button.pressed.connect(_reload_main_scene)
+	dxf_inspector = DXF_INSPECTOR.instantiate()
+	EditorInterface.get_editor_main_screen().add_child(dxf_inspector)
+	dxf_inspector.reload_button.pressed.connect(_reload_main_scene)
 
 
 func _reload_main_scene() -> void:
-	dxf_inspector_main.queue_free()
+	dxf_inspector.queue_free()
 	_init_main_scene()
 
 

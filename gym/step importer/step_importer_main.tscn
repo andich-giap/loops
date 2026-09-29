@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://dho6cu7wbxivj"]
+
+[sub_resource type="GDScript" id="GDScript_etd0p"]
+script/source = "extends Node3D
+@onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
+
+func _ready() -> void:
+	# Load the .step data file path resource
+	var file_path: String = \"res://gym/step importer/Реле интерфейсное.step\"
+	
+	if FileAccess.file_exists(file_path):
+		var file: FileAccess = FileAccess.open(file_path, FileAccess.READ)
+		var step_string: String = file.get_as_text()
+		file.close()
+		
+		# Generate the 3D Node
+		var step_mesh_node: MeshInstance3D = StepImporter.import_step_from_string(step_string)
+		if step_mesh_node:
+			mesh_instance_3d.mesh = step_mesh_node.mesh
+			print(\"STEP Data node added successfully to Scene Tree.\")
+	else:
+		print(\"Error: Could not locate specified file path.\")
+"
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_qa5yf"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_sr6kx"]
+sky_material = SubResource("ProceduralSkyMaterial_qa5yf")
+
+[sub_resource type="Environment" id="Environment_v2x2o"]
+background_mode = 2
+sky = SubResource("Sky_sr6kx")
+glow_enabled = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jd6mg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_daogd"]
+cull_mode = 2
+
+[node name="StepImporterMain" type="Node3D" unique_id=2083957370]
+script = SubResource("GDScript_etd0p")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1690818465]
+environment = SubResource("Environment_v2x2o")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1799389278]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=804096833]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.3124862)
+fov = 17.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=772236376]
+mesh = SubResource("CylinderMesh_jd6mg")
+surface_material_override/0 = SubResource("StandardMaterial3D_daogd")

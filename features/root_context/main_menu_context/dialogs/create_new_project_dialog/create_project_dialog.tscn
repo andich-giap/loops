@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://by7xio6vbbjpg"]
+
+[ext_resource type="Script" uid="uid://ddjqn7yb5dkm" path="res://features/root_context/main_menu_context/dialogs/create_new_project_dialog/create_project_dialog.gd" id="1_m85ej"]
+[ext_resource type="Texture2D" uid="uid://x0xdr1gt4cf6" path="res://addons/at-icons/node2d/folder_open.svg" id="2_nyqun"]
+
+[node name="CreateNewProjectDialog" type="ConfirmationDialog" unique_id=1392681389]
+oversampling_override = 1.0
+title = "CREATE_NEW_PROJECT"
+initial_position = 4
+size = Vector2i(400, 200)
+visible = true
+unresizable = true
+ok_button_text = "CREATE"
+cancel_button_text = "CANCEL"
+script = ExtResource("1_m85ej")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1744010456]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 396.0
+offset_bottom = 162.0
+
+[node name="NameLabel" type="Label" parent="VBoxContainer" unique_id=1606504180]
+layout_mode = 2
+text = "NAME"
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer" unique_id=49561813]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PathLabel" type="Label" parent="VBoxContainer" unique_id=2075856786]
+layout_mode = 2
+text = "STORAGE_LOCATION"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1621542713]
+layout_mode = 2
+
+[node name="PathLineEdit" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=1015492183]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+emoji_menu_enabled = false
+
+[node name="Button" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1901175919]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("2_nyqun")
+icon_alignment = 1
+
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/HBoxContainer/Button" unique_id=1365870120]
+oversampling_override = 1.0
+title = "Open a Directory"
+position = Vector2i(0, 24)
+force_native = true
+ok_button_text = "SELECT"
+dialog_hide_on_ok = true
+cancel_button_text = "CANCEL"
+file_mode = 2
+access = 2
+filters = PackedStringArray("*.tres", "*.res")
+use_native_dialog = true
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/Button" to="VBoxContainer/HBoxContainer/Button/FileDialog" method="set_visible" binds= [true]]
+[connection signal="dir_selected" from="VBoxContainer/HBoxContainer/Button/FileDialog" to="VBoxContainer/HBoxContainer/PathLineEdit" method="set_text"]

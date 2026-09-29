@@ -1,5 +1,5 @@
 @tool
-class_name DXFInspectorMain
+class_name DXFInspector
 extends Control
 
 
@@ -17,7 +17,7 @@ func _ready() -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tree_root = tree.create_item()
-	file = open("res://addons/dxf_inspector/test/test.dxf")
+	file = open("D:/Почта_Андич/Документы/Programs/Godot/Projects/loops/addons/dxf_inspector/test/test.dxf")
 	_populate_tree(file)
 
 
@@ -98,19 +98,19 @@ func _populate_tree(_file: FileAccess) -> void:
 				var icon: Texture2D
 				match section_tree_item.get_text(0):
 					"HEADER":
-						icon = DXFInspector.get_editor_icon("Signal")
+						icon = DXFPlugin.get_editor_icon("Signal")
 					"CLASSES":
-						icon = DXFInspector.get_editor_icon("GDScript")
+						icon = DXFPlugin.get_editor_icon("GDScript")
 					"TABLES":
-						icon = DXFInspector.get_editor_icon("GridContainer")
+						icon = DXFPlugin.get_editor_icon("GridContainer")
 					"BLOCKS":
-						icon = DXFInspector.get_editor_icon("PackedScene")
+						icon = DXFPlugin.get_editor_icon("PackedScene")
 					"ENTITIES":
-						icon = DXFInspector.get_editor_icon("Object")
+						icon = DXFPlugin.get_editor_icon("Object")
 					"OBJECTS":
-						icon = DXFInspector.get_editor_icon("Curve3D")
+						icon = DXFPlugin.get_editor_icon("Curve3D")
 					"THUMBNAILIMAGE":
-						icon = DXFInspector.get_editor_icon("Image")
+						icon = DXFPlugin.get_editor_icon("Image")
 				section_tree_item.set_icon(0, icon)
 		if section_tree_item.get_text(0) == "HEADER" and line == "  9":
 			_handle_variable(_file, section_tree_item)
@@ -153,32 +153,32 @@ func _handle_variable(_file: FileAccess, parent_tree_item: TreeItem) -> void:
 	var variable_texture: Texture2D
 	
 	if variable_type >= 1 and variable_type <= 8:
-		variable_texture = DXFInspector.get_editor_icon("String")
+		variable_texture = DXFPlugin.get_editor_icon("String")
 	
 	if variable_type >= 70 and variable_type <= 78 or variable_type in [290, 380]:
-		variable_texture = DXFInspector.get_editor_icon("bool")
+		variable_texture = DXFPlugin.get_editor_icon("bool")
 	
 	if variable_type in [90, 160, 280]:
-		variable_texture = DXFInspector.get_editor_icon("int")
+		variable_texture = DXFPlugin.get_editor_icon("int")
 	
 	if variable_type >= 40 and variable_type <= 48 or variable_type in [370]:
-		variable_texture = DXFInspector.get_editor_icon("float")
+		variable_texture = DXFPlugin.get_editor_icon("float")
 	
 	if variable_type >= 10 and variable_type <= 18:
-		variable_texture = DXFInspector.get_editor_icon("Vector3")
+		variable_texture = DXFPlugin.get_editor_icon("Vector3")
 		_file.get_line().strip_edges()
 		variable_value += ", " + _file.get_line().strip_edges()
 		_file.get_line().strip_edges()
 		variable_value += ", " + _file.get_line().strip_edges()
 	
 	if variable_type == 347:
-		variable_texture = DXFInspector.get_editor_icon("ShaderMaterial")
+		variable_texture = DXFPlugin.get_editor_icon("ShaderMaterial")
 	
 	if variable_type >= 50 and variable_type <= 58:
-		variable_texture = DXFInspector.get_editor_icon("Quaternion")
+		variable_texture = DXFPlugin.get_editor_icon("Quaternion")
 	
 	if variable_type == 62:
-		variable_texture = DXFInspector.get_editor_icon("Color")
+		variable_texture = DXFPlugin.get_editor_icon("Color")
 	
 	variable_tree_item.set_text(0, "   ".join([variable_name, variable_value]))
 	variable_tree_item.set_icon(0, variable_texture)
@@ -246,11 +246,11 @@ func _handle_entities(_file: FileAccess, section_tree_item: TreeItem) -> void:
 			var icon: Texture2D
 			match variable_value:
 				"LINE":
-					icon = DXFInspector.get_editor_icon("Line2D")
+					icon = DXFPlugin.get_editor_icon("Line2D")
 				"TEXT":
-					icon = DXFInspector.get_editor_icon("TextMesh")
+					icon = DXFPlugin.get_editor_icon("TextMesh")
 				"VIEWPORT":
-					icon = DXFInspector.get_editor_icon("Viewport")
+					icon = DXFPlugin.get_editor_icon("Viewport")
 				"_":
 					pass
 			if icon:

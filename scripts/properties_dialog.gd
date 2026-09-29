@@ -32,8 +32,7 @@ func activate() -> void:
 	theme_properties_per_class = properties[1]
 	if not properties_per_class.size() == 1:
 		scripts_tree.clear()
-		var tree_root: TreeItem
-		tree_root = scripts_tree.create_item()
+		var tree_root: TreeItem = scripts_tree.create_item()
 		
 		for script: Script in properties_per_class:
 			var tree_item: TreeItem = scripts_tree.create_item(tree_root)
@@ -91,22 +90,23 @@ func instanciate_properties_of_script(script: Script) -> void:
 			property_container.has_multiple_values = true
 		property_container.value = property_values[0]
 		property_container.column_width = header.split_offsets[0]
-		properties_container.add_child(property_container) 
+		properties_container.add_child(property_container)
 		property_container.changed.connect(_on_property_container_changed.bind(property_container).unbind(1), CONNECT_ONE_SHOT)
 		header.dragged.connect(property_container.set_column_width)
-	var theme_properties: Dictionary[StringName, Array] = theme_properties_per_class[script]
-	for theme_callable: StringName in theme_properties:
-		var control: Control = valid_nodes[0]
-		for theme_property: StringName in theme_properties[theme_callable]:
-			var property_container: PropertyContainer = PropertyContainer.new()
-			var theme_property_value: Variant = control.call("get"+theme_callable.replace("_override", ""), theme_properties[theme_callable][0])
-			property_container.property = _construct_theme_property(theme_property, script.get_global_name(), theme_property_value)
-			property_container.value = theme_property_value
-			property_container.column_width = header.split_offsets[0]
-			property_container.theme_callable = theme_callable
-			properties_container.add_child(property_container)
-			property_container.changed.connect(_on_property_container_changed.bind(property_container).unbind(1), CONNECT_ONE_SHOT)
-			header.dragged.connect(property_container.set_column_width)
+	if theme_properties_per_class.has(script):
+		var theme_properties: Dictionary[StringName, Array] = theme_properties_per_class[script]
+		for theme_callable: StringName in theme_properties:
+			var control: Control = valid_nodes[0]
+			for theme_property: StringName in theme_properties[theme_callable]:
+				var property_container: PropertyContainer = PropertyContainer.new()
+				var theme_property_value: Variant = control.call("get"+theme_callable.replace("_override", ""), theme_properties[theme_callable][0])
+				property_container.property = _construct_theme_property(theme_property, script.get_global_name(), theme_property_value)
+				property_container.value = theme_property_value
+				property_container.column_width = header.split_offsets[0]
+				property_container.theme_callable = theme_callable
+				properties_container.add_child(property_container)
+				property_container.changed.connect(_on_property_container_changed.bind(property_container).unbind(1), CONNECT_ONE_SHOT)
+				header.dragged.connect(property_container.set_column_width)
 	_fit_column(0)
 
 

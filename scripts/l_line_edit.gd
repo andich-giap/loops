@@ -8,18 +8,18 @@ signal finished_placing
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"text",
 		&"alignment",
-		&"grow_horizontal",
-		&"grow_vertical"
+		&"vertical_alignment",
 ]
-var THEME_OVERRIDABLE_PROPERTIES: Dictionary[StringName, Array] = {
+const THEME_OVERRIDABLE_PROPERTIES: Dictionary[StringName, Array] = {
 	&"_theme_color_override": [
 		&"text_color",
 	],
 	&"_theme_font_size_override": [
-		&"font_size"
+		&"font_size",
 	],
 }
 @export_storage var page_data: WeakRef
+@export var vertical_alignment: VerticalAlignment = VerticalAlignment.VERTICAL_ALIGNMENT_BOTTOM
 var is_placing: bool = false
 var is_selected: bool = false:
 	set = set_is_selected
@@ -27,12 +27,11 @@ var gizmos: Array[Gizmo]
 
 
 func _ready() -> void:
-	expand_to_text_length = true
 	flat = true
 	placeholder_text = "TEXT"
 	theme_type_variation = &"LLineEdit"
 	editable = false
-	grow_vertical = Control.GROW_DIRECTION_BEGIN
+	expand_to_text_length = true
 	changed.connect(_on_changed)
 	text_submitted.connect(_on_text_submitted)
 	focus_exited.connect(_on_focus_exited)
@@ -88,14 +87,15 @@ func _get_place_position() -> Vector2:
 
 func add_to_selection() -> void:
 	is_selected = true
-	add_theme_color_override(&"font_color", ProjectColor.selection_values[ProjectColor.Selection.TEXT])
+	add_theme_color_override(&"text_color", get_theme_color(&"font_uneditable_color"))
+	add_theme_color_override(&"font_uneditable_color", ProjectColor.selection_values[ProjectColor.Selection.TEXT])
 	add_theme_color_override(&"font_placeholder_color", ProjectColor.selection_values[ProjectColor.Selection.TEXT])
 	queue_redraw()
 
 
 func remove_from_selection() -> void:
 	is_selected = false
-	add_theme_color_override(&"font_color", get_theme_color(&"text_color"))
+	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_color"))
 	add_theme_color_override(&"font_placeholder_color", Color.from_rgba8(0, 0, 0, 128))
 	remove_from_group(&"selection")
 	_remove_gizmos()
@@ -147,6 +147,8 @@ func _add_gizmos() -> void:
 
 
 func _update_gizmo_position() -> void:
+	if gizmos.is_empty():
+		return
 	var gizmo: Gizmo = gizmos[0]
 	var gizmo_position: Vector2 = position
 	gizmo_position.y += get_rect().size.y

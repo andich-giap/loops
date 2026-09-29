@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://bkftkwn442cwp"]
+
+[ext_resource type="Curve" uid="uid://b2r64od1gruqa" path="res://resources/mm_to_px_curve.tres" id="1_w1snh"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://scripts/poly_line_2d.gd" id="2_bjqgd"]
+
+[sub_resource type="GDScript" id="GDScript_daogd"]
+script/source = "extends Node2D
+
+
+func _on_area_2d_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
+	print(event.as_text())
+
+
+func _on_area_2d_mouse_entered() -> void:
+	print(\"entered\")
+
+
+func _on_area_2d_mouse_exited() -> void:
+	print(\"exited\")
+"
+
+[node name="Polyline2dMouseOverlap" type="Node2D" unique_id=486798426]
+script = SubResource("GDScript_daogd")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=922701833]
+
+[node name="PolyLine2D" type="Line2D" parent="." unique_id=1583858443]
+points = PackedVector2Array(2, -24, 57, -56, 101, 28, -2, 107, -124, 47, -74, 12, -14, 33, -61, -59, -227, -31)
+width = 1.0
+width_curve = ExtResource("1_w1snh")
+default_color = Color(1, 0, 0, 1)
+script = ExtResource("2_bjqgd")
+metadata/_custom_type_script = "uid://bur730yq3xwn5"

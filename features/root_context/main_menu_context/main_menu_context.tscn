@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://dxwdlh8uhss5r"]
+
+[ext_resource type="Script" uid="uid://cybf2rrgiltfq" path="res://features/root_context/main_menu_context/main_menu_context.gd" id="1_syo5f"]
+[ext_resource type="PackedScene" uid="uid://by7xio6vbbjpg" path="res://features/root_context/main_menu_context/dialogs/create_new_project_dialog/create_project_dialog.tscn" id="2_s7w1v"]
+
+[node name="MainMenuContext" type="Control" unique_id=253362166]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_syo5f")
+
+[node name="BackgroundPanel" type="Panel" parent="." unique_id=385424824]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1467524863]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -230.5
+offset_top = -150.0
+offset_right = 230.5
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=747501187]
+layout_mode = 2
+
+[node name="CreateProjectButton" type="Button" parent="HBoxContainer/VBoxContainer" unique_id=419547017]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CREATE_PROJECT"
+
+[node name="OpenProjectButton" type="Button" parent="HBoxContainer/VBoxContainer" unique_id=541704007]
+unique_name_in_owner = true
+layout_mode = 2
+text = "OPEN_PROJECT"
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=1659169593]
+layout_mode = 2
+
+[node name="RecentProjectsContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=2023524543]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="CreateProjectDialog" parent="." unique_id=1392681389 instance=ExtResource("2_s7w1v")]
+unique_name_in_owner = true
+visible = false
+
+[node name="OpenProjectFileDialog" type="FileDialog" parent="." unique_id=208400103]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 4
+force_native = true
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.tres", "*.res")
+use_native_dialog = true

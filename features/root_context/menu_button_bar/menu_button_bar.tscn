@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://b8hjkiryh7avx"]
+
+[ext_resource type="Script" uid="uid://qj1uk2qsb4fi" path="res://scripts/button_bar.gd" id="1_h3o2d"]
+[ext_resource type="Texture2D" uid="uid://1yipspqlrh1c" path="res://addons/at-icons/node2d/badge.svg" id="2_u6wsf"]
+[ext_resource type="Texture2D" uid="uid://x0xdr1gt4cf6" path="res://addons/at-icons/node2d/folder_open.svg" id="3_3a4pb"]
+[ext_resource type="Texture2D" uid="uid://cyjqrfe7ulfsk" path="res://addons/at-icons/node3d/arrow_left_to_line.svg" id="4_fxluq"]
+[ext_resource type="Texture2D" uid="uid://cysvciv67xt3r" path="res://addons/at-icons/node2d/book_open.svg" id="5_ffsm2"]
+
+[node name="MenuButtonBar" type="HBoxContainer" unique_id=1187337308]
+script = ExtResource("1_h3o2d")
+
+[node name="ProjectMenuButton" type="MenuButton" parent="." unique_id=938769081]
+layout_mode = 2
+text = "PROJECT"
+item_count = 3
+popup/item_0/text = "CREATE"
+popup/item_0/icon = ExtResource("2_u6wsf")
+popup/item_0/id = 0
+popup/item_1/text = "OPEN"
+popup/item_1/icon = ExtResource("3_3a4pb")
+popup/item_1/id = 1
+popup/item_2/text = "CLOSE"
+popup/item_2/icon = ExtResource("4_fxluq")
+popup/item_2/id = 2
+
+[node name="ViewMenuButton" type="MenuButton" parent="." unique_id=1245545820]
+layout_mode = 2
+text = "VIEW"
+item_count = 1
+popup/item_0/text = "PAGE_MANAGER"
+popup/item_0/icon = ExtResource("5_ffsm2")
+popup/item_0/id = 0

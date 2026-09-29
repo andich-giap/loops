@@ -13,6 +13,14 @@ enum DecorationType {
 const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [param new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
 const MM_TO_PX_CURVE: Curve = preload("uid://b2r64od1gruqa")
+const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
+		&"color",
+		&"segment_length",
+		&"decoration",
+		&"decoration_size",
+		&"closed",
+		&"width",
+	]
 static var default_width: float = 1.0
 @export var color: Color = Color.RED
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 3.0:
@@ -89,7 +97,7 @@ func _draw() -> void:
 	if can_create_new_point and is_selected and is_debug:
 		draw_circle(get_local_mouse_position(), DISTANCE_TO_CURSOR, Color(0.0, 0.651, 0.208, 0.482))
 		draw_circle(new_point_position, DEBUG_CURSOR_SIZE/2.0, default_color)
-	for point: int in points.size():		
+	for point: int in points.size():
 		if point == points.size() - 1:
 			continue
 		var current_position: Vector2 = get_point_position(point)
@@ -272,17 +280,9 @@ func _remove_gizmos() -> void:
 
 
 func get_editable_properties() -> Array[Dictionary]:
-	var editable_properties_names: Array[StringName] = [
-		&"color",
-		&"segment_length",
-		&"decoration",
-		&"decoration_size",
-		&"closed",
-		&"width",
-	]
 	var editable_properties: Array[Dictionary]
 	for property: Dictionary in get_property_list():
-		if not editable_properties_names.has(property["name"]):
+		if not EDITABLE_PROPERTIES_NAMES.has(property["name"]):
 			continue
 		editable_properties.append(property)
 	return editable_properties

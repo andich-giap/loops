@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://qtum532pni8g"]
+
+[ext_resource type="Script" uid="uid://d4a1qdejpd5ar" path="res://gym/text_server/text_line_edit.gd" id="1_xitnq"]
+
+[node name="TextLineEdit" type="Control" unique_id=45626712]
+custom_minimum_size = Vector2(224, 32)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_xitnq")
+text = "Hello TextLine!"

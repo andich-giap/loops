@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bj3pyd453gwlr"]
 
-[ext_resource type="Script" uid="uid://cw6wtvelgg0dj" path="res://scenes/dxf_inspector/dxf_inspector_main.gd" id="1_6xb1d"]
+[ext_resource type="Script" uid="uid://cw6wtvelgg0dj" path="res://features/editor_context/dxf_inspector/dxf_inspector_main.gd" id="1_6xb1d"]
 [ext_resource type="Texture2D" uid="uid://be68hw5jfh7hw" path="res://addons/at-icons/node2d/arrow_counter_clockwise.svg" id="2_g27pv"]
 
 [node name="DxfInspector" type="PanelContainer" unique_id=1714747910]

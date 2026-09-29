@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://3vplj1htyh6"]
+
+[ext_resource type="Script" uid="uid://baw7yg4c8ccrq" path="res://features/root_context/root_context.gd" id="1_fitu1"]
+[ext_resource type="PackedScene" uid="uid://dxwdlh8uhss5r" path="res://features/root_context/main_menu_context/main_menu_context.tscn" id="2_xyf87"]
+[ext_resource type="PackedScene" uid="uid://gbujm53dgawl" path="res://features/editor_context/editor_context.tscn" id="3_4poga"]
+
+[node name="RootContext" type="Node" unique_id=1412128826 groups=["persists"]]
+script = ExtResource("1_fitu1")
+main_menu_context_scene = ExtResource("2_xyf87")
+editor_context_scene = ExtResource("3_4poga")

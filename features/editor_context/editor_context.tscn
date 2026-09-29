@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://gbujm53dgawl"]
+
+[ext_resource type="PackedScene" uid="uid://b8hjkiryh7avx" path="res://features/root_context/menu_button_bar/menu_button_bar.tscn" id="2_gh3nv"]
+[ext_resource type="Script" uid="uid://0ubcs215msmx" path="res://features/editor_context/editor_context.gd" id="2_yte1j"]
+[ext_resource type="PackedScene" uid="uid://dbf4pqgs3bu4v" path="res://features/editor_context/page_manager/page_manager.tscn" id="5_h4eoq"]
+[ext_resource type="PackedScene" uid="uid://dk2mbb7vuk7lp" path="res://features/editor_context/tool_bar/toolbar.tscn" id="8_e5dx5"]
+[ext_resource type="PackedScene" uid="uid://bj3pyd453gwlr" path="res://features/editor_context/dxf_inspector/dxf_inspector.tscn" id="17_bbw0a"]
+
+[node name="EditorContext" type="Panel" unique_id=1162624687]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
+script = ExtResource("2_yte1j")
+menu_button_bar_scene = ExtResource("2_gh3nv")
+tool_bar_scene = ExtResource("8_e5dx5")
+page_manager_scene = ExtResource("5_h4eoq")
+dxf_inspector_scene = ExtResource("17_bbw0a")
+
+[node name="TopBar" type="VBoxContainer" parent="." unique_id=870639815]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSplitContainer" type="HSplitContainer" parent="TopBar" unique_id=543976631]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+split_offsets = PackedInt32Array(283)
+split_offset = 283
+
+[node name="TabContainer" type="TabContainer" parent="TopBar/HSplitContainer" unique_id=1636871862]
+unique_name_in_owner = true
+layout_mode = 2
