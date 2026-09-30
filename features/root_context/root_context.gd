@@ -66,8 +66,13 @@ func _create_contents_directories(project_base_name: String) -> void:
 	DirAccess.make_dir_absolute(contents_path+"/pages")
 
 
-func _handle_open_project() -> void:
-	open_project_file_dialog.show()
+func _handle_open_project(path: String = "") -> void:
+	if not path:
+		open_project_file_dialog.show()
+		return
+	var project_data: ProjectData = load_project(path)
+	if project_data:
+		open_project(project_data)
 
 
 func _on_project_created(project_data: ProjectData) -> void:

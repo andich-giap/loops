@@ -13,6 +13,7 @@ var recent_projects: Array[String]
 func build() -> void:
 	var recent_projects_array: Array = SettingsManager.get_value(SettingsManager.RECENT_PROJECTS_KEY)
 	recent_projects.append_array(recent_projects_array)
+	recent_projects.reverse()
 	for project_path: String in recent_projects:
 		add_recent_project(project_path)
 
@@ -28,4 +29,7 @@ func setup() -> void:
 
 
 func add_recent_project(path: String) -> void:
-	print(path)
+	var button: Button = Button.new()
+	button.text = path
+	button.pressed.connect(open_project_requested.emit.bind(path))
+	recent_projects_container.add_child(button)
