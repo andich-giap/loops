@@ -3,20 +3,29 @@ class_name SettingsManager
 
 
 const RECENT_PROJECTS_KEY: StringName = &"recent_projects"
+
 const USER_PREFERENCES_FILE_PATH: StringName = &"user://user_preferences.json"
+
 const KEY_PATHS: Dictionary[StringName, String] = {
 	RECENT_PROJECTS_KEY: USER_PREFERENCES_FILE_PATH,
 }
 static var files: Array[String] = [
 	USER_PREFERENCES_FILE_PATH,
 ]
-static var _key_values: Dictionary[StringName, Dictionary]
+static var _key_values: Dictionary[StringName, Dictionary]  = {
+	USER_PREFERENCES_FILE_PATH: {
+		RECENT_PROJECTS_KEY: [],
+	},
+}
 
 
 static func load_files() -> void:
 	for file: String in files:
 		var data_string: String = FileAccess.get_file_as_string(USER_PREFERENCES_FILE_PATH)
 		if not data_string:
+			var file_access: FileAccess = FileAccess.open(file, FileAccess.WRITE)
+			file_access.store_string(JSON.stringify(_key_values[file]))
+			file_access.close()
 			continue
 		var data: Dictionary = JSON.parse_string(data_string)
 		_key_values[USER_PREFERENCES_FILE_PATH] = data
