@@ -10,7 +10,9 @@ var _editor_context_node: EditorContext
 @onready var create_project_dialog: CreateProjectDialog = %CreateProjectDialog
 @onready var open_project_file_dialog: FileDialog = %OpenProjectFileDialog
 
+
 func _ready() -> void:
+	SettingsManager.load_files()
 	build()
 	bind_dependencies()
 	setup()
@@ -86,6 +88,7 @@ func open_project(project_data: ProjectData) -> void:
 	_main_menu_context_node.hide()
 	_editor_context_node.show()
 	_editor_context_node.current_project = project_data
+	add_recent_project(project_data.resource_path)
 
 
 func _handle_project_file_selected(path: String) -> void:
@@ -108,6 +111,16 @@ func _handle_save() -> void:
 
 func save() -> void:
 	pass
+
+
+func add_recent_project(project_path: String) -> void:
+	if not FileAccess.file_exists(project_path):
+		return
+	var recent_projects: Array = SettingsManager.get_value(SettingsManager.RECENT_PROJECTS_KEY)
+	recent_projects.erase(project_path)
+	recent_projects.append(project_path)
+	SettingsManager.set_value(SettingsManager.RECENT_PROJECTS_KEY, recent_projects)
+	SettingsManager.save_by_key(SettingsManager.RECENT_PROJECTS_KEY)
 
 
 #func _input(event: InputEvent) -> void:

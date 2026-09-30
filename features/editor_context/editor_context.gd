@@ -20,12 +20,6 @@ var current_project: ProjectData
 @onready var tab_container: TabContainer = %TabContainer
 
 
-func _ready() -> void:
-	build()
-	bind_dependencies()
-	setup()
-
-
 func build() -> void:
 	_menu_button_bar_node = menu_button_bar_scene.instantiate()
 	_tool_bar_node = tool_bar_scene.instantiate()
