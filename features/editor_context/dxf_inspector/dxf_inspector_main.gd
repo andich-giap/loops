@@ -18,6 +18,8 @@ func _ready() -> void:
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tree_root = tree.create_item()
 	file = open("D:/Почта_Андич/Документы/Programs/Godot/Projects/loops/addons/dxf_inspector/test/test.dxf")
+	if not file:
+		return
 	_populate_tree(file)
 
 
