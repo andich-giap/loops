@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dxwdlh8uhss5r"]
 
 [ext_resource type="Script" uid="uid://cybf2rrgiltfq" path="res://features/root_context/main_menu_context/main_menu_context.gd" id="1_syo5f"]
-[ext_resource type="PackedScene" uid="uid://by7xio6vbbjpg" path="res://features/root_context/main_menu_context/dialogs/create_new_project_dialog/create_project_dialog.tscn" id="2_s7w1v"]
 
 [node name="MainMenuContext" type="Control" unique_id=253362166]
 layout_mode = 3
@@ -39,6 +38,12 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=747501187]
 layout_mode = 2
 
+[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1731242596]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "LOOPS"
+horizontal_alignment = 2
+
 [node name="CreateProjectButton" type="Button" parent="HBoxContainer/VBoxContainer" unique_id=419547017]
 unique_name_in_owner = true
 layout_mode = 2
@@ -57,17 +62,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 
-[node name="CreateProjectDialog" parent="." unique_id=1392681389 instance=ExtResource("2_s7w1v")]
-unique_name_in_owner = true
-visible = false
-
-[node name="OpenProjectFileDialog" type="FileDialog" parent="." unique_id=208400103]
-unique_name_in_owner = true
-oversampling_override = 1.0
-title = "Open a File"
-initial_position = 4
-force_native = true
-file_mode = 0
-access = 2
-filters = PackedStringArray("*.tres", "*.res")
-use_native_dialog = true
+[node name="Label" type="Label" parent="HBoxContainer/RecentProjectsContainer" unique_id=1247084255]
+layout_mode = 2
+theme_type_variation = &"HeaderLarge"
+text = "Recent Projects"

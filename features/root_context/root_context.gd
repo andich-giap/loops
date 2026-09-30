@@ -7,9 +7,12 @@ extends Node
 var current_project: ProjectData
 var _main_menu_context_node: MainMenuContext
 var _editor_context_node: EditorContext
+@onready var create_project_dialog: CreateProjectDialog = %CreateProjectDialog
+@onready var open_project_file_dialog: FileDialog = %OpenProjectFileDialog
 
 
 func _ready() -> void:
+	SettingsManager.load_files()
 	build()
 	bind_dependencies()
 	setup()
@@ -37,40 +40,92 @@ func setup() -> void:
 	_editor_context_node.setup()
 	_editor_context_node.hide()
 	
-	_main_menu_context_node.project_created.connect(handle_project_created)
-	_main_menu_context_node.open_project_requested.connect(handle_open_project)
+	_main_menu_context_node.create_project_requested.connect(_handle_create_project)
+	_main_menu_context_node.open_project_requested.connect(_handle_open_project)
+	
+	create_project_dialog.create_project_requested.connect(create_project)
+	open_project_file_dialog.file_selected.connect(_handle_project_file_selected)
 
 
-func handle_project_created(project_data: ProjectData) -> void:
-	handle_open_project(project_data.resource_path)
+func _handle_create_project() -> void:
+	create_project_dialog.show()
 
 
-func handle_open_project(path: String) -> void:
-	pass
+func create_project(project_name: String, project_path: String) -> void:
+	var project_data: ProjectData = ProjectData.new()
+	project_data.name = project_name
+	project_data.resource_path = project_path
+	ResourceSaver.save(project_data)
+	DirAccess.make_dir_absolute(project_data.resource_path.get_basename())
+	_create_contents_directories(project_data.resource_path.get_basename())
+	_on_project_created(project_data)
 
 
-func open_loaded_project(project_data: ProjectData) -> void:
-	pass
+func _create_contents_directories(project_base_name: String) -> void:
+	var contents_path: String = project_base_name + "_loops_contents"
+	DirAccess.make_dir_absolute(contents_path+"/pages")
 
 
-func handle_close_project() -> void:
+func _handle_open_project(path: String = "") -> void:
+	if not path:
+		open_project_file_dialog.show()
+		return
+	var project_data: ProjectData = load_project(path)
+	if project_data:
+		open_project(project_data)
+
+
+func _on_project_created(project_data: ProjectData) -> void:
+	open_project(project_data)
+
+
+func load_project(path: String) -> ProjectData:
+	var project_data: ProjectData
+	if FileAccess.file_exists(path):
+		project_data = ResourceLoader.load(path)
+	if project_data:
+		return project_data
+	push_warning("Failed to load ProjectData from path: " + path)
+	return null
+
+
+func open_project(project_data: ProjectData) -> void:
+	_main_menu_context_node.hide()
+	_editor_context_node.show()
+	_editor_context_node.current_project = project_data
+	add_recent_project(project_data.resource_path)
+
+
+func _handle_project_file_selected(path: String) -> void:
+	var project_data: ProjectData = load_project(path)
+	if project_data:
+		open_project(project_data)
+
+
+func _handle_close_project() -> void:
+	close_project()
+
+
+func close_project() -> void:
 	current_project.close()
 
 
-func handle_save() -> void:
+func _handle_save() -> void:
 	pass
 
 
-func _on_create_new_project_dialog_new_project_created(project_data: ProjectData) -> void:
-	add_project(project_data)
+func save() -> void:
+	pass
 
 
-func add_project(project_data: ProjectData) -> void:
-	project_data.closed.connect(_on_project_data_closed, CONNECT_APPEND_SOURCE_OBJECT)
-
-
-func _on_project_data_closed(project_data: ProjectData) -> void:
-	project_data.closed.disconnect(_on_project_data_closed)
+func add_recent_project(project_path: String) -> void:
+	if not FileAccess.file_exists(project_path):
+		return
+	var recent_projects: Array = SettingsManager.get_value(SettingsManager.RECENT_PROJECTS_KEY)
+	recent_projects.erase(project_path)
+	recent_projects.append(project_path)
+	SettingsManager.set_value(SettingsManager.RECENT_PROJECTS_KEY, recent_projects)
+	SettingsManager.save_by_key(SettingsManager.RECENT_PROJECTS_KEY)
 
 
 #func _input(event: InputEvent) -> void:

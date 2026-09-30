@@ -2,17 +2,20 @@ class_name MainMenuContext
 extends Control
 
 
-signal project_created(project_data: ProjectData)
+signal create_project_requested
 signal open_project_requested(path: String)
 @onready var create_project_button: Button = %CreateProjectButton
 @onready var open_project_button: Button = %OpenProjectButton
 @onready var recent_projects_container: VBoxContainer = %RecentProjectsContainer
-@onready var create_project_dialog: CreateProjectDialog = %CreateProjectDialog
-@onready var open_project_file_dialog: FileDialog = %OpenProjectFileDialog
+var recent_projects: Array[String]
 
 
 func build() -> void:
-	pass
+	var recent_projects_array: Array = SettingsManager.get_value(SettingsManager.RECENT_PROJECTS_KEY)
+	recent_projects.append_array(recent_projects_array)
+	recent_projects.reverse()
+	for project_path: String in recent_projects:
+		add_recent_project(project_path)
 
 
 func bind_dependencies() -> void:
@@ -20,22 +23,13 @@ func bind_dependencies() -> void:
 
 
 func setup() -> void:
-	create_project_button.pressed.connect(handle_create_project)
-	open_project_button.pressed.connect(handle_open_project)
-	
-	create_project_dialog.project_created.connect(project_created.emit)
-	open_project_file_dialog.file_selected.connect(handle_project_file_selected)
-	
+	create_project_button.pressed.connect(create_project_requested.emit)
+	open_project_button.pressed.connect(open_project_requested.emit)
 	#TODO add recent projects
 
 
-func handle_create_project() -> void:
-	create_project_dialog.show()
-
-
-func handle_open_project() -> void:
-	open_project_file_dialog.show()
-
-
-func handle_project_file_selected(path: String) -> void:
-	open_project_requested.emit(path)
+func add_recent_project(path: String) -> void:
+	var button: Button = Button.new()
+	button.text = path
+	button.pressed.connect(open_project_requested.emit.bind(path))
+	recent_projects_container.add_child(button)
