@@ -5,6 +5,10 @@ extends TabContainer
 const PAGE_VIEWPORT: PackedScene = preload("uid://fuajg8iy61yx")
 
 
+func _init() -> void:
+	name = "PagesTabContainer"
+
+
 func set_last_opened_page() -> void:
 	if get_child_count() == 0:
 		return

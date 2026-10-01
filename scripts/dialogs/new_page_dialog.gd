@@ -3,10 +3,12 @@ extends ConfirmationDialog
 
 
 signal page_created(page_data: PageData)
+signal new_page_name_changed(name: String)
 @onready var designation_line_edit: LineEdit = $VBoxContainer/Designation/DesignationLineEdit
 @onready var name_line_edit: LineEdit = $VBoxContainer/Name/NameLineEdit
 @onready var description_line_edit: LineEdit = $VBoxContainer/Description/DescriptionLineEdit
 @onready var type_option_button: OptionButton = $VBoxContainer/Type/TypeOptionButton
+@onready var new_page_name_line_edit: LineEdit = %NameLineEdit
 
 
 func _ready() -> void:
@@ -15,10 +17,11 @@ func _ready() -> void:
 	for type: String in PageData.Type.keys():
 		type = tr(type)
 		type_option_button.add_item(type)
+	new_page_name_line_edit.text_changed.connect(new_page_name_changed.emit)
 
 
 func activate(last_page_in_tree: PageData) -> void:
-	name_line_edit.self_modulate = Color.WHITE
+	name_line_edit.theme_type_variation = ""
 	if not last_page_in_tree:
 		description_line_edit.text = ""
 		description_line_edit.text = ""

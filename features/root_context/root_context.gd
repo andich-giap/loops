@@ -56,13 +56,13 @@ func create_project(project_name: String, project_path: String) -> void:
 	project_data.name = project_name
 	project_data.resource_path = project_path
 	ResourceSaver.save(project_data)
-	DirAccess.make_dir_absolute(project_data.resource_path.get_basename())
 	_create_contents_directories(project_data.resource_path.get_basename())
 	_on_project_created(project_data)
 
 
 func _create_contents_directories(project_base_name: String) -> void:
 	var contents_path: String = project_base_name + "_loops_contents"
+	DirAccess.make_dir_absolute(contents_path)
 	DirAccess.make_dir_absolute(contents_path+"/pages")
 
 
@@ -92,7 +92,7 @@ func load_project(path: String) -> ProjectData:
 func open_project(project_data: ProjectData) -> void:
 	_main_menu_context_node.hide()
 	_editor_context_node.show()
-	_editor_context_node.current_project = project_data
+	_editor_context_node.open_project(project_data)
 	add_recent_project(project_data.resource_path)
 
 

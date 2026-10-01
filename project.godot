@@ -37,6 +37,7 @@ enabled=PackedStringArray("res://addons/at-icons/plugin.cfg", "res://addons/dxf_
 [file_customization]
 
 folder_colors={
+"res://features/": "pink",
 "res://gym/": "green",
 "res://resources/": "yellow",
 "res://scripts/data/": "teal",

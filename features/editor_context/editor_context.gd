@@ -51,10 +51,17 @@ func setup() -> void:
 	_tool_bar_node.add_text_requested.connect(handle_add_text)
 	_tool_bar_node.ortho_requested.connect(handle_ortho_toggle)
 	_tool_bar_node.grid_requested.connect(handle_grid_toggle)
+	
+	_page_manager_node.open_page_requested.connect(handle_open_page)
+
+
+func handle_open_page(page_data: PageData) -> void:
+	_pages_tab_container.open_page(page_data)
 
 
 func handle_show_page_manager() -> void:
-	pass
+	_page_manager_node.show()
+	_page_manager_node.grab_focus()
 
 
 func handle_add_draw_line() -> void:
@@ -67,7 +74,20 @@ func handle_add_text() -> void:
 
 func handle_ortho_toggle(toggled_on: bool) -> void:
 	pass
+	#for child: Node in _pages_tab_container:
+		#if child is not PageViewport:
+			#continue
+		#var page_viewport: PageViewport = child
 
 
 func handle_grid_toggle(toggled_on: bool) -> void:
-	pass
+	for child: Node in _pages_tab_container:
+		if child is not PageViewport:
+			continue
+		var page_viewport: PageViewport = child
+		page_viewport.grid.visible = toggled_on
+
+
+func open_project(project_data: ProjectData) -> void:
+	current_project = project_data
+	_page_manager_node.open_project(project_data)

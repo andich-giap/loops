@@ -16,12 +16,22 @@ var project_context_items: Array[StringName] = [
 	"PROPERTIES",
 ]
 @onready var tree: Tree = %PagesTree
-@onready var context_menu: PopupMenu = $ContextMenu
-@onready var new_page_dialog: CreateNewPageDialog = $NewPageDialog
+@onready var context_menu: PopupMenu = %ContextMenu
+@onready var new_page_dialog: CreateNewPageDialog = %NewPageDialog
 
 
 func _ready() -> void:
 	root = tree.create_item()
+	
+	tree.item_mouse_selected.connect(_on_tree_item_mouse_selected)
+	tree.item_activated.connect(_on_tree_item_activated)
+	tree.item_edited.connect(_on_tree_item_edited)
+	tree.gui_input.connect(_on_tree_gui_input)
+	
+	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
+	
+	new_page_dialog.page_created.connect(_on_new_page_dialog_page_created)
+	new_page_dialog.new_page_name_changed.connect(_on_new_page_dialog_new_page_name_changed)
 
 
 func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: int) -> void:
@@ -37,6 +47,34 @@ func _on_tree_item_mouse_selected(mouse_position: Vector2, mouse_button_index: i
 			context_menu.set_item_disabled(index, false)
 	context_menu.position = mouse_position
 	context_menu.visible = true
+
+
+func _on_tree_item_activated() -> void:
+	var selected_tree_item: TreeItem = tree.get_selected()
+	var metadata: Variant = selected_tree_item.get_metadata(0)
+	if selected_tree_item.get_metadata(0) is PageData:
+		open_page_requested.emit(metadata)
+
+
+func _on_tree_item_edited() -> void:
+	var tree_item: TreeItem = tree.get_selected()
+	var metadata: Variant = tree_item.get_metadata(0)
+	if metadata is PageData:
+		var page_data: PageData = metadata
+		var project_data: ProjectData = page_data.project_data.get_ref()
+		if project_data.pages.has(page_data.designation.get_string() + "_" + tree_item.get_text(0)):
+			tree_item.set_text(0, page_data.name + " " + page_data.description)
+		else:
+			page_data.name = tree_item.get_text(0)
+			tree_item.set_text(0, page_data.name + " " + page_data.description)
+		return
+	if metadata is ProjectData:
+		pass
+
+
+func _on_tree_gui_input(event: InputEvent) -> void:
+	if event.is_action(&"rename") and event.is_pressed():
+		_on_rename_triggered()
 
 
 func _on_context_menu_index_pressed(index: int) -> void:
@@ -89,7 +127,7 @@ func _get_last_child_of_selected_item(selected_item: TreeItem) -> TreeItem:
 	return last_child
 
 
-func add_project(project_data: ProjectData) -> void:
+func open_project(project_data: ProjectData) -> void:
 	var project_item: TreeItem = tree.create_item(root)
 	project_item.set_metadata(0, project_data)
 	project_item.set_text(0, project_data.name)
@@ -145,13 +183,6 @@ func get_project_from_child(child: TreeItem) -> ProjectData:
 	return parent.get_metadata(0)
 
 
-func _on_tree_item_activated() -> void:
-	var selected_tree_item: TreeItem = tree.get_selected()
-	var metadata: Variant = selected_tree_item.get_metadata(0)
-	if selected_tree_item.get_metadata(0) is PageData:
-		open_page_requested.emit(metadata)
-
-
 func _on_project_data_closed(project_data: ProjectData) -> void:
 	project_data.closed.disconnect(_on_project_data_closed)
 	var closed_project_tree_item: TreeItem
@@ -166,33 +197,12 @@ func _on_project_data_closed(project_data: ProjectData) -> void:
 	closed_project_tree_item.free()
 
 
-func _on_name_line_edit_text_changed(new_text: String) -> void:
+func _on_new_page_dialog_new_page_name_changed(new_name: String) -> void:
 	var tree_item: TreeItem = tree.get_selected()
 	var project_data: ProjectData = get_project_from_child(tree_item)
-	if project_data.pages.has(new_page_dialog.designation_line_edit.text + "_" + new_text):
+	if project_data.pages.has(new_page_dialog.designation_line_edit.text + "_" + new_name):
 		new_page_dialog.get_ok_button().disabled = true
-		new_page_dialog.name_line_edit.self_modulate = Color(1.0, 0.902, 0.902)
+		new_page_dialog.name_line_edit.theme_type_variation = "LineEditWarning"
 	else:
 		new_page_dialog.get_ok_button().disabled = false
-		new_page_dialog.name_line_edit.self_modulate = Color.WHITE
-
-
-func _on_tree_item_edited() -> void:
-	var tree_item: TreeItem = tree.get_selected()
-	var metadata: Variant = tree_item.get_metadata(0)
-	if metadata is PageData:
-		var page_data: PageData = metadata
-		var project_data: ProjectData = page_data.project_data.get_ref()
-		if project_data.pages.has(page_data.designation.get_string() + "_" + tree_item.get_text(0)):
-			tree_item.set_text(0, page_data.name + " " + page_data.description)
-		else:
-			page_data.name = tree_item.get_text(0)
-			tree_item.set_text(0, page_data.name + " " + page_data.description)
-		return
-	if metadata is ProjectData:
-		pass
-
-
-func _on_tree_gui_input(event: InputEvent) -> void:
-	if event.is_action(&"rename") and event.is_pressed():
-		_on_rename_triggered()
+		new_page_dialog.name_line_edit.theme_type_variation = ""

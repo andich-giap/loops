@@ -1,0 +1,85 @@
+[gd_scene format=3 uid="uid://b5ctw8j7ouqns"]
+
+[ext_resource type="Script" uid="uid://nvokjlsotfvf" path="res://scripts/dialogs/new_page_dialog.gd" id="1_8ilwy"]
+
+[node name="NewPageDialog" type="ConfirmationDialog" unique_id=1019417673]
+oversampling_override = 1.0
+title = "NEW_PAGE"
+initial_position = 4
+size = Vector2i(600, 214)
+visible = true
+ok_button_text = "CREATE"
+cancel_button_text = "CANCEL"
+script = ExtResource("1_8ilwy")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1727832026]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 176.0
+
+[node name="Designation" type="HBoxContainer" parent="VBoxContainer" unique_id=722917481]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="DesignationLabel" type="Label" parent="VBoxContainer/Designation" unique_id=463079839]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "DESIGNATION"
+
+[node name="DesignationLineEdit" type="LineEdit" parent="VBoxContainer/Designation" unique_id=928186573]
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Name" type="HBoxContainer" parent="VBoxContainer" unique_id=417336692]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/Name" unique_id=2045653397]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "NUMBER"
+
+[node name="NameLineEdit" type="LineEdit" parent="VBoxContainer/Name" unique_id=350489791]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "1"
+
+[node name="Description" type="HBoxContainer" parent="VBoxContainer" unique_id=1570642512]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/Description" unique_id=249086331]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "DESCRIPTION"
+
+[node name="DescriptionLineEdit" type="LineEdit" parent="VBoxContainer/Description" unique_id=2113526644]
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="Type" type="HBoxContainer" parent="VBoxContainer" unique_id=935474778]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TypeLabel" type="Label" parent="VBoxContainer/Type" unique_id=43161241]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Type"
+
+[node name="TypeOptionButton" type="OptionButton" parent="VBoxContainer/Type" unique_id=82939350]
+custom_minimum_size = Vector2(119.54, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4

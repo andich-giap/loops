@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dbf4pqgs3bu4v"]
 
-[ext_resource type="Script" uid="uid://5mtm3db2h0xu" path="res://scenes/page_manager/page_manager.gd" id="1_61cwo"]
+[ext_resource type="Script" uid="uid://5mtm3db2h0xu" path="res://features/editor_context/page_manager/page_manager.gd" id="1_61cwo"]
 [ext_resource type="Texture2D" uid="uid://dqtomh4b7e6yb" path="res://addons/at-icons/node2d/file.svg" id="2_ii7i7"]
 [ext_resource type="Texture2D" uid="uid://bprhcoty4m42s" path="res://addons/at-icons/node3d/cross.svg" id="3_aya7p"]
-[ext_resource type="Script" uid="uid://nvokjlsotfvf" path="res://scripts/dialogs/create_new_page_dialog.gd" id="4_10vf3"]
+[ext_resource type="PackedScene" uid="uid://b5ctw8j7ouqns" path="res://scripts/dialogs/new_page_dialog.tscn" id="4_8s48f"]
 
 [node name="PageManager" type="PanelContainer" unique_id=56668837]
 custom_minimum_size = Vector2(200, 0)
@@ -25,6 +25,7 @@ hide_root = true
 select_mode = 2
 
 [node name="ContextMenu" type="PopupMenu" parent="." unique_id=1175352808]
+unique_name_in_owner = true
 transparent_bg = false
 oversampling_override = 1.0
 size = Vector2i(200, 258)
@@ -61,90 +62,6 @@ item_12/separator = true
 item_13/text = "PROPERTIES"
 item_13/id = 13
 
-[node name="NewPageDialog" type="ConfirmationDialog" parent="." unique_id=1635693418]
-oversampling_override = 1.0
-title = "NEW_PAGE"
-initial_position = 4
-size = Vector2i(600, 214)
-ok_button_text = "CREATE"
-cancel_button_text = "CANCEL"
-script = ExtResource("4_10vf3")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="NewPageDialog" unique_id=56432307]
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 596.0
-offset_bottom = 176.0
-
-[node name="Designation" type="HBoxContainer" parent="NewPageDialog/VBoxContainer" unique_id=1492411182]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="DesignationLabel" type="Label" parent="NewPageDialog/VBoxContainer/Designation" unique_id=386451543]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-text = "DESIGNATION"
-
-[node name="DesignationLineEdit" type="LineEdit" parent="NewPageDialog/VBoxContainer/Designation" unique_id=873135805]
-custom_minimum_size = Vector2(119.54, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="Name" type="HBoxContainer" parent="NewPageDialog/VBoxContainer" unique_id=814957759]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="NameLabel" type="Label" parent="NewPageDialog/VBoxContainer/Name" unique_id=1249468285]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-text = "NUMBER"
-
-[node name="NameLineEdit" type="LineEdit" parent="NewPageDialog/VBoxContainer/Name" unique_id=579711628]
-custom_minimum_size = Vector2(119.54, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-text = "1"
-
-[node name="Description" type="HBoxContainer" parent="NewPageDialog/VBoxContainer" unique_id=2069629782]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="DescriptionLabel" type="Label" parent="NewPageDialog/VBoxContainer/Description" unique_id=1501809233]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-text = "DESCRIPTION"
-
-[node name="DescriptionLineEdit" type="LineEdit" parent="NewPageDialog/VBoxContainer/Description" unique_id=1358917473]
-custom_minimum_size = Vector2(119.54, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[node name="Type" type="HBoxContainer" parent="NewPageDialog/VBoxContainer" unique_id=895435922]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="TypeLabel" type="Label" parent="NewPageDialog/VBoxContainer/Type" unique_id=371000697]
-custom_minimum_size = Vector2(200, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-text = "Type"
-
-[node name="TypeOptionButton" type="OptionButton" parent="NewPageDialog/VBoxContainer/Type" unique_id=1785767101]
-custom_minimum_size = Vector2(119.54, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 4
-
-[connection signal="gui_input" from="PagesTree" to="." method="_on_tree_gui_input"]
-[connection signal="item_activated" from="PagesTree" to="." method="_on_tree_item_activated"]
-[connection signal="item_edited" from="PagesTree" to="." method="_on_tree_item_edited"]
-[connection signal="item_mouse_selected" from="PagesTree" to="." method="_on_tree_item_mouse_selected"]
-[connection signal="index_pressed" from="ContextMenu" to="." method="_on_context_menu_index_pressed"]
-[connection signal="page_created" from="NewPageDialog" to="." method="_on_new_page_dialog_page_created"]
-[connection signal="text_changed" from="NewPageDialog/VBoxContainer/Name/NameLineEdit" to="." method="_on_name_line_edit_text_changed"]
+[node name="NewPageDialog" parent="." unique_id=1019417673 instance=ExtResource("4_8s48f")]
+unique_name_in_owner = true
+visible = false
