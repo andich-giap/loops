@@ -26,6 +26,11 @@ var is_selected: bool = false:
 var gizmos: Array[Gizmo]
 
 
+func _init(edit_placement: bool = false) -> void:
+	is_placing = edit_placement
+	context_menu_enabled = false
+
+
 func _ready() -> void:
 	flat = true
 	placeholder_text = "TEXT"

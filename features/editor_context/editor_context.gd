@@ -73,7 +73,11 @@ func handle_add_draw_line() -> void:
 
 
 func handle_add_text() -> void:
-	pass
+	var page: PageViewport = _pages_tab_container.current_page
+	if not page:
+		return
+	var l_line_edit: LLineEdit = LLineEdit.new(true)
+	page.add_graphics(l_line_edit)
 
 
 func handle_ortho_toggle(toggled_on: bool) -> void:
