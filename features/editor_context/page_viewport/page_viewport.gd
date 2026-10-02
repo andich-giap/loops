@@ -6,14 +6,14 @@ extends SubViewportContainer
 @export var page_data: PageData:
 	set = set_page_data
 var unsaved_contents: Dictionary[PageData, PackedScene]
-@onready var layout: Panel = $SubViewport/PageLayoutLayer/Layout
-@onready var contents_layer: CanvasLayer = $SubViewport/ContentsLayer
-@onready var selection_manager: SelectionManager = $SubViewport/SelectionLayer/SelectionManager
-@onready var grid: Grid = $SubViewport/PageLayoutLayer/Layout/Grid
+@onready var layout: Panel = %Layout
+@onready var contents_layer: CanvasLayer = %ContentsLayer
+@onready var selection_manager: SelectionManager = %SelectionManager
+@onready var grid: Grid = %Grid
 
 
 func _ready() -> void:
-	if page_data and layout and contents_layer:
+	if page_data:
 		_update_page_viewport()
 
 
@@ -26,7 +26,7 @@ func set_page_data(_page_data: PageData) -> void:
 		if not page_data.is_saved:
 			unsaved_contents[page_data] = pack_contents()
 	page_data = _page_data
-	if page_data and layout and contents_layer:
+	if page_data:
 		_update_page_viewport()
 	project_data = page_data.project_data.get_ref()
 	page_data.grid_interval_changed.connect(_on_page_data_grid_interval_changed)

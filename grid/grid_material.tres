@@ -5,8 +5,7 @@
 [resource]
 resource_local_to_scene = true
 shader = ExtResource("1_x1f8i")
-shader_parameter/ColorParameter = Color(0, 0, 0, 1)
-shader_parameter/Size = Vector2(1152, 648)
+shader_parameter/Color = Color(0, 0, 0, 1)
+shader_parameter/Size = Vector2(677.95276, 958.8189)
 shader_parameter/Interval = 32.28346456692913
-shader_parameter/DotRadius = 1.0
-shader_parameter/Alpha = 0.50000002375
+shader_parameter/DotRadius = 3.0

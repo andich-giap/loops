@@ -22,6 +22,10 @@ func _init() -> void:
 	shader_material.set_shader_parameter(&"Interval", Units.mm_to_px(interval))
 
 
+func _ready() -> void:
+	shader_material.set_shader_parameter(&"Color", get_theme_color(&"grid_color"))
+
+
 func _on_resized() -> void:
 	shader_material.set_shader_parameter(&"Size", size)
 
