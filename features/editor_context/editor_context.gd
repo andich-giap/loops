@@ -65,7 +65,11 @@ func handle_show_page_manager() -> void:
 
 
 func handle_add_draw_line() -> void:
-	pass
+	var page: PageViewport = _pages_tab_container.current_page
+	if not page:
+		return
+	var poly_line_2d: PolyLine2D = PolyLine2D.new(true)
+	page.add_graphics(poly_line_2d)
 
 
 func handle_add_text() -> void:

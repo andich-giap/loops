@@ -3,6 +3,8 @@ extends TabContainer
 
 
 const PAGE_VIEWPORT: PackedScene = preload("uid://fuajg8iy61yx")
+var current_page: PageViewport:
+	get = get_current_page
 
 
 func _init() -> void:
@@ -68,12 +70,11 @@ func _on_dxf_inspector_tree_item_selected(source: Tree) -> void:
 			"LINE":
 				graphics = get_poly_line_2d_from_tree_item(selected_item)
 			"TEXT":
-				graphics = get_l_line_edit_from_tree_item(selected_item)
+				graphics = dxf_get_l_line_edit_from_tree_item(selected_item)
 		if not graphics:
 			selected_item = source.get_next_selected(selected_item)
 			continue
-		var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
-		current_page_viewport.add_graphics(graphics)
+		current_page.add_graphics(graphics)
 		if graphics.has_method("queue_redraw"):
 			graphics.call("queue_redraw")
 		selected_item = source.get_next_selected(selected_item)
@@ -102,7 +103,7 @@ func get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
 	return poly_line_2d
 
 
-func get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
+func dxf_get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
 	var l_line_edit: LLineEdit = LLineEdit.new()
 	for child: TreeItem in tree_item.get_children():
 		var variable_name: String = child.get_text(0).split(" ")[0]
@@ -116,3 +117,12 @@ func get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
 				l_line_edit.position.y = float(variable_value) - l_line_edit.size.y
 	l_line_edit.is_placing = false
 	return l_line_edit
+
+
+func get_current_page() -> PageViewport:
+	if get_child_count() == 0:
+		return null
+	var tab: Control = get_current_tab_control()
+	if tab is PageViewport:
+		return tab
+	return null

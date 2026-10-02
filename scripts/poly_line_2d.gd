@@ -42,10 +42,11 @@ var gizmos: Array[Gizmo]
 var _initial_point_position: Vector2
 
 
-func _init() -> void:
+func _init(edit: bool = false) -> void:
 	width_curve = MM_TO_PX_CURVE
 	width = default_width
 	default_color = color
+	is_active = edit
 
 
 func _input(event: InputEvent) -> void:
