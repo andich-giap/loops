@@ -11,3 +11,7 @@ signal grid_requested(toggled_on: bool)
 func _ready() -> void:
 	ortho.toggled.connect(ortho_requested.emit)
 	grid.toggled.connect(grid_requested.emit)
+	if ortho.button_pressed:
+		ortho_requested.emit(true)
+	if grid.button_pressed:
+		grid_requested.emit(true)

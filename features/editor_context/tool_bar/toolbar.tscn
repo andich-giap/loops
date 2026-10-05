@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bchcrsaxd56ht" path="res://features/editor_context/tool_bar/draw_tool_bar/draw_tool_bar.tscn" id="2_wb132"]
 [ext_resource type="PackedScene" uid="uid://cdhf0aptl3bu3" path="res://features/editor_context/tool_bar/modes_bar/modes_bar.tscn" id="3_lquya"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_lquya"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_n77dm"]
 
 [node name="ToolBar" type="HBoxContainer" unique_id=1888273831]
 script = ExtResource("1_xtbyg")
@@ -12,7 +12,7 @@ script = ExtResource("1_xtbyg")
 [node name="DrawToolBar" parent="." unique_id=737868671 instance=ExtResource("2_wb132")]
 unique_name_in_owner = true
 layout_mode = 2
-button_group = SubResource("ButtonGroup_lquya")
+button_group = SubResource("ButtonGroup_n77dm")
 
 [node name="ModesBar" parent="." unique_id=1352189373 instance=ExtResource("3_lquya")]
 unique_name_in_owner = true

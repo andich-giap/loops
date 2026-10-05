@@ -26,7 +26,7 @@ func set_page_data(_page_data: PageData) -> void:
 		if not page_data.is_saved:
 			unsaved_contents[page_data] = pack_contents()
 	page_data = _page_data
-	if page_data:
+	if is_node_ready():
 		_update_page_viewport()
 	project_data = page_data.project_data.get_ref()
 	page_data.grid_interval_changed.connect(_on_page_data_grid_interval_changed)
@@ -73,6 +73,7 @@ func _add_contents(contents: PackedScene) -> void:
 		child.owner = null
 		child.reparent(contents_layer)
 		child.owner = contents_layer
+		child.set(&"page_viewport", self)
 	new_contents.queue_free()
 
 
@@ -102,12 +103,14 @@ func add_graphics(graphics: Node) -> void:
 
 func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d.page_data = weakref(page_data)
+	poly_line_2d.page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
 
 
 func add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.page_data = weakref(page_data)
+	l_line_edit.page_viewport = self
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 
@@ -132,3 +135,14 @@ func _on_page_data_grid_interval_changed(grid_interval: float) -> void:
 
 func _on_project_data_closed() -> void:
 	queue_free()
+
+
+func get_place_position() -> Vector2:
+	var interval: Vector2 = Vector2(Units.mm_to_px(grid.interval), Units.mm_to_px(grid.interval))
+	var place_position: Vector2
+	var local_mouse_position: Vector2 = get_local_mouse_position()
+	if grid.visible:
+		place_position = snapped(local_mouse_position, interval)
+	else:
+		place_position = local_mouse_position
+	return place_position

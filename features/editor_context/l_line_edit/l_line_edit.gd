@@ -24,6 +24,7 @@ var is_placing: bool = false
 var is_selected: bool = false:
 	set = set_is_selected
 var gizmos: Array[Gizmo]
+var page_viewport: PageViewport
 
 
 func _init(edit_placement: bool = false) -> void:
@@ -80,13 +81,7 @@ func _on_focus_exited() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var interval: Vector2 = Vector2(Units.mm_to_px(Grid.interval), Units.mm_to_px(Grid.interval))
-	var place_position: Vector2
-	var global_mouse_position: Vector2 = get_global_mouse_position()
-	if Grid.grid_visible:
-		place_position = snapped(global_mouse_position, interval)
-	else:
-		place_position = global_mouse_position
+	var place_position: Vector2 = page_viewport.get_place_position()
 	return place_position
 
 

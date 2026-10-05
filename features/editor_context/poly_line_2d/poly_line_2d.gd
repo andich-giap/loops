@@ -40,6 +40,7 @@ var active_point: int
 var selected_points: Array[int]
 var gizmos: Array[Gizmo]
 var _initial_point_position: Vector2
+var page_viewport: PageViewport
 
 
 func _init(edit: bool = false) -> void:
@@ -328,13 +329,7 @@ func _on_gizmo_released() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var interval: Vector2 = Vector2(Units.mm_to_px(Grid.interval), Units.mm_to_px(Grid.interval))
-	var place_position: Vector2
-	var local_mouse_position: Vector2 = get_local_mouse_position()
-	if Grid.grid_visible:
-		place_position = snapped(local_mouse_position, interval)
-	else:
-		place_position = local_mouse_position
+	var place_position: Vector2 = page_viewport.get_place_position()
 	if Grid.is_orthogonal and not get_point_count() <= 1:
 		if abs((place_position - _initial_point_position).normalized().dot(Vector2.RIGHT)) <= 0.5:
 			place_position = Vector2(_initial_point_position.x, place_position.y)

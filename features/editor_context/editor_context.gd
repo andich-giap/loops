@@ -70,6 +70,7 @@ func handle_add_draw_line() -> void:
 		return
 	var poly_line_2d: PolyLine2D = PolyLine2D.new(true)
 	page.add_graphics(poly_line_2d)
+	poly_line_2d.finished_drawing.connect(_unpress_draw_button)
 
 
 func handle_add_text() -> void:
@@ -78,18 +79,19 @@ func handle_add_text() -> void:
 		return
 	var l_line_edit: LLineEdit = LLineEdit.new(true)
 	page.add_graphics(l_line_edit)
+	l_line_edit.finished_placing.connect(_unpress_draw_button)
+
+
+func _unpress_draw_button() -> void:
+	_tool_bar_node.draw_tool_bar.button_group.get_pressed_button().button_pressed = false
 
 
 func handle_ortho_toggle(toggled_on: bool) -> void:
-	pass
-	#for child: Node in _pages_tab_container:
-		#if child is not PageViewport:
-			#continue
-		#var page_viewport: PageViewport = child
+	Grid.is_orthogonal = toggled_on
 
 
 func handle_grid_toggle(toggled_on: bool) -> void:
-	for child: Node in _pages_tab_container:
+	for child: Node in _pages_tab_container.get_children():
 		if child is not PageViewport:
 			continue
 		var page_viewport: PageViewport = child

@@ -51,7 +51,6 @@ func _set_can_select(can_select: bool) -> void:
 
 
 func _on_grid_toggled(toggled_on: bool) -> void:
-	Grid.grid_visible = toggled_on
 	for child: Node in get_children():
 		if child is not PageViewport:
 			continue

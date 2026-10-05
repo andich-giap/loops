@@ -4,7 +4,6 @@ extends PanelContainer
 
 
 static var is_orthogonal: bool = false
-static var grid_visible: bool = true
 static var color: Color = Color(0.76, 0.76, 0.76, 1.0)
 static var width: float = 1.0
 static var interval: float = 10.0:
