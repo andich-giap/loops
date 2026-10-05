@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" format=3 uid="uid://dwyv1ggygksy6"]
+
+[ext_resource type="FontFile" uid="uid://d4fkcqpp7ur68" path="res://features/theme/fonts/times_new_roman/TIMESI.TTF" id="1_23pcd"]
+
+[resource]
+base_font = ExtResource("1_23pcd")

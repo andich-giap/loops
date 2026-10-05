@@ -1,6 +1,0 @@
-[gd_resource type="FontVariation" format=3 uid="uid://ckenrsecbyq6y"]
-
-[ext_resource type="FontFile" uid="uid://bmparg1k2vyrf" path="res://resources/theme/fonts/google sans/GoogleSans-VariableFont_GRAD,opsz,wght.ttf" id="1_tou6f"]
-
-[resource]
-base_font = ExtResource("1_tou6f")

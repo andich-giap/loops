@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="Pallete" format=3 uid="uid://b1s4dsfjjdjc"]
+
+[ext_resource type="Script" uid="uid://cxedgc5eqhurx" path="res://features/theme/pallete.gd" id="1_enlhs"]
+[ext_resource type="Script" uid="uid://csk437kahvrcq" path="res://features/theme/pallete_map_container.gd" id="1_r8dwh"]
+[ext_resource type="Script" uid="uid://ccvd41r386un1" path="res://features/theme/pallete_map.gd" id="2_uofao"]
+
+[sub_resource type="Resource" id="Resource_5ar88"]
+script = ExtResource("2_uofao")
+theme_type = &"text_selection_color"
+name = &"LLineEdit"
+metadata/_custom_type_script = "uid://ccvd41r386un1"
+
+[sub_resource type="Resource" id="Resource_ktotv"]
+script = ExtResource("1_r8dwh")
+pallete_maps = Array[ExtResource("2_uofao")]([SubResource("Resource_5ar88")])
+metadata/_custom_type_script = "uid://csk437kahvrcq"
+
+[resource]
+script = ExtResource("1_enlhs")
+color_maps = Dictionary[Color, ExtResource("1_r8dwh")]({
+Color(0.18039216, 0.5019608, 1, 1): SubResource("Resource_ktotv"),
+Color(0.76, 0, 0.012666473, 1): SubResource("Resource_ktotv")
+})
+metadata/_custom_type_script = "uid://cxedgc5eqhurx"

@@ -10,12 +10,19 @@ var unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var selection_manager: SelectionManager = %SelectionManager
 @onready var grid: Grid = %Grid
 @onready var viewport_camera: VewportCamera = %ViewportCamera
+@onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog
 
 
 func _ready() -> void:
 	selection_manager.contents_layer = contents_layer
 	if page_data:
 		_update_page_viewport()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action(&"open_properties") and event.is_pressed():
+		edit_properties_dialog.activate()
+		get_viewport().set_input_as_handled()
 
 
 func set_page_data(_page_data: PageData) -> void:

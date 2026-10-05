@@ -11,12 +11,19 @@ var _max_size: Vector2i
 var changed_property_containers: Array[PropertyContainer]
 var double_click_timer: Timer
 @onready var properties_container: VBoxContainer = $PropertiesContainer
-@onready var choose_item_to_edit_dialog: ConfirmationDialog = $ChooseItemToEditDialog
-@onready var scripts_tree: Tree = $ChooseItemToEditDialog/ScriptsTree
-@onready var header: HSplitContainer = $PropertiesContainer/Header
+@onready var header: HSplitContainer = %Header
+@onready var choose_item_to_edit_dialog: ConfirmationDialog = %ChooseItemToEditDialog
+@onready var scripts_tree: Tree = %ScriptsTree
 
 
 func _ready() -> void:
+	canceled.connect(clear_properties)
+	confirmed.connect(apply_changes)
+	header.drag_started.connect(_on_header_drag_started)
+	header.drag_ended.connect(_on_header_drag_ended)
+	choose_item_to_edit_dialog.confirmed.connect(_select_and_edit_properties)
+	scripts_tree.item_activated.connect(_select_and_edit_properties)
+	
 	double_click_timer = Timer.new()
 	double_click_timer.one_shot = true
 	double_click_timer.wait_time = DOUBLE_CLICK_INTERVAL
@@ -73,7 +80,7 @@ func get_properties(_selection: Array[Node]) -> Array[Dictionary]:
 	return [_properties_per_class, _theme_properties_per_class]
 
 
-func _on_script_tree_item_activated() -> void:
+func _select_and_edit_properties() -> void:
 	var script: Script = scripts_tree.get_selected().get_metadata(0)
 	instanciate_properties_of_script(script)
 	choose_item_to_edit_dialog.visible = false
@@ -168,7 +175,6 @@ func _on_header_drag_started() -> void:
 	else:
 		_fit_column(0)
 		double_click_timer.stop()
-
 
 
 func _on_header_drag_ended() -> void:

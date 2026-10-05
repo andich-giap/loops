@@ -1,0 +1,36 @@
+[remap]
+
+importer="font_data_dynamic"
+type="FontFile"
+uid="uid://b47xo4pvam12s"
+path="res://.godot/imported/GOST Common Italic.ttf-58183a11f9017802bc17375f46c77f9a.fontdata"
+
+[deps]
+
+source_file="res://features/theme/fonts/gost_type_a/GOST Common Italic.ttf"
+dest_files=["res://.godot/imported/GOST Common Italic.ttf-58183a11f9017802bc17375f46c77f9a.fontdata"]
+
+[params]
+
+Rendering=null
+antialiasing=1
+generate_mipmaps=false
+disable_embedded_bitmaps=true
+multichannel_signed_distance_field=false
+msdf_pixel_range=8
+msdf_size=48
+allow_system_fallback=true
+force_autohinter=false
+modulate_color_glyphs=false
+hinting=1
+subpixel_positioning=4
+keep_rounding_remainders=true
+oversampling=0.0
+Fallbacks=null
+fallbacks=[]
+Compress=null
+compress=true
+preload=[]
+language_support={}
+script_support={}
+opentype_features={}

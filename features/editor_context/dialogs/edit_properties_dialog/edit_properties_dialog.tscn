@@ -7,6 +7,7 @@ handle_input_locally = false
 oversampling_override = 1.0
 title = "PROPERTIES"
 initial_position = 4
+visible = true
 script = ExtResource("1_4yc2x")
 
 [node name="PropertiesContainer" type="VBoxContainer" parent="." unique_id=2060252479]
@@ -16,6 +17,7 @@ offset_right = 196.0
 offset_bottom = 62.0
 
 [node name="Header" type="HSplitContainer" parent="PropertiesContainer" unique_id=569905753]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_type_variation = &"PropertyContainerHeader"
@@ -34,11 +36,13 @@ text = "VALUE"
 text_overrun_behavior = 3
 
 [node name="ChooseItemToEditDialog" type="ConfirmationDialog" parent="." unique_id=265060145]
+unique_name_in_owner = true
 oversampling_override = 1.0
 initial_position = 4
 size = Vector2i(336, 100)
 
 [node name="ScriptsTree" type="Tree" parent="ChooseItemToEditDialog" unique_id=828144676]
+unique_name_in_owner = true
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 332.0
@@ -48,10 +52,3 @@ hide_folding = true
 enable_recursive_folding = false
 enable_drag_unfolding = false
 hide_root = true
-
-[connection signal="canceled" from="." to="." method="clear_properties"]
-[connection signal="confirmed" from="." to="." method="apply_changes"]
-[connection signal="drag_ended" from="PropertiesContainer/Header" to="." method="_on_header_drag_ended"]
-[connection signal="drag_started" from="PropertiesContainer/Header" to="." method="_on_header_drag_started"]
-[connection signal="confirmed" from="ChooseItemToEditDialog" to="." method="_on_script_tree_item_activated"]
-[connection signal="item_activated" from="ChooseItemToEditDialog/ScriptsTree" to="." method="_on_script_tree_item_activated"]

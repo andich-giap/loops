@@ -1,0 +1,43 @@
+[remap]
+
+importer="font_data_dynamic"
+type="FontFile"
+uid="uid://bmparg1k2vyrf"
+path="res://.godot/imported/GoogleSans-VariableFont_GRAD,opsz,wght.ttf-41ca15a3e5248b98420e52c7cd1617f6.fontdata"
+
+[deps]
+
+source_file="res://features/theme/fonts/google sans/GoogleSans-VariableFont_GRAD,opsz,wght.ttf"
+dest_files=["res://.godot/imported/GoogleSans-VariableFont_GRAD,opsz,wght.ttf-41ca15a3e5248b98420e52c7cd1617f6.fontdata"]
+
+[params]
+
+Rendering=null
+antialiasing=1
+generate_mipmaps=false
+disable_embedded_bitmaps=true
+multichannel_signed_distance_field=true
+msdf_pixel_range=8
+msdf_size=48
+allow_system_fallback=true
+force_autohinter=false
+modulate_color_glyphs=false
+hinting=3
+subpixel_positioning=4
+keep_rounding_remainders=true
+oversampling=0.0
+Fallbacks=null
+fallbacks=[]
+Compress=null
+compress=true
+preload=[{
+"chars": [],
+"glyphs": [],
+"name": "New Configuration",
+"size": Vector2i(16, 0),
+&"variation_embolden": 0.0,
+&"variation_opentype": {}
+}]
+language_support={}
+script_support={}
+opentype_features={}

@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="2_h7mtx"]
 [ext_resource type="Script" uid="uid://bdkax8ga5cpf4" path="res://features/editor_context/page_viewport/grid/grid.gd" id="2_r585w"]
 [ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="5_x5m46"]
+[ext_resource type="PackedScene" uid="uid://cqsrk6m3o1w2a" path="res://features/editor_context/dialogs/edit_properties_dialog/edit_properties_dialog.tscn" id="6_x60ko"]
 
 [node name="PageViewport" type="SubViewportContainer" unique_id=1907616996 groups=["persists"]]
 anchors_preset = 15
@@ -84,6 +85,10 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 script = ExtResource("5_x5m46")
 viewport = NodePath("../SubViewport")
+
+[node name="EditPropertiesDialog" parent="." unique_id=1341264742 instance=ExtResource("6_x60ko")]
+unique_name_in_owner = true
+visible = false
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]
 [connection signal="mouse_exited" from="." to="ViewportCamera" method="set_process_input" binds= [false]]
