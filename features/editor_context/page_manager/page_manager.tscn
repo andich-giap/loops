@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://5mtm3db2h0xu" path="res://features/editor_context/page_manager/page_manager.gd" id="1_61cwo"]
 [ext_resource type="Texture2D" uid="uid://dqtomh4b7e6yb" path="res://addons/at-icons/node2d/file.svg" id="2_ii7i7"]
 [ext_resource type="Texture2D" uid="uid://bprhcoty4m42s" path="res://addons/at-icons/node3d/cross.svg" id="3_aya7p"]
-[ext_resource type="PackedScene" uid="uid://b5ctw8j7ouqns" path="res://scripts/dialogs/new_page_dialog.tscn" id="4_8s48f"]
+[ext_resource type="PackedScene" uid="uid://b5ctw8j7ouqns" path="res://features/editor_context/dialogs/new_page_dialog/new_page_dialog.tscn" id="4_8s48f"]
 
 [node name="PageManager" type="PanelContainer" unique_id=56668837]
 custom_minimum_size = Vector2(200, 0)

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bkftkwn442cwp"]
 
 [ext_resource type="Curve" uid="uid://b2r64od1gruqa" path="res://resources/mm_to_px_curve.tres" id="1_w1snh"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://scripts/poly_line_2d.gd" id="2_bjqgd"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_bjqgd"]
 
 [sub_resource type="GDScript" id="GDScript_daogd"]
 script/source = "extends Node2D

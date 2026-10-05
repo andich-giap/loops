@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b5ctw8j7ouqns"]
 
-[ext_resource type="Script" uid="uid://nvokjlsotfvf" path="res://scripts/dialogs/new_page_dialog.gd" id="1_8ilwy"]
+[ext_resource type="Script" uid="uid://nvokjlsotfvf" path="res://features/editor_context/dialogs/new_page_dialog/new_page_dialog.gd" id="1_8ilwy"]
 
 [node name="NewPageDialog" type="ConfirmationDialog" unique_id=1019417673]
 oversampling_override = 1.0

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cqsrk6m3o1w2a"]
 
-[ext_resource type="Script" uid="uid://c1lh8qy081sh" path="res://scripts/properties_dialog.gd" id="1_4yc2x"]
+[ext_resource type="Script" uid="uid://c1lh8qy081sh" path="res://features/editor_context/dialogs/edit_properties_dialog/properties_dialog.gd" id="1_4yc2x"]
 
 [node name="EditPropertiesDialog" type="ConfirmationDialog" unique_id=1341264742]
 handle_input_locally = false

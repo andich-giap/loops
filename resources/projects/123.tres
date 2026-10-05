@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="ProjectData" format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="1_ou7k0"]
+[ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="1_ou7k0"]
 [ext_resource type="Resource" path="res://resources/projects/123_loops_contents/pages/_1.tres" id="2_3w7cp"]
-[ext_resource type="Script" path="res://scripts/project_data.gd" id="2_5r175"]
+[ext_resource type="Script" uid="uid://32r1hyne14j5" path="res://features/project/project_data.gd" id="2_5r175"]
 [ext_resource type="Resource" path="res://resources/projects/123_loops_contents/pages/_2.tres" id="3_2uw4c"]
 
 [resource]

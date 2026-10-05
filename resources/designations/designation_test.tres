@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Designation" format=3 uid="uid://btq8ee7aoue5x"]
 
-[ext_resource type="Script" uid="uid://ocxud7ml3308" path="res://scripts/resources/designation.gd" id="1_ptvwo"]
+[ext_resource type="Script" uid="uid://ocxud7ml3308" path="res://features/project/designation/designation.gd" id="1_ptvwo"]
 
 [resource]
 script = ExtResource("1_ptvwo")

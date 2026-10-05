@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://db1ex8xkvsrgm"]
 
-[ext_resource type="Script" uid="uid://f8qma8fuuv37" path="res://scenes/loops_workspace/scenes/loop_container/loop_container.gd" id="1_vddfm"]
-[ext_resource type="Script" uid="uid://ru5a7rudn2e3" path="res://scripts/resources/alarm_safety_data.gd" id="2_h3lhc"]
-[ext_resource type="Script" uid="uid://c0cs0ts8lqmhd" path="res://scripts/resources/device_data.gd" id="3_1r6v4"]
-[ext_resource type="Script" uid="uid://bhawerbooal6a" path="res://scripts/resources/loop_data.gd" id="4_bxvgp"]
+[ext_resource type="Script" uid="uid://f8qma8fuuv37" path="res://gym/loops_workspace/scenes/loop_container/loop_container.gd" id="1_vddfm"]
+[ext_resource type="Script" uid="uid://ru5a7rudn2e3" path="res://features/project/loop/alarm_safety_data.gd" id="2_h3lhc"]
+[ext_resource type="Script" uid="uid://c0cs0ts8lqmhd" path="res://features/project/device/device_data.gd" id="3_1r6v4"]
+[ext_resource type="Script" uid="uid://bhawerbooal6a" path="res://features/project/loop/loop_data.gd" id="4_bxvgp"]
 
 [sub_resource type="Resource" id="Resource_1r6v4"]
 script = ExtResource("3_1r6v4")

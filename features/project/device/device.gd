@@ -14,7 +14,6 @@ static var device_function_tag: Dictionary[DeviceFunction, String] = {
 @export var device_data: DeviceData
 @onready var tag_label: Label = $TagLabel
 @onready var suffix_label: Label = $SuffixLabel
-@onready var gizmo_manager: GizmoManager = $GizmoManager
 
 
 func _ready() -> void:

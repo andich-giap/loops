@@ -1,10 +1,14 @@
-[gd_resource type="Resource" script_class="PageData" format=3]
+[gd_resource type="Resource" script_class="PageData" format=3 uid="uid://isyamwo6tvc3"]
 
-[ext_resource type="Curve" path="res://resources/mm_to_px_curve.tres" id="1_a7r50"]
-[ext_resource type="Script" path="res://scripts/resources/designations_data.gd" id="1_k75xc"]
-[ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="2_hgwp6"]
-[ext_resource type="Script" path="res://scripts/poly_line_2d.gd" id="2_orq18"]
-[ext_resource type="Script" path="res://scripts/l_line_edit.gd" id="3_orq18"]
+[ext_resource type="Script" uid="uid://dymm05dpsi8fe" path="res://features/project/designation/designations_data.gd" id="1_k75xc"]
+[ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="2_hgwp6"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_orq18"]
+[ext_resource type="Script" uid="uid://cemf6cgro6mag" path="res://features/editor_context/l_line_edit/l_line_edit.gd" id="3_orq18"]
+
+[sub_resource type="Curve" id="Curve_a7r50"]
+_limits = [0.0, 5.0, 0.0, 1.0]
+_data = [Vector2(0, 3.228), 0.0, 0.0, 0, 0]
+point_count = 1
 
 [sub_resource type="PackedScene" id="PackedScene_orq18"]
 _bundled = {
@@ -17,7 +21,7 @@ _bundled = {
 "node_ids": PackedInt32Array(1034811757, 732414056, 1290180061),
 "node_paths": [],
 "nodes": PackedInt32Array(-1, -1, 2, 0, -1, 1, 1, 0, 0, 0, 0, 11, 3, -1, 7, 4, 1, 5, 2, 6, 3, 7, 4, 8, 5, 9, 6, 10, 7, 0, 0, 0, 29, 12, -1, 18, 13, 8, 14, 9, 15, 10, 16, 11, 17, 12, 18, 13, 19, 14, 20, 15, 21, 16, 22, 17, 23, 18, 24, 19, 25, 20, 26, 0, 27, 0, 28, 21, 8, 22, 10, 23, 0),
-"variants": [true, PackedVector2Array(129.13385, 167.87401, 129.13385, 245.35432, 258.2677, 245.35432, 258.2677, 167.87401, 361.5748, 167.87401, 361.5748, 284.09448), 1.0, ExtResource("1_a7r50"), Color(1, 0, 0, 1), ExtResource("2_orq18"), Rect2(129.13385, 167.87401, 232.44095, 116.220474), Object(WeakRef,"script":null)
+"variants": [true, PackedVector2Array(129.13385, 167.87401, 129.13385, 245.35432, 258.2677, 245.35432, 258.2677, 167.87401, 361.5748, 167.87401, 361.5748, 284.09448), 1.0, SubResource("Curve_a7r50"), Color(1, 0, 0, 1), ExtResource("2_orq18"), Rect2(129.13385, 167.87401, 232.44095, 116.220474), Object(WeakRef,"script":null)
 , 245.35432, 51.65354, 316.4168, 76.65354, 0, &"LLineEdit", Color(0, 0.439, 0.85, 1), Color(0.27512455, 0.8671875, 0.06097412, 1), Color(0, 0, 0, 0.5019608), 16, "21332", "TEXT", false, 5, ExtResource("3_orq18"), Object(WeakRef,"script":null)
 ],
 "version": 3

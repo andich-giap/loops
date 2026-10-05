@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dvdwchy1criqh" path="res://addons/loops/scripts/viewport_controller.gd" id="1_7ybj1"]
 [ext_resource type="Curve" uid="uid://b2r64od1gruqa" path="res://resources/mm_to_px_curve.tres" id="2_dqggl"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://scripts/poly_line_2d.gd" id="2_pdfi8"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_pdfi8"]
 
 [node name="SubViewportContainer" type="SubViewportContainer" unique_id=1707838730]
 offset_right = 40.0

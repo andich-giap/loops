@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" format=3 uid="uid://csvrt4x5w11m0"]
 
-[ext_resource type="Shader" uid="uid://ck0y5g1dh82mi" path="res://grid/grid_dots.tres" id="1_x1f8i"]
+[ext_resource type="Shader" uid="uid://ck0y5g1dh82mi" path="res://features/editor_context/page_viewport/grid/grid_dots.tres" id="1_x1f8i"]
 
 [resource]
 resource_local_to_scene = true

@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://fuajg8iy61yx"]
 
 [ext_resource type="Script" uid="uid://dd3jvsqwkexpi" path="res://features/editor_context/page_viewport/page_viewport.gd" id="1_r585w"]
-[ext_resource type="Material" uid="uid://csvrt4x5w11m0" path="res://grid/grid_material.tres" id="2_35qq2"]
-[ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://scripts/selection_manager.gd" id="2_h7mtx"]
+[ext_resource type="Material" uid="uid://csvrt4x5w11m0" path="res://features/editor_context/page_viewport/grid/grid_material.tres" id="2_35qq2"]
+[ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="2_h7mtx"]
 [ext_resource type="Script" uid="uid://bdkax8ga5cpf4" path="res://features/editor_context/page_viewport/grid/grid.gd" id="2_r585w"]
 
 [sub_resource type="GDScript" id="GDScript_jd6mg"]

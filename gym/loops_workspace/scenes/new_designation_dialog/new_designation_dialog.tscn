@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bsl8w74ut4jx4"]
 
-[ext_resource type="Script" uid="uid://yhojk62c6rau" path="res://scenes/loops_workspace/scenes/new_designation_dialog/new_designation_dialog.gd" id="1_yhlbp"]
+[ext_resource type="Script" uid="uid://yhojk62c6rau" path="res://gym/loops_workspace/scenes/new_designation_dialog/new_designation_dialog.gd" id="1_yhlbp"]
 
 [node name="NewDesignationDialog" type="ConfirmationDialog" unique_id=1631700389]
 oversampling_override = 1.0

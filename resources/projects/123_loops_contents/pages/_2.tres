@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="PageData" format=3]
 
-[ext_resource type="Script" path="res://scripts/resources/designations_data.gd" id="1_nlsgr"]
-[ext_resource type="Script" path="res://scripts/resources/page_data.gd" id="2_e25x3"]
+[ext_resource type="Script" uid="uid://dymm05dpsi8fe" path="res://features/project/designation/designations_data.gd" id="1_nlsgr"]
+[ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="2_e25x3"]
 
 [sub_resource type="PackedScene" id="PackedScene_nlsgr"]
 _bundled = {
