@@ -7,13 +7,22 @@
 [sub_resource type="ButtonGroup" id="ButtonGroup_n77dm"]
 
 [node name="ToolBar" type="HBoxContainer" unique_id=1888273831]
+theme_type_variation = &"ToolBar"
 script = ExtResource("1_xtbyg")
 
-[node name="DrawToolBar" parent="." unique_id=737868671 instance=ExtResource("2_wb132")]
+[node name="DrawToolsPanel" type="PanelContainer" parent="." unique_id=873611292]
+layout_mode = 2
+theme_type_variation = &"ToolsPanel"
+
+[node name="DrawToolBar" parent="DrawToolsPanel" unique_id=737868671 instance=ExtResource("2_wb132")]
 unique_name_in_owner = true
 layout_mode = 2
 button_group = SubResource("ButtonGroup_n77dm")
 
-[node name="ModesBar" parent="." unique_id=1352189373 instance=ExtResource("3_lquya")]
+[node name="ModesPanel" type="PanelContainer" parent="." unique_id=6023102]
+layout_mode = 2
+theme_type_variation = &"ToolsPanel"
+
+[node name="ModesBar" parent="ModesPanel" unique_id=1352189373 instance=ExtResource("3_lquya")]
 unique_name_in_owner = true
 layout_mode = 2

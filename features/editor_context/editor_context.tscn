@@ -43,6 +43,3 @@ layout_mode = 2
 layout_mode = 0
 offset_right = 80.0625
 offset_bottom = 30.666666
-
-[node name="LineEdit" type="LineEdit" parent="PanelContainer" unique_id=2018526424]
-layout_mode = 2

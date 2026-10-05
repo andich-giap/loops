@@ -8,11 +8,13 @@
 script = ExtResource("1_ej1d1")
 
 [node name="Ortho" type="Button" parent="." unique_id=1676596567]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 toggle_mode = true
 icon = ExtResource("2_q0jjc")
 
 [node name="Grid" type="Button" parent="." unique_id=1282106548]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 toggle_mode = true
 button_pressed = true

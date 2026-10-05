@@ -17,12 +17,14 @@ var state: State = State.VIEWING:
 @onready var grid: Grid = %Grid
 @onready var viewport_camera: VewportCamera = %ViewportCamera
 @onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog
+@onready var reset_vew_button: Button = %ResetVewButton
 
 
 func _ready() -> void:
 	selection_manager.contents_layer = contents_layer
 	if page_data:
 		_update_page_viewport()
+	reset_vew_button.pressed.connect(reset_view)
 
 
 func _input(event: InputEvent) -> void:
@@ -120,7 +122,7 @@ func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d.page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
-	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING))
+	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING), CONNECT_ONE_SHOT)
 
 
 func add_l_line_edit(l_line_edit: LLineEdit) -> void:
@@ -129,6 +131,7 @@ func add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 	l_line_edit.editing_toggled.connect(_on_l_line_edit_editing_toggled)
+	l_line_edit.finished_placing.connect(set_state.bind(State.EDITING), CONNECT_ONE_SHOT)
 
 
 func _on_l_line_edit_editing_toggled(toggled_on: bool) -> void:
@@ -180,3 +183,7 @@ func set_state(_state: State) -> void:
 			set_can_select(false)
 		State.EDITING:
 			set_can_select(false)
+
+
+func reset_view() -> void:
+	viewport_camera.viewport.canvas_transform = Transform2D.IDENTITY

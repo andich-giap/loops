@@ -40,3 +40,4 @@ WIDTH;Width;Толщина
 POLY_LINE_2D;Polyline;Полилиния
 L_LINE_EDIT;Text;Текст
 TEXT;Text;Текст
+RESET_VIEW;Reset view;Восстановить вид

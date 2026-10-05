@@ -4,8 +4,17 @@
 [ext_resource type="Material" uid="uid://csvrt4x5w11m0" path="res://features/editor_context/page_viewport/grid/grid_material.tres" id="2_35qq2"]
 [ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="2_h7mtx"]
 [ext_resource type="Script" uid="uid://bdkax8ga5cpf4" path="res://features/editor_context/page_viewport/grid/grid.gd" id="2_r585w"]
+[ext_resource type="Texture2D" uid="uid://dp1iial4o6yny" path="res://addons/at-icons/node/arrow_axes_2d_down.svg" id="5_kvkci"]
 [ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="5_x5m46"]
 [ext_resource type="PackedScene" uid="uid://cqsrk6m3o1w2a" path="res://features/editor_context/dialogs/edit_properties_dialog/edit_properties_dialog.tscn" id="6_x60ko"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_kvkci"]
+device = -1
+alt_pressed = true
+keycode = 51
+
+[sub_resource type="Shortcut" id="Shortcut_g0s4p"]
+events = [SubResource("InputEventKey_kvkci")]
 
 [node name="PageViewport" type="SubViewportContainer" unique_id=1907616996 groups=["persists"]]
 anchors_preset = 15
@@ -80,6 +89,16 @@ follow_viewport_enabled = true
 
 [node name="OverlayLayer" type="CanvasLayer" parent="SubViewport" unique_id=1624929297]
 unique_name_in_owner = true
+
+[node name="ResetVewButton" type="Button" parent="SubViewport/OverlayLayer" unique_id=1329922900]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 24)
+offset_right = 8.0
+offset_bottom = 6.0
+tooltip_text = "RESET_VIEW"
+shortcut = SubResource("Shortcut_g0s4p")
+icon = ExtResource("5_kvkci")
+flat = true
 
 [node name="ViewportCamera" type="Node2D" parent="." unique_id=1987732426 node_paths=PackedStringArray("viewport")]
 unique_name_in_owner = true

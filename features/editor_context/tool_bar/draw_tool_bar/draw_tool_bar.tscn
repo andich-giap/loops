@@ -11,6 +11,7 @@ script = ExtResource("1_ru3ek")
 button_group = SubResource("ButtonGroup_40gth")
 
 [node name="DrawLine" type="Button" parent="." unique_id=576955418]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 tooltip_text = "POLY_LINE_2D"
 toggle_mode = true
@@ -18,6 +19,7 @@ button_group = SubResource("ButtonGroup_40gth")
 icon = ExtResource("2_r4xr4")
 
 [node name="AddText" type="Button" parent="." unique_id=1182738604]
+custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 tooltip_text = "L_LINE_EDIT"
 toggle_mode = true
