@@ -2,7 +2,7 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmd6gye0j45p6"
+uid="uid://bufj150f0foxv"
 path="res://.godot/imported/arrow_axes_2d.svg-7975e606f850b1a315094c7fe80a983d.ctex"
 metadata={
 "has_editor_variant": true,
@@ -32,7 +32,7 @@ process/channel_remap/red=0
 process/channel_remap/green=1
 process/channel_remap/blue=2
 process/channel_remap/alpha=3
-process/fix_alpha_border=true
+process/fix_alpha_border=false
 process/premult_alpha=false
 process/normal_map_invert_y=false
 process/hdr_as_srgb=false
