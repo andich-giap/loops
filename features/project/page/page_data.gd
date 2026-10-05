@@ -13,7 +13,6 @@ enum Type {
 	PID,
 	REPORT,
 }
-const INCH_TO_MM_CONVERSION: float = 25.4
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var size: Vector2 = Vector2(210.0, 297.0):
 	set = set_size
 @export var designation: DesignationsData
