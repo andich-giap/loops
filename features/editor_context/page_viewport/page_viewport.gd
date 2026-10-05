@@ -1,10 +1,16 @@
 class_name PageViewport
 extends SubViewportContainer
 
-
+enum State {
+	VIEWING,
+	PLACING,
+	EDITING,
+}
 @export var page_data: PageData:
 	set = set_page_data
 var unsaved_contents: Dictionary[PageData, PackedScene]
+var state: State = State.VIEWING:
+	set = set_state
 @onready var layout: Panel = %Layout
 @onready var contents_layer: CanvasLayer = %ContentsLayer
 @onready var selection_manager: SelectionManager = %SelectionManager
@@ -114,6 +120,7 @@ func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d.page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
+	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING))
 
 
 func add_l_line_edit(l_line_edit: LLineEdit) -> void:
@@ -121,6 +128,14 @@ func add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.page_viewport = self
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
+	l_line_edit.editing_toggled.connect(_on_l_line_edit_editing_toggled)
+
+
+func _on_l_line_edit_editing_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		state = State.EDITING
+	else:
+		state = State.VIEWING
 
 
 func _on_page_data_content_changed() -> void:
@@ -154,3 +169,14 @@ func get_place_position() -> Vector2:
 	else:
 		place_position = local_mouse_position
 	return place_position
+
+
+func set_state(_state: State) -> void:
+	state = _state
+	match state:
+		State.VIEWING:
+			set_can_select(true)
+		State.PLACING:
+			set_can_select(false)
+		State.EDITING:
+			set_can_select(false)

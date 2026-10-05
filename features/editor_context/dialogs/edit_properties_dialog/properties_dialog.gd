@@ -106,7 +106,7 @@ func instanciate_properties_of_script(script: Script) -> void:
 			var control: Control = valid_nodes[0]
 			for theme_property: StringName in theme_properties[theme_callable]:
 				var property_container: PropertyContainer = PropertyContainer.new()
-				var theme_property_value: Variant = control.call("get"+theme_callable.replace("_override", ""), theme_properties[theme_callable][0])
+				var theme_property_value: Variant = control.call("get"+theme_callable.replace("_override", ""), theme_property, script.get_global_name())
 				property_container.property = _construct_theme_property(theme_property, script.get_global_name(), theme_property_value)
 				property_container.value = theme_property_value
 				property_container.column_width = header.split_offsets[0]

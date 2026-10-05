@@ -33,7 +33,7 @@ func _init(edit_placement: bool = false) -> void:
 
 
 func _ready() -> void:
-	flat = true
+	flat = false
 	placeholder_text = "TEXT"
 	theme_type_variation = &"LLineEdit"
 	editable = false
@@ -43,6 +43,7 @@ func _ready() -> void:
 	changed.connect(_on_changed)
 	text_submitted.connect(_on_text_submitted)
 	focus_exited.connect(_on_focus_exited)
+	add_theme_color_override(&"text_color", get_theme_color(&"font_uneditable_color", &"LLineEdit"))
 
 
 func _on_changed() -> void:
@@ -60,6 +61,9 @@ func _input(event: InputEvent) -> void:
 				is_placing = false
 				finished_placing.emit()
 				changed.emit()
+		if event.is_action(&"ui_cancel"):
+			finished_placing.emit()
+			queue_free()
 	if event.is_action(&"delete") and not is_editing() and is_selected:
 		deleted.emit()
 		_remove_gizmos()
@@ -73,6 +77,7 @@ func _gui_input(event: InputEvent) -> void:
 			editable = true
 			caret_force_displayed = true
 			edit()
+			size = Vector2.ZERO
 
 
 func _on_text_submitted(_new_text: String) -> void:
@@ -81,6 +86,10 @@ func _on_text_submitted(_new_text: String) -> void:
 
 
 func _on_focus_exited() -> void:
+	var rect: Rect2 = get_rect()
+	rect.position = Vector2.ZERO
+	if rect.has_point(get_local_mouse_position()):
+		return
 	editable = false
 	caret_force_displayed = false
 
@@ -93,17 +102,14 @@ func _get_place_position() -> Vector2:
 func add_to_selection() -> void:
 	is_selected = true
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_selection_color", &"LLineEdit"))
-	#add_theme_color_override(&"font_uneditable_color", get_theme_color(&"font_selected_color", &"LLineEdit"))
-	#add_theme_color_override(&"font_placeholder_color", ProjectColor.selection_values[ProjectColor.Selection.TEXT])
 	queue_redraw()
 
 
 func remove_from_selection() -> void:
 	is_selected = false
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_color", &"LLineEdit"))
+	add_theme_color_override(&"text_color", get_theme_color(&"text_color", &"LLineEdit"))
 	remove_theme_color_override(&"font_placeholder_color")
-	#add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_color", &"LLineEdit"))
-	#add_theme_color_override(&"font_placeholder_color", Color.from_rgba8(0, 0, 0, 128))
 	remove_from_group(&"selection")
 	_remove_gizmos()
 	queue_redraw()
