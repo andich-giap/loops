@@ -14,6 +14,7 @@ var unsaved_contents: Dictionary[PageData, PackedScene]
 
 
 func _ready() -> void:
+	selection_manager.contents_layer = contents_layer
 	if page_data:
 		_update_page_viewport()
 

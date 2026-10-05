@@ -9,7 +9,7 @@ var is_selecting: bool = false:
 var selection_rect: Rect2
 var single_click_size: float = 3.0
 var clear_on_new_selection: bool = true
-@onready var contents_layer: CanvasLayer = $"../../ContentsLayer"
+var contents_layer: CanvasLayer
 
 
 func _gui_input(event: InputEvent) -> void:
