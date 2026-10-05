@@ -4,11 +4,13 @@ extends Node
 
 @export var main_menu_context_scene: PackedScene
 @export var editor_context_scene: PackedScene
-var current_project: ProjectData
+var _current_project: ProjectData
+var _opened_projects: Array[ProjectData]
 var _main_menu_context_node: MainMenuContext
 var _editor_context_node: EditorContext
 @onready var create_project_dialog: CreateProjectDialog = %CreateProjectDialog
 @onready var open_project_file_dialog: FileDialog = %OpenProjectFileDialog
+@onready var save_notification: Notification = %SaveNotification
 
 
 func _ready() -> void:
@@ -42,6 +44,10 @@ func setup() -> void:
 	
 	_main_menu_context_node.create_project_requested.connect(_handle_create_project)
 	_main_menu_context_node.open_project_requested.connect(_handle_open_project)
+	
+	_editor_context_node.create_project_requested.connect(_handle_create_project)
+	_editor_context_node.open_project_requested.connect(_handle_open_project)
+	_editor_context_node.close_project_requested.connect(_handle_close_project)
 	
 	create_project_dialog.create_project_requested.connect(create_project)
 	open_project_file_dialog.file_selected.connect(_handle_project_file_selected)
@@ -94,6 +100,8 @@ func open_project(project_data: ProjectData) -> void:
 	_editor_context_node.show()
 	_editor_context_node.open_project(project_data)
 	add_recent_project(project_data.resource_path)
+	_current_project = project_data
+	_opened_projects.append(project_data)
 
 
 func _handle_project_file_selected(path: String) -> void:
@@ -102,20 +110,32 @@ func _handle_project_file_selected(path: String) -> void:
 		open_project(project_data)
 
 
-func _handle_close_project() -> void:
-	close_project()
+func _handle_close_project(project_data: ProjectData = null) -> void:
+	close_project(project_data)
+	if _opened_projects.is_empty():
+		_editor_context_node.hide()
+		_main_menu_context_node.show()
+	elif not _current_project:
+		_current_project = _opened_projects[0]
 
 
-func close_project() -> void:
-	current_project.close()
+func close_project(project_data: ProjectData = null) -> void:
+	if project_data:
+		_opened_projects.erase(project_data)
+		project_data.close()
+		return
+	_opened_projects.erase(_current_project)
+	_current_project.close()
+	_current_project = null
 
 
 func _handle_save() -> void:
-	pass
+	save()
 
 
 func save() -> void:
-	pass
+	get_tree().call_group("persists", "save")
+	save_notification.trigger()
 
 
 func add_recent_project(project_path: String) -> void:
@@ -128,9 +148,10 @@ func add_recent_project(project_path: String) -> void:
 	SettingsManager.save_by_key(SettingsManager.RECENT_PROJECTS_KEY)
 
 
-#func _input(event: InputEvent) -> void:
-	#if event.is_action(&"save_project") and event.is_pressed() and current_project:
-		#get_tree().call_group("persists", "save")
+func _input(event: InputEvent) -> void:
+	if event.is_action(&"save_project") and event.is_pressed() and _current_project:
+		_handle_save()
+		get_viewport().set_input_as_handled()
 
 
 #func _on_project_menu_button_index_pressed(index: int, project_menu_button: MenuButton) -> void:
@@ -160,7 +181,7 @@ func add_recent_project(project_path: String) -> void:
 	#if not page_data.project_data:
 		#return
 	#var project_data: ProjectData = page_data.project_data.get_ref()
-	#current_project = project_data
+	#_current_project = project_data
 
 
 #func _on_pages_tab_container_tab_changed(tab: int) -> void:
@@ -169,4 +190,4 @@ func add_recent_project(project_path: String) -> void:
 
 
 #func _on_page_manager_project_tree_item_selected(project_data: ProjectData, _item: TreeItem) -> void:
-	#current_project = project_data
+	#_current_project = project_data

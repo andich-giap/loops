@@ -5,6 +5,7 @@ extends PanelContainer
 signal project_selected(project_data: ProjectData, item: TreeItem)
 signal open_page_requested(page_data: PageData)
 signal create_page_requested(page_data: PageData)
+signal close_project_requested(project_data: ProjectData)
 var root: TreeItem
 var project_context_items: Array[StringName] = [
 	"CREATE",
@@ -92,7 +93,7 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"CLOSE":
 			if tree_item.get_metadata(0) is ProjectData:
 				var project_data: ProjectData = tree_item.get_metadata(0)
-				project_data.close()
+				_close_project(project_data)
 		"COPY":
 			pass
 		"PASTE":
@@ -135,7 +136,8 @@ func open_project(project_data: ProjectData) -> void:
 	var pages: Array[PageData]
 	for page_data: PageData in project_data.pages.values():
 		page_data.project_data = weakref(project_data)
-		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data), CONNECT_PERSIST)
+		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data))
+		print(page_data.name_changed.get_connections())
 		pages.append(page_data)
 	pages.sort_custom(func(a: PageData, b: PageData) -> bool:
 		return int(a.name) < int(b.name)
@@ -206,3 +208,9 @@ func _on_new_page_dialog_new_page_name_changed(new_name: String) -> void:
 	else:
 		new_page_dialog.get_ok_button().disabled = false
 		new_page_dialog.name_line_edit.theme_type_variation = ""
+
+
+func _close_project(project_data: ProjectData) -> void:
+	close_project_requested.emit(project_data)
+	for page_data: PageData in project_data.pages.values():
+		page_data.name_changed.disconnect(project_data._on_page_data_name_changed)

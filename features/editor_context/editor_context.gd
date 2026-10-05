@@ -4,7 +4,7 @@ extends Panel
 
 signal create_project_requested
 signal open_project_requested
-signal close_project_requested
+signal close_project_requested(project_data: ProjectData)
 @export var menu_button_bar_scene: PackedScene
 @export var tool_bar_scene: PackedScene
 @export var page_manager_scene: PackedScene
@@ -14,7 +14,6 @@ var _tool_bar_node: ToolBar
 var _page_manager_node: PageManager
 var _dxf_inspector_node: DXFInspector
 var _pages_tab_container: PagesTabContainer
-var current_project: ProjectData
 @onready var top_bar: VBoxContainer = %TopBar
 @onready var h_split_container: HSplitContainer = %HSplitContainer
 @onready var tab_container: TabContainer = %TabContainer
@@ -44,7 +43,7 @@ func bind_dependencies() -> void:
 func setup() -> void:
 	_menu_button_bar_node.create_project_requested.connect(create_project_requested.emit)
 	_menu_button_bar_node.open_project_requested.connect(open_project_requested.emit)
-	_menu_button_bar_node.close_project_requested.connect(close_project_requested.emit)
+	_menu_button_bar_node.close_project_requested.connect(_handle_close_project)
 	_menu_button_bar_node.show_page_manager_requested.connect(handle_show_page_manager)
 	
 	_tool_bar_node.add_draw_line_requested.connect(handle_add_draw_line)
@@ -53,6 +52,11 @@ func setup() -> void:
 	_tool_bar_node.grid_requested.connect(handle_grid_toggle)
 	
 	_page_manager_node.open_page_requested.connect(handle_open_page)
+	_page_manager_node.close_project_requested.connect(_handle_close_project)
+
+
+func _handle_close_project(project_data: ProjectData = null) -> void:
+	close_project_requested.emit(project_data)
 
 
 func handle_open_page(page_data: PageData) -> void:
@@ -99,5 +103,6 @@ func handle_grid_toggle(toggled_on: bool) -> void:
 
 
 func open_project(project_data: ProjectData) -> void:
-	current_project = project_data
 	_page_manager_node.open_project(project_data)
+	var pages: Array[PageData] = project_data.pages.values()
+	handle_open_page(pages[0])
