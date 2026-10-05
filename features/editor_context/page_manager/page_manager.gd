@@ -137,7 +137,6 @@ func open_project(project_data: ProjectData) -> void:
 	for page_data: PageData in project_data.pages.values():
 		page_data.project_data = weakref(project_data)
 		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data))
-		print(page_data.name_changed.get_connections())
 		pages.append(page_data)
 	pages.sort_custom(func(a: PageData, b: PageData) -> bool:
 		return int(a.name) < int(b.name)
