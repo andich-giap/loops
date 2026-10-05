@@ -4,35 +4,10 @@
 [ext_resource type="Material" uid="uid://csvrt4x5w11m0" path="res://features/editor_context/page_viewport/grid/grid_material.tres" id="2_35qq2"]
 [ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="2_h7mtx"]
 [ext_resource type="Script" uid="uid://bdkax8ga5cpf4" path="res://features/editor_context/page_viewport/grid/grid.gd" id="2_r585w"]
-
-[sub_resource type="GDScript" id="GDScript_jd6mg"]
-script/source = "extends Node2D
-
-
-@export var viewport: Viewport
-const scale_step: Vector2 = Vector2(1.1, 1.1)
-
-
-func _input(event: InputEvent) -> void:
-	# pan
-	if event is InputEventMouseMotion:
-		var mouse_motion_event: InputEventMouseMotion = event
-		if mouse_motion_event.button_mask & MOUSE_BUTTON_MASK_MIDDLE:
-			viewport.canvas_transform = viewport.canvas_transform.translated(mouse_motion_event.relative)
-	# zoom
-	if event is InputEventMouseButton and event.is_pressed():
-		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.button_index != MOUSE_BUTTON_WHEEL_DOWN and mouse_button_event.button_index != MOUSE_BUTTON_WHEEL_UP:
-			return
-		viewport.canvas_transform = viewport.canvas_transform.translated(-viewport.get_mouse_position())
-		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			viewport.canvas_transform = viewport.canvas_transform.scaled(Vector2.ONE / scale_step)
-		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			viewport.canvas_transform = viewport.canvas_transform.scaled(scale_step)
-		viewport.canvas_transform = viewport.canvas_transform.translated(viewport.get_mouse_position())
-"
+[ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="5_x5m46"]
 
 [node name="PageViewport" type="SubViewportContainer" unique_id=1907616996 groups=["persists"]]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
@@ -107,7 +82,7 @@ unique_name_in_owner = true
 
 [node name="ViewportCamera" type="Node2D" parent="." unique_id=1987732426 node_paths=PackedStringArray("viewport")]
 unique_name_in_owner = true
-script = SubResource("GDScript_jd6mg")
+script = ExtResource("5_x5m46")
 viewport = NodePath("../SubViewport")
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]

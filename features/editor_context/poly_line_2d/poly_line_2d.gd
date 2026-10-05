@@ -12,7 +12,6 @@ enum DecorationType {
 }
 const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [param new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
-const MM_TO_PX_CURVE: Curve = preload("uid://b2r64od1gruqa")
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"color",
 		&"segment_length",
@@ -44,7 +43,6 @@ var page_viewport: PageViewport
 
 
 func _init(edit: bool = false) -> void:
-	width_curve = MM_TO_PX_CURVE
 	width = default_width
 	default_color = color
 	is_active = edit

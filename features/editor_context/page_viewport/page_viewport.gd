@@ -10,6 +10,7 @@ var unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var contents_layer: CanvasLayer = %ContentsLayer
 @onready var selection_manager: SelectionManager = %SelectionManager
 @onready var grid: Grid = %Grid
+@onready var viewport_camera: VewportCamera = %ViewportCamera
 
 
 func _ready() -> void:
@@ -140,7 +141,7 @@ func _on_project_data_closed() -> void:
 func get_place_position() -> Vector2:
 	var interval: Vector2 = Vector2(Units.mm_to_px(grid.interval), Units.mm_to_px(grid.interval))
 	var place_position: Vector2
-	var local_mouse_position: Vector2 = get_local_mouse_position()
+	var local_mouse_position: Vector2 = viewport_camera.viewport.canvas_transform.affine_inverse() * viewport_camera.viewport.get_mouse_position()
 	if grid.visible:
 		place_position = snapped(local_mouse_position, interval)
 	else:
