@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://q4ood0wh1d5b"]
 
-[ext_resource type="Texture2D" uid="uid://di85w4in8gymw" path="res://addons/loops/assets/icons/plus.svg" id="1_8kbpq"]
 [ext_resource type="Script" uid="uid://cyx2kv18psuvq" path="res://gym/loops_workspace/loops_main.gd" id="1_o0xt2"]
-[ext_resource type="Texture2D" uid="uid://rxqbeifkov5o" path="res://addons/loops/assets/icons/clockwise-rotation.svg" id="3_snwq4"]
+[ext_resource type="Texture2D" uid="uid://c22w8mwnevnfb" path="res://addons/at-icons/node2d/plus.svg" id="2_6u5ge"]
+[ext_resource type="Texture2D" uid="uid://c7ydqoeh68vtt" path="res://addons/at-icons/node2d/arrow_clockwise.svg" id="3_p77dg"]
 [ext_resource type="Script" uid="uid://dwvbdurgdmmjt" path="res://gym/loops_workspace/loops_tree.gd" id="4_k4q18"]
 [ext_resource type="Script" uid="uid://br4bka6dfms7e" path="res://gym/loops_workspace/designations_manager.gd" id="5_3pang"]
 [ext_resource type="Script" uid="uid://cm1iyc6s6obiy" path="res://gym/loops_workspace/designations_tree.gd" id="5_i2134"]
@@ -42,18 +42,18 @@ layout_mode = 2
 [node name="NewLoopButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=752051920]
 layout_mode = 2
 text = "New Loop"
-icon = ExtResource("1_8kbpq")
+icon = ExtResource("2_6u5ge")
 
 [node name="NewDeviceButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=1698682300]
 layout_mode = 2
 text = "New Device"
-icon = ExtResource("1_8kbpq")
+icon = ExtResource("2_6u5ge")
 
 [node name="ReloadButton" type="Button" parent="TabContainer/LoopsManager/PanelContainer/HBoxContainer" unique_id=1114023350]
 layout_mode = 2
 size_flags_horizontal = 10
 text = "Reload"
-icon = ExtResource("3_snwq4")
+icon = ExtResource("3_p77dg")
 
 [node name="PanelContainer2" type="PanelContainer" parent="TabContainer/LoopsManager" unique_id=917843752]
 layout_mode = 2
@@ -90,13 +90,13 @@ layout_mode = 2
 [node name="NewDesignationButton" type="Button" parent="TabContainer/DesignationsManager/PanelContainer/HBoxContainer" unique_id=1024992378]
 layout_mode = 2
 text = "New Designation"
-icon = ExtResource("1_8kbpq")
+icon = ExtResource("2_6u5ge")
 
 [node name="ReloadButton" type="Button" parent="TabContainer/DesignationsManager/PanelContainer/HBoxContainer" unique_id=986955011]
 layout_mode = 2
 size_flags_horizontal = 10
 text = "Reload"
-icon = ExtResource("3_snwq4")
+icon = ExtResource("3_p77dg")
 
 [node name="PanelContainer2" type="PanelContainer" parent="TabContainer/DesignationsManager" unique_id=456479246]
 layout_mode = 2

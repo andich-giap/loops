@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://b3x6ak10xv3m0"]
 
-[ext_resource type="Script" uid="uid://dvdwchy1criqh" path="res://addons/loops/scripts/viewport_controller.gd" id="1_7ybj1"]
-[ext_resource type="Curve" uid="uid://b2r64od1gruqa" path="res://resources/mm_to_px_curve.tres" id="2_dqggl"]
+[ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="2_kuiv3"]
 [ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_pdfi8"]
 
 [node name="SubViewportContainer" type="SubViewportContainer" unique_id=1707838730]
@@ -12,15 +11,16 @@ offset_bottom = 40.0
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="ViewportController" type="Node2D" parent="SubViewport" unique_id=323539210]
-script = ExtResource("1_7ybj1")
-metadata/_custom_type_script = "uid://dvdwchy1criqh"
-
 [node name="CanvasLayer" type="CanvasLayer" parent="SubViewport" unique_id=2034047879]
 follow_viewport_enabled = true
 
 [node name="DrawLine2D" type="Line2D" parent="SubViewport/CanvasLayer" unique_id=1446682908]
 points = PackedVector2Array(207, 84, 242, 189, 468, 121, 47, 88, 109, 282, 441, 40)
-width_curve = ExtResource("2_dqggl")
+width = 1.0
+default_color = Color(1, 0, 0, 1)
 script = ExtResource("2_pdfi8")
 metadata/_custom_type_script = "uid://bur730yq3xwn5"
+
+[node name="VewportCamera" type="Node2D" parent="SubViewport" unique_id=1630937416]
+script = ExtResource("2_kuiv3")
+metadata/_custom_type_script = "uid://b5cydthd5sk13"

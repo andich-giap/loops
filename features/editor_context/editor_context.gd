@@ -106,3 +106,16 @@ func open_project(project_data: ProjectData) -> void:
 	_page_manager_node.open_project(project_data)
 	var pages: Array[PageData] = project_data.pages.values()
 	handle_open_page(pages[0])
+
+
+#func get_editable_properties(object: Object) -> Array[Dictionary]:
+	#var property_list: Array[Dictionary] = object.get_property_list()
+	#var editable_properties: Array[Dictionary] = []
+	#for property: Dictionary in property_list:
+		#var export_var_usage: int = PROPERTY_USAGE_STORAGE + PROPERTY_USAGE_EDITOR + PROPERTY_USAGE_SCRIPT_VARIABLE
+		#if property["type"] == TYPE_NIL \
+			#or not property["usage"] == PROPERTY_USAGE_SCRIPT_VARIABLE \
+			#and not property["usage"] == export_var_usage:
+			#continue
+		#editable_properties.append(property)
+	#return editable_properties

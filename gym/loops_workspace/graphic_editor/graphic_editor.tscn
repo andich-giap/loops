@@ -1,9 +1,8 @@
 [gd_scene format=3 uid="uid://crukg31usr104"]
 
-[ext_resource type="Script" uid="uid://dvdwchy1criqh" path="res://addons/loops/scripts/viewport_controller.gd" id="1_e44qp"]
-[ext_resource type="Curve" uid="uid://b2r64od1gruqa" path="res://resources/mm_to_px_curve.tres" id="1_fr8vl"]
 [ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_uke43"]
 [ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="3_3hfee"]
+[ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="3_h16ng"]
 
 [sub_resource type="GDScript" id="GDScript_3hfee"]
 script/source = "@tool
@@ -73,18 +72,16 @@ follow_viewport_enabled = true
 
 [node name="Line2D" type="Line2D" parent="VBoxContainer/SubViewportContainer/SubViewport/Entities" unique_id=1403574200]
 points = PackedVector2Array(61, 48, 114, 53, 128, 89, 198, 30, 388, 256)
-width_curve = ExtResource("1_fr8vl")
+width = 1.0
+default_color = Color(1, 0, 0, 1)
 script = ExtResource("2_uke43")
 
 [node name="Line2D2" type="Line2D" parent="VBoxContainer/SubViewportContainer/SubViewport/Entities" unique_id=814776875]
 position = Vector2(431, 33)
 points = PackedVector2Array(61, 48, 114, 53, 128, 89, 198, 30, 388, 256)
-width_curve = ExtResource("1_fr8vl")
+width = 1.0
+default_color = Color(1, 0, 0, 1)
 script = ExtResource("2_uke43")
-
-[node name="ViewportController" type="Node2D" parent="VBoxContainer/SubViewportContainer/SubViewport" unique_id=1458482365]
-script = ExtResource("1_e44qp")
-metadata/_custom_type_script = "uid://dvdwchy1criqh"
 
 [node name="SelectionManager" type="Control" parent="VBoxContainer/SubViewportContainer/SubViewport" unique_id=437073292]
 modulate = Color(0, 1, 0.25, 0.29411766)
@@ -94,3 +91,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("3_3hfee")
 metadata/_custom_type_script = "uid://jqqnhrauy8dp"
+
+[node name="VewportCamera" type="Node2D" parent="VBoxContainer/SubViewportContainer/SubViewport" unique_id=1442241293]
+script = ExtResource("3_h16ng")
+metadata/_custom_type_script = "uid://b5cydthd5sk13"
