@@ -14,7 +14,6 @@ var _editor_context_node: EditorContext
 
 
 func _ready() -> void:
-	SettingsManager.load_files()
 	build()
 	bind_dependencies()
 	setup()
@@ -33,6 +32,7 @@ func bind_dependencies() -> void:
 
 
 func setup() -> void:
+	SettingsManager.load_files()
 	_main_menu_context_node.build()
 	_main_menu_context_node.bind_dependencies()
 	_main_menu_context_node.setup()
