@@ -18,6 +18,8 @@ func _popup_menu(paths: PackedStringArray) -> void:
 
 
 func _on_create_function_pressed(code_edit: CodeEdit, selected_text: String) -> void:
+	selected_text = selected_text.replace(".", "_")
+	
 	var new_function_template = "\n\nfunc %s() -> void:\n\tpass" % selected_text
 	code_edit.deselect()
 	

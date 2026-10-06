@@ -1,0 +1,9 @@
+[gd_resource type="Shortcut" format=3 uid="uid://bixxbpkcdd4jl"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_5k6gt"]
+device = -1
+ctrl_pressed = true
+keycode = 93
+
+[resource]
+events = [SubResource("InputEventKey_5k6gt")]
