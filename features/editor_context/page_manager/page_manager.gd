@@ -19,6 +19,7 @@ var project_context_items: Array[StringName] = [
 @onready var tree: Tree = %PagesTree
 @onready var context_menu: PopupMenu = %ContextMenu
 @onready var new_page_dialog: CreateNewPageDialog = %NewPageDialog
+@onready var number_pages_dialog: NumberPagesDialog = %NumberPagesDialog
 
 
 func _ready() -> void:
@@ -101,7 +102,8 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"RENAME":
 			_on_rename_triggered()
 		"NUMBERING":
-			pass
+			var pages_to_number: Array[PageData] = get_selected_pages(true)
+			number_pages_dialog.activate(pages_to_number)
 		"PROPERTIES":
 			pass
 
@@ -153,15 +155,36 @@ func add_page(parent: TreeItem, page_data: PageData) -> void:
 	page_tree_item.set_metadata(0, page_data)
 
 
-func get_selected_tree_items() -> Array[TreeItem]:
+func get_selected_pages(select_children: bool = false) -> Array[PageData]:
+	var page_datas: Array[PageData]
+	var selected_tree_items: Array[TreeItem] = get_selected_tree_items(select_children)
+	for tree_item: TreeItem in selected_tree_items:
+		if tree_item.get_metadata(0) is not PageData:
+			continue
+		var page_data: PageData = tree_item.get_metadata(0)
+		page_datas.append(page_data)
+	return page_datas
+
+
+func get_selected_tree_items(select_children: bool = false) -> Array[TreeItem]:
 	var selected_items: Array[TreeItem] = []
-	var selected_item: TreeItem = tree.get_next_selected(null)
-	if not selected_item:
-		return []
-	while selected_item:
-		selected_items.append(selected_item)
-		selected_item = tree.get_next_selected(selected_item)
+	var current_item: TreeItem = tree.get_next_selected(null)
+	while current_item:
+		if not selected_items.has(current_item):
+			selected_items.append(current_item)
+			if select_children:
+				_select_children_recursive(current_item, selected_items)
+		current_item = tree.get_next_selected(current_item)
 	return selected_items
+
+
+func _select_children_recursive(parent_item: TreeItem, list: Array[TreeItem]) -> void:
+	var child: TreeItem = parent_item.get_first_child()
+	while child:
+		if not list.has(child):
+			list.append(child)
+		_select_children_recursive(child, list)
+		child = child.get_next()
 
 
 func _on_new_page_dialog_page_created(page_data: PageData) -> void:

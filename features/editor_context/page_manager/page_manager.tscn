@@ -2,8 +2,17 @@
 
 [ext_resource type="Script" uid="uid://5mtm3db2h0xu" path="res://features/editor_context/page_manager/page_manager.gd" id="1_61cwo"]
 [ext_resource type="Texture2D" uid="uid://dqtomh4b7e6yb" path="res://addons/at-icons/node2d/file.svg" id="2_ii7i7"]
-[ext_resource type="Texture2D" uid="uid://bprhcoty4m42s" path="res://addons/at-icons/node3d/cross.svg" id="3_aya7p"]
+[ext_resource type="Texture2D" uid="uid://x0xdr1gt4cf6" path="res://addons/at-icons/node2d/folder_open.svg" id="3_xpnwn"]
+[ext_resource type="Texture2D" uid="uid://cyjqrfe7ulfsk" path="res://addons/at-icons/node3d/arrow_left_to_line.svg" id="4_3atmh"]
 [ext_resource type="PackedScene" uid="uid://b5ctw8j7ouqns" path="res://features/editor_context/dialogs/new_page_dialog/new_page_dialog.tscn" id="4_8s48f"]
+[ext_resource type="Texture2D" uid="uid://co2dbg267dnnc" path="res://addons/at-icons/node2d/scissors.svg" id="5_2ua5x"]
+[ext_resource type="Texture2D" uid="uid://dxbq48xios54n" path="res://addons/at-icons/node2d/files.svg" id="6_efymm"]
+[ext_resource type="Texture2D" uid="uid://b6wskrflnwf02" path="res://addons/at-icons/node2d/clipboard.svg" id="7_nmx37"]
+[ext_resource type="Texture2D" uid="uid://cise7ijyppxmj" path="res://addons/at-icons/node3d/trash_can.svg" id="8_ibg0f"]
+[ext_resource type="Texture2D" uid="uid://b65ryda45mopc" path="res://addons/at-icons/node2d/pencil.svg" id="9_bjacu"]
+[ext_resource type="Texture2D" uid="uid://bafm6t0up3uqn" path="res://addons/at-icons/node2d/number_sign.svg" id="10_xubxq"]
+[ext_resource type="Texture2D" uid="uid://c3p6orknwcka8" path="res://addons/at-icons/node2d/file_sliders.svg" id="11_5ijmf"]
+[ext_resource type="PackedScene" uid="uid://ccpw2r6hv4f8e" path="res://features/editor_context/dialogs/number_pages_dialog/number_pages_dialog.tscn" id="13_3atmh"]
 
 [node name="PageManager" type="PanelContainer" unique_id=56668837]
 custom_minimum_size = Vector2(200, 0)
@@ -35,33 +44,45 @@ item_0/text = "CREATE"
 item_0/icon = ExtResource("2_ii7i7")
 item_0/id = 0
 item_1/text = "OPEN"
+item_1/icon = ExtResource("3_xpnwn")
 item_1/id = 2
 item_2/text = "CLOSE"
+item_2/icon = ExtResource("4_3atmh")
 item_2/id = 4
 item_3/id = 3
 item_3/separator = true
 item_4/text = "CUT"
+item_4/icon = ExtResource("5_2ua5x")
 item_4/id = 5
 item_5/text = "COPY"
+item_5/icon = ExtResource("6_efymm")
 item_5/id = 4
 item_6/text = "PASTE"
+item_6/icon = ExtResource("7_nmx37")
 item_6/id = 4
 item_7/id = 4
 item_7/separator = true
 item_8/text = "DELETE"
-item_8/icon = ExtResource("3_aya7p")
+item_8/icon = ExtResource("8_ibg0f")
 item_8/id = 1
 item_9/text = "RENAME"
+item_9/icon = ExtResource("9_bjacu")
 item_9/id = 9
 item_10/id = 10
 item_10/separator = true
 item_11/text = "NUMBERING"
+item_11/icon = ExtResource("10_xubxq")
 item_11/id = 11
 item_12/id = 12
 item_12/separator = true
 item_13/text = "PROPERTIES"
+item_13/icon = ExtResource("11_5ijmf")
 item_13/id = 13
 
 [node name="NewPageDialog" parent="." unique_id=1019417673 instance=ExtResource("4_8s48f")]
+unique_name_in_owner = true
+visible = false
+
+[node name="NumberPagesDialog" parent="." unique_id=305764397 instance=ExtResource("13_3atmh")]
 unique_name_in_owner = true
 visible = false

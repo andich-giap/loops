@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://ccpw2r6hv4f8e"]
+
+[ext_resource type="Script" uid="uid://dyq7gly325bmi" path="res://features/editor_context/dialogs/number_pages_dialog/number_pages_dialog.gd" id="1_fsjq2"]
+[ext_resource type="Texture2D" uid="uid://bovew1l582r11" path="res://addons/at-icons/node2d/lock.svg" id="1_u3cit"]
+[ext_resource type="Texture2D" uid="uid://clkrp8pwrk211" path="res://addons/at-icons/node2d/number_float.svg" id="2_fsjq2"]
+[ext_resource type="Texture2D" uid="uid://4u4inm6cni07" path="res://addons/at-icons/node2d/numbers.svg" id="3_ovd2p"]
+
+[node name="NumberPagesDialog" type="ConfirmationDialog" unique_id=305764397]
+oversampling_override = 1.0
+title = "NUMBERING"
+initial_position = 4
+size = Vector2i(402, 150)
+visible = true
+cancel_button_text = "CANCEL"
+script = ExtResource("1_fsjq2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1340242037]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 398.0
+offset_bottom = 112.0
+
+[node name="NumberingBegin" type="HBoxContainer" parent="VBoxContainer" unique_id=855792566]
+layout_mode = 2
+
+[node name="NumberingBeginLabel" type="Label" parent="VBoxContainer/NumberingBegin" unique_id=1826061894]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NUMBERING_BEGIN"
+
+[node name="NumberingBeginSpinBox" type="SpinBox" parent="VBoxContainer/NumberingBegin" unique_id=1387023155]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100000.0
+
+[node name="StepSize" type="HBoxContainer" parent="VBoxContainer" unique_id=2102697851]
+layout_mode = 2
+
+[node name="StepSizeLabel" type="Label" parent="VBoxContainer/StepSize" unique_id=628386733]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NUMBERING_STEP_SIZE"
+
+[node name="StepSizeSpinBox" type="SpinBox" parent="VBoxContainer/StepSize" unique_id=1158165134]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100000.0
+
+[node name="SubPages" type="HBoxContainer" parent="VBoxContainer" unique_id=1418244148]
+layout_mode = 2
+
+[node name="SubPagesLabel" type="Label" parent="VBoxContainer/SubPages" unique_id=191556172]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NUMBERING_STEP_SIZE"
+
+[node name="SubPagesMenuButton" type="MenuButton" parent="VBoxContainer/SubPages" unique_id=542221379]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SUB_PAGES_HOLD"
+icon = ExtResource("1_u3cit")
+flat = false
+alignment = 0
+item_count = 3
+popup/item_0/text = "SUB_PAGES_HOLD"
+popup/item_0/icon = ExtResource("1_u3cit")
+popup/item_0/id = 0
+popup/item_1/text = "SUB_PAGES_NUMBER"
+popup/item_1/icon = ExtResource("2_fsjq2")
+popup/item_1/id = 1
+popup/item_2/text = "SUB_PAGES_CONVERT_TO_REGULAR"
+popup/item_2/icon = ExtResource("3_ovd2p")
+popup/item_2/id = 2

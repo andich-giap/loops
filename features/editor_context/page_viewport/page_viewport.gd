@@ -1,6 +1,7 @@
 class_name PageViewport
 extends SubViewportContainer
 
+
 enum State {
 	VIEWING,
 	PLACING,
