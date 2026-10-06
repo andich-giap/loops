@@ -8,11 +8,12 @@ extends ConfirmationDialog
 @onready var description_line_edit: LineEdit = %DescriptionLineEdit
 @onready var properties_container: VBoxContainer = %PropertiesContainer
 @onready var header: HSplitContainer = %Header
-var _changed_properties: Array[StringName]
+var _changed_properties: Dictionary[StringName, Variant]
 
 
 func _ready() -> void:
 	canceled.connect(_on_canceled)
+	#designation_line_edit.text_changed.connect()
 
 
 func activate(page_datas: Array[PageData]) -> void:
