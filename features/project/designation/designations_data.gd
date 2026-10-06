@@ -8,11 +8,13 @@ signal designation_changed(designation: Designation)
 @export var designations: Dictionary[Designation.Type, Array]
 
 
-func _init() -> void:
-	if not designations.is_empty():
-		return
-	for type: Designation.Type in Designation.Type.values():
-		designations[type] = []
+func _init(designation_string: String = "") -> void:
+	## TODO implement construction from string
+	pass
+	#if not designations.is_empty():
+		#return
+	#for type: Designation.Type in Designation.Type.values():
+		#designations[type] = []
 
 
 func add_designation(designation: Designation) -> void:

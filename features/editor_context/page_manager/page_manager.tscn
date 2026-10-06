@@ -89,4 +89,5 @@ unique_name_in_owner = true
 visible = false
 
 [node name="PagePropertiesDialog" parent="." unique_id=1860110484 instance=ExtResource("14_2ua5x")]
+unique_name_in_owner = true
 visible = false

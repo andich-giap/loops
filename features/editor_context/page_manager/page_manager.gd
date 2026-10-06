@@ -20,6 +20,7 @@ var project_context_items: Array[StringName] = [
 @onready var context_menu: PopupMenu = %ContextMenu
 @onready var new_page_dialog: CreateNewPageDialog = %NewPageDialog
 @onready var number_pages_dialog: NumberPagesDialog = %NumberPagesDialog
+@onready var page_properties_dialog: PagePropertiesDialog = %PagePropertiesDialog
 
 
 func _ready() -> void:
@@ -105,7 +106,8 @@ func _on_context_menu_index_pressed(index: int) -> void:
 			var pages_to_number: Array[PageData] = get_selected_pages(true)
 			number_pages_dialog.activate(pages_to_number)
 		"PROPERTIES":
-			pass
+			var pages_to_edit: Array[PageData] = get_selected_pages(true)
+			page_properties_dialog.activate(pages_to_edit)
 
 
 func _on_rename_triggered() -> void:
@@ -138,7 +140,7 @@ func open_project(project_data: ProjectData) -> void:
 	var pages: Array[PageData]
 	for page_data: PageData in project_data.pages.values():
 		page_data.project_data = weakref(project_data)
-		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data))
+		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_ONE_SHOT)
 		pages.append(page_data)
 	pages.sort_custom(func(a: PageData, b: PageData) -> bool:
 		return int(a.name) < int(b.name)
@@ -151,8 +153,16 @@ func open_project(project_data: ProjectData) -> void:
 
 func add_page(parent: TreeItem, page_data: PageData) -> void:
 	var page_tree_item: TreeItem = parent.create_child()
+	page_tree_item.set_icon(0, PageData.PAGE_TYPE_ICONS[page_data.type])
 	page_tree_item.set_text(0, page_data.name + " " + page_data.description)
 	page_tree_item.set_metadata(0, page_data)
+	page_data.changed.connect(_on_page_data_changed.bind(page_tree_item))
+
+
+func _on_page_data_changed(page_tree_item: TreeItem) -> void:
+	var page_data: PageData = page_tree_item.get_metadata(0)
+	page_tree_item.set_icon(0, PageData.PAGE_TYPE_ICONS[page_data.type])
+	page_tree_item.set_text(0, page_data.name + " " + page_data.description)
 
 
 func get_selected_pages(select_children: bool = false) -> Array[PageData]:

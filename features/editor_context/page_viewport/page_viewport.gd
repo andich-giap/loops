@@ -48,6 +48,8 @@ func set_page_data(_page_data: PageData) -> void:
 	project_data = page_data.project_data.get_ref()
 	page_data.grid_interval_changed.connect(_on_page_data_grid_interval_changed)
 	project_data.closed.connect(_on_project_data_closed)
+	if not page_data.changed.is_connected(_on_page_data_changed):
+		page_data.changed.connect(_on_page_data_changed)
 
 
 func _update_page_viewport() -> void:
@@ -188,3 +190,7 @@ func set_state(_state: State) -> void:
 
 func reset_view() -> void:
 	viewport_camera.viewport.canvas_transform = Transform2D.IDENTITY
+
+
+func _on_page_data_changed() -> void:
+	name = page_data.name + " " + page_data.description

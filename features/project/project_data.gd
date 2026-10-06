@@ -21,7 +21,7 @@ func add_page(page_data: PageData) -> void:
 	pages[page_data.designation.get_string() + "_" + page_data.name] = page_data
 	page_data.project_data = weakref(self)
 	page_added.emit(page_data)
-	page_data.name_changed.connect(_on_page_data_name_changed.bind(page_data), CONNECT_PERSIST)
+	page_data.name_changed.connect(_on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_PERSIST)
 	ResourceSaver.save(self)
 
 
@@ -29,10 +29,11 @@ func close() -> void:
 	closed.emit()
 
 
-func _on_page_data_name_changed(new_name: StringName, old_name: StringName, page_data: PageData) -> void:
+func _on_page_data_name_changed(old_name: StringName, page_data: PageData) -> void:
 	pages.erase(page_data.designation.get_string() + "_" + old_name)
-	pages[page_data.designation.get_string() + "_" + new_name] = page_data
+	pages[page_data.designation.get_string() + "_" + page_data.name] = page_data
 	var new_path: String = page_data.resource_path.get_base_dir() + "/" + page_data.get_full_name() + ".tres"
 	DirAccess.rename_absolute(page_data.resource_path, new_path)
 	page_data.take_over_path(new_path)
 	ResourceSaver.save(self)
+	page_data.name_changed.connect(_on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_ONE_SHOT)
