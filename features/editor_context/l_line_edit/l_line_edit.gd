@@ -61,6 +61,7 @@ func _input(event: InputEvent) -> void:
 				is_placing = false
 				finished_placing.emit()
 				changed.emit()
+				edit_text()
 		if event.is_action(&"ui_cancel"):
 			finished_placing.emit()
 			queue_free()
@@ -74,10 +75,14 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if mouse_button_event.double_click:
-			editable = true
-			caret_force_displayed = true
-			edit()
-			size = Vector2.ZERO
+			edit_text()
+
+
+func edit_text() -> void:
+	editable = true
+	caret_force_displayed = true
+	edit()
+	size = Vector2.ZERO
 
 
 func _on_text_submitted(_new_text: String) -> void:

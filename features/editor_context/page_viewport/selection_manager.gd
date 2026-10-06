@@ -13,6 +13,9 @@ var contents_layer: CanvasLayer
 
 
 func _gui_input(event: InputEvent) -> void:
+	if not can_select:
+		is_selecting = false
+		return
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT and can_select:

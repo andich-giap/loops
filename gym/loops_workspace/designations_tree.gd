@@ -2,8 +2,6 @@
 class_name DesignationsTree
 extends Tree
 
-
-const PLUS: Texture = preload("uid://di85w4in8gymw")
 var designations: Array[Designation]
 
 
@@ -31,7 +29,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	var metadata: Variant = tree_item.get_metadata(0)
 	if metadata is Resource:
 		var texture: TextureRect = TextureRect.new()
-		texture.texture = PLUS
+		texture.texture = Texture.new()
 		set_drag_preview(texture)
 		return metadata
 	else:
