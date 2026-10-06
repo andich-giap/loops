@@ -1,0 +1,100 @@
+[gd_scene format=3 uid="uid://d0oo2pbt8hin7"]
+
+[ext_resource type="Script" uid="uid://wmrf107nqofj" path="res://features/editor_context/dialogs/page_properties_dialog/page_properties_dialog.gd" id="1_m5iea"]
+[ext_resource type="Texture2D" uid="uid://dyecji531e7na" path="res://addons/at-icons/node/ellipsis_horizontal.svg" id="2_0wxjy"]
+
+[node name="PagePropertiesDialog" type="ConfirmationDialog" unique_id=1860110484]
+oversampling_override = 1.0
+title = "PAGE_PROPERTIES"
+initial_position = 4
+size = Vector2i(600, 400)
+visible = true
+cancel_button_text = "CANCEL"
+script = ExtResource("1_m5iea")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=467505339]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 596.0
+offset_bottom = 362.0
+
+[node name="Designation" type="HBoxContainer" parent="VBoxContainer" unique_id=2051233128]
+layout_mode = 2
+
+[node name="DesignationLabel" type="Label" parent="VBoxContainer/Designation" unique_id=1374359078]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DESIGNATION"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Designation" unique_id=886177784]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DesignationLineEdit" type="LineEdit" parent="VBoxContainer/Designation/HBoxContainer" unique_id=901781244]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DesignationOptionsButton" type="Button" parent="VBoxContainer/Designation/HBoxContainer" unique_id=2022384789]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("2_0wxjy")
+
+[node name="PageType" type="HBoxContainer" parent="VBoxContainer" unique_id=1478485378]
+layout_mode = 2
+
+[node name="PageTypeLabel" type="Label" parent="VBoxContainer/PageType" unique_id=205695090]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TYPE"
+
+[node name="PageTypeMenuButton" type="MenuButton" parent="VBoxContainer/PageType" unique_id=43904937]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+flat = false
+alignment = 0
+
+[node name="Description" type="HBoxContainer" parent="VBoxContainer" unique_id=1620213804]
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/Description" unique_id=1050505108]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "DESCRIPTION"
+
+[node name="DescriptionLineEdit" type="LineEdit" parent="VBoxContainer/Description" unique_id=155696228]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer" unique_id=18584846]
+layout_mode = 2
+
+[node name="PropertiesLabel" type="Label" parent="VBoxContainer" unique_id=514272544]
+layout_mode = 2
+text = "PROPERTIES"
+
+[node name="PropertiesContainer" type="VBoxContainer" parent="VBoxContainer" unique_id=549883943]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Header" type="HSplitContainer" parent="VBoxContainer/PropertiesContainer" unique_id=2037688749]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_type_variation = &"PropertyContainerHeader"
+split_offsets = PackedInt32Array(236)
+drag_area_highlight_in_editor = true
+split_offset = 236
+
+[node name="PropertyNameLabel" type="Label" parent="VBoxContainer/PropertiesContainer/Header" unique_id=104301032]
+layout_mode = 2
+text = "PROPERTY_NAME"
+text_overrun_behavior = 5
+
+[node name="ValueLabel" type="Label" parent="VBoxContainer/PropertiesContainer/Header" unique_id=1854609161]
+layout_mode = 2
+text = "VALUE"
+text_overrun_behavior = 3

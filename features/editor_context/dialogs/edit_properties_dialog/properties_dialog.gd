@@ -10,7 +10,7 @@ var valid_nodes: Array[Node]
 var _max_size: Vector2i
 var changed_property_containers: Array[PropertyContainer]
 var double_click_timer: Timer
-@onready var properties_container: VBoxContainer = $PropertiesContainer
+@onready var properties_container: VBoxContainer = %PropertiesContainer
 @onready var header: HSplitContainer = %Header
 @onready var choose_item_to_edit_dialog: ConfirmationDialog = %ChooseItemToEditDialog
 @onready var scripts_tree: Tree = %ScriptsTree

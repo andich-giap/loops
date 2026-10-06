@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://bafm6t0up3uqn" path="res://addons/at-icons/node2d/number_sign.svg" id="10_xubxq"]
 [ext_resource type="Texture2D" uid="uid://c3p6orknwcka8" path="res://addons/at-icons/node2d/file_sliders.svg" id="11_5ijmf"]
 [ext_resource type="PackedScene" uid="uid://ccpw2r6hv4f8e" path="res://features/editor_context/dialogs/number_pages_dialog/number_pages_dialog.tscn" id="13_3atmh"]
+[ext_resource type="PackedScene" uid="uid://d0oo2pbt8hin7" path="res://features/editor_context/dialogs/page_properties_dialog/page_properties_dialog.tscn" id="14_2ua5x"]
 
 [node name="PageManager" type="PanelContainer" unique_id=56668837]
 custom_minimum_size = Vector2(200, 0)
@@ -85,4 +86,7 @@ visible = false
 
 [node name="NumberPagesDialog" parent="." unique_id=305764397 instance=ExtResource("13_3atmh")]
 unique_name_in_owner = true
+visible = false
+
+[node name="PagePropertiesDialog" parent="." unique_id=1860110484 instance=ExtResource("14_2ua5x")]
 visible = false

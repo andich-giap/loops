@@ -41,3 +41,10 @@ POLY_LINE_2D;Polyline;Полилиния
 L_LINE_EDIT;Text;Текст
 TEXT;Text;Текст
 RESET_VIEW;Reset view;Восстановить вид
+PAGE_PROPERTIES;Page properties;Свойства страницы
+NUMBERING_BEGIN;Start value;Начальное значение
+NUMBERING_STEP_SIZE;Step;Шаг
+NUMBERING_SUBPAGES;Subpages;Подстраницы
+SUBPAGES_HOLD;Hold;Удерживать
+SUBPAGES_NUMBER;Number;Нумеровать
+SUBPAGES_CONVERT_TO_REGULAR;Convert to regular;Преобразовать в основные

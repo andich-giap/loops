@@ -7,13 +7,15 @@ handle_input_locally = false
 oversampling_override = 1.0
 title = "PROPERTIES"
 initial_position = 4
+size = Vector2i(204, 100)
 visible = true
 script = ExtResource("1_4yc2x")
 
 [node name="PropertiesContainer" type="VBoxContainer" parent="." unique_id=2060252479]
+unique_name_in_owner = true
 offset_left = 4.0
 offset_top = 4.0
-offset_right = 196.0
+offset_right = 200.0
 offset_bottom = 62.0
 
 [node name="Header" type="HSplitContainer" parent="PropertiesContainer" unique_id=569905753]

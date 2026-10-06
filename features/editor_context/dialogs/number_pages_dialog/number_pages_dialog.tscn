@@ -51,26 +51,26 @@ max_value = 100000.0
 [node name="SubPages" type="HBoxContainer" parent="VBoxContainer" unique_id=1418244148]
 layout_mode = 2
 
-[node name="SubPagesLabel" type="Label" parent="VBoxContainer/SubPages" unique_id=191556172]
+[node name="SubpagesLabel" type="Label" parent="VBoxContainer/SubPages" unique_id=191556172]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "NUMBERING_STEP_SIZE"
+text = "NUMBERING_SUBPAGES"
 
-[node name="SubPagesMenuButton" type="MenuButton" parent="VBoxContainer/SubPages" unique_id=542221379]
+[node name="SubpagesMenuButton" type="MenuButton" parent="VBoxContainer/SubPages" unique_id=542221379]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "SUB_PAGES_HOLD"
+text = "SUBPAGES_HOLD"
 icon = ExtResource("1_u3cit")
 flat = false
 alignment = 0
 item_count = 3
-popup/item_0/text = "SUB_PAGES_HOLD"
+popup/item_0/text = "SUBPAGES_HOLD"
 popup/item_0/icon = ExtResource("1_u3cit")
 popup/item_0/id = 0
-popup/item_1/text = "SUB_PAGES_NUMBER"
+popup/item_1/text = "SUBPAGES_NUMBER"
 popup/item_1/icon = ExtResource("2_fsjq2")
 popup/item_1/id = 1
-popup/item_2/text = "SUB_PAGES_CONVERT_TO_REGULAR"
+popup/item_2/text = "SUBPAGES_CONVERT_TO_REGULAR"
 popup/item_2/icon = ExtResource("3_ovd2p")
 popup/item_2/id = 2

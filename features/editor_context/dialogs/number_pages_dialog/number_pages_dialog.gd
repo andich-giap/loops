@@ -4,12 +4,12 @@ extends ConfirmationDialog
 
 @onready var numbering_begin_spin_box: SpinBox = %NumberingBeginSpinBox
 @onready var step_size_spin_box: SpinBox = %StepSizeSpinBox
-@onready var sub_pages_menu_button: MenuButton = %SubPagesMenuButton
+@onready var subpages_menu_button: MenuButton = %SubpagesMenuButton
 
 
 func _ready() -> void:
 	canceled.connect(_on_cancel)
-	sub_pages_menu_button.get_popup().index_pressed.connect(handle_sub_pages_numbering_type_changed)
+	subpages_menu_button.get_popup().index_pressed.connect(handle_sub_pages_numbering_type_changed)
 
 
 func activate(pages: Array[PageData]) -> void:
@@ -34,5 +34,5 @@ func _on_cancel() -> void:
 
 
 func handle_sub_pages_numbering_type_changed(index: int) -> void:
-	sub_pages_menu_button.text = sub_pages_menu_button.get_popup().get_item_text(index)
-	sub_pages_menu_button.icon = sub_pages_menu_button.get_popup().get_item_icon(index)
+	subpages_menu_button.text = subpages_menu_button.get_popup().get_item_text(index)
+	subpages_menu_button.icon = subpages_menu_button.get_popup().get_item_icon(index)
