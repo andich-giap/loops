@@ -1,9 +1,10 @@
 class_name PagesTabContainer
 extends TabContainer
+## Contains opened pages as [PageViewport]s.
 
 
 const PAGE_VIEWPORT: PackedScene = preload("uid://fuajg8iy61yx")
-var current_page: PageViewport:
+var current_page: PageViewport: ## Returns focused [PageViewport] or [code]null[/code] if there are no pages opened.
 	get = get_current_page
 
 
@@ -11,29 +12,29 @@ func _init() -> void:
 	name = "PagesTabContainer"
 
 
-func set_last_opened_page() -> void:
-	if get_child_count() == 0:
-		return
-	#var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
-	##if current_page_viewport and current_page_viewport.page_data:
-		##Global.program_state.last_opened_page = current_page_viewport.page_data
-		##ResourceSaver.save(Global.program_state)
-
-
+## Opens the page as a [PageViewport]. Replaces the contents of currently active [PageViewport].
 func open_page(page_data: PageData) -> void:
 	if get_child_count() == 0:
-		_open_page_in_new_tab(page_data)
+		open_page_in_new_tab(page_data)
 		return
 	var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
 	current_page_viewport.page_data = page_data
-	set_last_opened_page()
 
 
-func _open_page_in_new_tab(page_data: PageData) -> void:
+## Opens the page as a [PageViewport].
+func open_page_in_new_tab(page_data: PageData) -> void:
 	var page_viewport: PageViewport = PAGE_VIEWPORT.instantiate()
 	page_viewport.page_data = page_data
 	add_child(page_viewport)
-	set_last_opened_page()
+
+
+func get_current_page() -> PageViewport:
+	if get_child_count() == 0:
+		return null
+	var tab: Control = get_current_tab_control()
+	if tab is PageViewport:
+		return tab
+	return null
 
 
 func _on_tool_bar_graphics_added(graphics: Node) -> void:
@@ -67,9 +68,9 @@ func _on_dxf_inspector_tree_item_selected(source: Tree) -> void:
 				for child: TreeItem in selected_item.get_children():
 					child.select(0)
 			"LINE":
-				graphics = get_poly_line_2d_from_tree_item(selected_item)
+				graphics = _dxf_get_poly_line_2d_from_tree_item(selected_item)
 			"TEXT":
-				graphics = dxf_get_l_line_edit_from_tree_item(selected_item)
+				graphics = _dxf_get_l_line_edit_from_tree_item(selected_item)
 		if not graphics:
 			selected_item = source.get_next_selected(selected_item)
 			continue
@@ -79,7 +80,7 @@ func _on_dxf_inspector_tree_item_selected(source: Tree) -> void:
 		selected_item = source.get_next_selected(selected_item)
 
 
-func get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
+func _dxf_get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
 	var poly_line_2d: PolyLine2D = PolyLine2D.new()
 	var positions: Array[Vector2]
 	positions.resize(2)
@@ -102,7 +103,7 @@ func get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
 	return poly_line_2d
 
 
-func dxf_get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
+func _dxf_get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
 	var l_line_edit: LLineEdit = LLineEdit.new()
 	for child: TreeItem in tree_item.get_children():
 		var variable_name: String = child.get_text(0).split(" ")[0]
@@ -116,12 +117,3 @@ func dxf_get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
 				l_line_edit.position.y = float(variable_value) - l_line_edit.size.y
 	l_line_edit.is_placing = false
 	return l_line_edit
-
-
-func get_current_page() -> PageViewport:
-	if get_child_count() == 0:
-		return null
-	var tab: Control = get_current_tab_control()
-	if tab is PageViewport:
-		return tab
-	return null
