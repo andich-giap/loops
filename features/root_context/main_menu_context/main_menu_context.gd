@@ -3,8 +3,8 @@ extends Control
 ## Main menu of the program where the user can create and open projects.
 
 
-signal create_project_requested ## Emitted when the [param create_project_button] is pressed.
-signal open_project_requested(path: String) ## Emitted when the [param open_project_button] is pressed or recent project is selected.
+signal create_project_requested ## Emitted when the [member create_project_button] is pressed.
+signal open_project_requested(path: String) ## Emitted when the [member open_project_button] is pressed or recent project is selected.
 @onready var create_project_button: Button = %CreateProjectButton ## Used for triggering emitting [signal create_project_requested].
 @onready var open_project_button: Button = %OpenProjectButton ## Used for triggering emitting [signal open_project_requested].
 @onready var recent_projects_container: VBoxContainer = %RecentProjectsContainer ## Contains the recent projects. Recent projects are retrieved via [constant SettingsManager.RECENT_PROJECTS_KEY].

@@ -10,7 +10,7 @@ enum DecorationType {
 	LINE,
 	CIRCLE,
 }
-const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [param new_point_position].
+const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [member new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"color",

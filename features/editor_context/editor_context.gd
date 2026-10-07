@@ -15,7 +15,7 @@ var _tool_bar_node: ToolBar
 var _page_manager_node: PageManager
 var _dxf_inspector_node: DXFInspector
 var _pages_tab_container: PagesTabContainer
-@onready var top_bar: VBoxContainer = %TopBar ## A bar that contains a pallete of instruments such as [DrawToolBar] and [ModesPanel].
+@onready var top_bar: VBoxContainer = %TopBar ## A bar that contains a pallete of instruments such as [DrawToolBar] and [ModesBar].
 @onready var h_split_container: HSplitContainer = %HSplitContainer ## Contains [PageManager] and other managers on the left side and [PagesTabContainer] with [PageViewport]s on the right side.
 @onready var tab_container: TabContainer = %TabContainer ## Contains  ## Contains [PageManager] and other managers.
 

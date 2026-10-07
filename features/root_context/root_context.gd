@@ -96,7 +96,7 @@ func open_project(project_data: ProjectData) -> void:
 
 
 ## Closes a project, if [param project_data] is not provided then the
-## [param current_project] is closed.
+## [member current_project] is closed.
 func close_project(project_data: ProjectData = null) -> void:
 	if project_data:
 		_opened_projects.erase(project_data)
