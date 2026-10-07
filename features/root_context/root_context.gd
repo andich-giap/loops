@@ -26,7 +26,7 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-## Instanciating and adding nodes
+## Setting up self, instanciating and adding nodes.
 func build() -> void:
 	_main_menu_context_node = main_menu_context_scene.instantiate()
 	_editor_context_node = editor_context_scene.instantiate()
