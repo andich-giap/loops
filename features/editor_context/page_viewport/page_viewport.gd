@@ -121,16 +121,14 @@ func add_graphics(graphics: Node) -> void:
 
 
 func add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
-	poly_line_2d.page_data = weakref(page_data)
-	poly_line_2d.page_viewport = self
+	poly_line_2d._page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
 	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING), CONNECT_ONE_SHOT)
 
 
 func add_l_line_edit(l_line_edit: LLineEdit) -> void:
-	l_line_edit.page_data = weakref(page_data)
-	l_line_edit.page_viewport = self
+	l_line_edit._page_viewport = self
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 	l_line_edit.editing_toggled.connect(_on_l_line_edit_editing_toggled)

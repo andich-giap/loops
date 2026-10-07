@@ -8,7 +8,7 @@ signal designation_changed(designation: Designation)
 @export var designations: Dictionary[Designation.Type, Array]
 
 
-func _init(designation_string: String = "") -> void:
+func _init(_designation_string: String = "") -> void:
 	## TODO implement construction from string
 	pass
 	#if not designations.is_empty():
