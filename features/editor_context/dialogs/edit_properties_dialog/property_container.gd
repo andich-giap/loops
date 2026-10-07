@@ -16,6 +16,7 @@ var is_enum: bool = false
 var is_changed: bool = false
 var has_multiple_values: bool = false
 var theme_callable: StringName
+var _suffix: String
 
 
 func _ready() -> void:
@@ -43,12 +44,19 @@ func _create_property_control(_property: Dictionary) -> Control:
 			if has_multiple_values:
 				self_modulate = Color(1.0, 1.0, 1.0, 0.5)
 		TYPE_FLOAT:
+			var float_value: float = value
 			var line_edit: LineEdit = LineEdit.new()
-			line_edit.text = str(value)
 			control = line_edit
 			line_edit.text_changed.connect(_on_value_node_value_changed)
 			if has_multiple_values:
 				line_edit.text = "..."
+			var hint_string: String = property[&"hint_string"]
+			if hint_string.contains("suffix: "):
+				_suffix = hint_string.split(":")[1].strip_edges()
+			if _suffix == "mm":
+				value = Units.px_to_mm(float_value)
+				float_value = value
+			line_edit.text = str(roundf(float_value * 10_000_000) / 10_000_000)
 		TYPE_INT:
 			if is_enum:
 				var option_button: OptionButton = OptionButton.new()
@@ -141,6 +149,13 @@ func set_value(_value: Variant) -> void:
 func set_label_text() -> void:
 	var property_name: StringName = property["name"]
 	label.text = property_name.to_upper()
+
+
+func retrieve_value() -> Variant:
+	if _suffix == "mm":
+		var float_value: float = value
+		return Units.mm_to_px(float_value)
+	return value
 
 
 func _on_value_node_value_changed(_value: Variant) -> void:

@@ -193,7 +193,7 @@ func apply_changes() -> void:
 			if property_container.theme_callable:
 				node.call("add"+property_container.theme_callable, property_name, property_container.value)
 				continue
-			node.set(property_name, property_container.value)
+			node.set(property_name, property_container.retrieve_value())
 		if node.has_signal("changed"):
 			node.emit_signal("changed")
 	clear_properties()

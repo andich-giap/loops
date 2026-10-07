@@ -22,13 +22,13 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"closed",
 		&"width",
 	]
-static var default_width: float = 1.0 ## The default width of the line.
+static var default_width: float = Units.mm_to_px(1.0) ## The default width of the line.
 @export var color: Color = Color.BLACK ## Color of the line.
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 3.0: ## Distance between decorations.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(3.0): ## Distance between decorations.
 	set = set_segment_step
 @export var decoration: DecorationType: ## The type of decoration.
 	set = set_decoration
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 5.0: ## The size of the decoration.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = Units.mm_to_px(5.0): ## The size of the decoration.
 	set = set_decoration_size
 @export_storage var bounding_box: Rect2 ## The bounding box of the line.
 var is_selected: bool: ## Determines if the line is selected by the [SelectionManager].
