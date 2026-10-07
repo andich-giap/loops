@@ -1,14 +1,16 @@
 class_name ProjectData
 extends Resource
+## Contains all the data about project itself.
 
 
-signal page_added(page_data: PageData)
-signal closed
-@export var name: StringName
-@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY) var last_edited: String
-@export var pages: Dictionary[StringName, PageData]
+signal page_added(page_data: PageData) ## Emitted when a page is added to the project.
+signal closed ## Emitted upon the closing of the project.
+@export var name: StringName ## The name of the project.
+@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_READ_ONLY) var last_edited: String ## The time at which the last edit was done.
+@export var pages: Dictionary[StringName, PageData] ## Contains all the pages of the project. The key is a string representation of [DesignationsData].
 
 
+## Adds a given [param page_data] to the project.
 func add_page(page_data: PageData) -> void:
 	var _resource_path: String = resource_path.get_basename() \
 		+ "_loops_contents/pages/" \
@@ -25,6 +27,7 @@ func add_page(page_data: PageData) -> void:
 	ResourceSaver.save(self)
 
 
+## Closes a project
 func close() -> void:
 	closed.emit()
 
