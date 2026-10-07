@@ -46,11 +46,6 @@ func _on_tool_bar_graphics_added(graphics: Node) -> void:
 	current_page_viewport.add_graphics(graphics)
 
 
-func _set_can_select(can_select: bool) -> void:
-	var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
-	current_page_viewport.set_can_select(can_select)
-
-
 func _on_grid_toggled(toggled_on: bool) -> void:
 	for child: Node in get_children():
 		if child is not PageViewport:
