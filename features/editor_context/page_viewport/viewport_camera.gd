@@ -1,9 +1,10 @@
 class_name VewportCamera
 extends Node2D
+## CAD-like camera that manipulates the [member Viewport.canvas_transform] of [member viewport].
 
 
+const SCALE_STEP: Vector2 = Vector2(1.1, 1.1)
 @export var viewport: Viewport
-const scale_step: Vector2 = Vector2(1.1, 1.1)
 
 
 func _input(event: InputEvent) -> void:
@@ -19,7 +20,7 @@ func _input(event: InputEvent) -> void:
 			return
 		viewport.canvas_transform = viewport.canvas_transform.translated(-viewport.get_mouse_position())
 		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			viewport.canvas_transform = viewport.canvas_transform.scaled(Vector2.ONE / scale_step)
+			viewport.canvas_transform = viewport.canvas_transform.scaled(Vector2.ONE / SCALE_STEP)
 		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			viewport.canvas_transform = viewport.canvas_transform.scaled(scale_step)
+			viewport.canvas_transform = viewport.canvas_transform.scaled(SCALE_STEP)
 		viewport.canvas_transform = viewport.canvas_transform.translated(viewport.get_mouse_position())
