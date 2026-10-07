@@ -1,15 +1,16 @@
 class_name SelectionManager
 extends Control
+## Manages Users input for selecting page contents in [PageViewport].
 
 
-signal selected(selected_nodes: Array[Node])
-static var can_select: bool = true
-var is_selecting: bool = false:
+signal selected(selected_nodes: Array[Node]) ## Emitted if after finishing the selection there are valid contents.
+var can_select: bool = true ## Determines if selection manager listens to User input.
+var is_selecting: bool = false: ## Determines if there is selection in progress.
 	set = set_is_selecting
-var selection_rect: Rect2
-var single_click_size: float = 3.0
-var clear_on_new_selection: bool = true
-var contents_layer: CanvasLayer
+var selection_rect: Rect2 ## Current [Rect2] of the selection.
+var single_click_size: float = 3.0 ## The size of the selection rect on a single click.
+var clear_on_new_selection: bool = true ## If [code]true[/code] when starting the new selection previous selection is cleared unless [kbd]Shift[/kbd] is pressed.
+var contents_layer: CanvasLayer ## Reference to the layer with the contents.
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -49,6 +50,7 @@ func _draw() -> void:
 		true)
 
 
+#region setters/getters
 func set_is_selecting(_is_selecting: bool) -> void:
 	is_selecting = _is_selecting
 	if is_selecting:
@@ -59,8 +61,10 @@ func set_is_selecting(_is_selecting: bool) -> void:
 	if not selected_nodes.is_empty():
 		selected.emit(selected_nodes)
 	selection_rect.size = Vector2.ZERO
+#endregion
 
 
+## Returns the array containing the nodes that are under a [param _selection_rect].
 func get_selection(_selection_rect: Rect2) -> Array[Node]:
 	var selected_nodes: Array[Node] = []
 	for node: Node in contents_layer.get_children():
@@ -81,6 +85,9 @@ func get_selection(_selection_rect: Rect2) -> Array[Node]:
 	return selected_nodes
 
 
+## Converts [Rect2] to [PackedVector2Array]. The first point is at the 
+## [member Rect2.position], the following points  are at the clockwize
+## direction of the rectangle.
 static func rect2_to_packed_vector2_array(rect: Rect2) -> PackedVector2Array:
 	return PackedVector2Array([
 		rect.position,
@@ -90,12 +97,14 @@ static func rect2_to_packed_vector2_array(rect: Rect2) -> PackedVector2Array:
 	])
 
 
+## Adds specified [param node] to "selection" group
 func add_to_selection(node: Node) -> void:
-	node.add_to_group("selection")
+	node.add_to_group(&"selection")
 	if node.has_method("add_to_selection"):
 		node.call("add_to_selection")
 
 
+## Returns bounding box of a node if it has such.
 func get_node_rect(node: Node) -> Rect2:
 	var rect: Rect2
 	if node is PolyLine2D:
@@ -107,5 +116,6 @@ func get_node_rect(node: Node) -> Rect2:
 	return rect
 
 
+## Clears the selection.
 func clear_selection() -> void:
-	get_tree().call_group("selection", "remove_from_selection")
+	get_tree().call_group(&"selection", &"remove_from_selection")
