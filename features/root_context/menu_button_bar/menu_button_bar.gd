@@ -1,13 +1,14 @@
 class_name MenuButtonBar
 extends HBoxContainer
+## A menu bar at the top of the screen that show actions that are related to project, opening panels, etc.
 
 
-signal create_project_requested
-signal open_project_requested
-signal close_project_requested
-signal show_page_manager_requested
-@onready var project_menu_button: MenuButton = $ProjectMenuButton
-@onready var view_menu_button: MenuButton = $ViewMenuButton
+signal create_project_requested ## Emitted for [RootContext] to create a new project.
+signal open_project_requested ## Emitted for [RootContext] to open a project.
+signal close_project_requested ## Emitted for [RootContext] to close the current project.
+signal show_page_manager_requested ## Emitted for [EditorContext] to toggle [PageManager].
+@onready var project_menu_button: MenuButton = $ProjectMenuButton ## Responsible for project actions.
+@onready var view_menu_button: MenuButton = $ViewMenuButton ## Responsible for showing various panels and views.
 
 
 func _ready() -> void:
