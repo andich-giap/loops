@@ -1,16 +1,17 @@
 class_name PagePropertiesDialog
 extends ConfirmationDialog
+ ## Dialog that displays the properties of the page and allow to edit them.
 
 
-@onready var designation_line_edit: LineEdit = %DesignationLineEdit
-@onready var designation_options_button: Button = %DesignationOptionsButton
-@onready var page_type_menu_button: MenuButton = %PageTypeMenuButton
-@onready var description_line_edit: LineEdit = %DescriptionLineEdit
-@onready var properties_container: VBoxContainer = %PropertiesContainer
-@onready var header: HSplitContainer = %Header
+@onready var designation_line_edit: LineEdit = %DesignationLineEdit ## Used for specifying [DesignationsData].
+@onready var designation_options_button: Button = %DesignationOptionsButton ## Used for opening a dedicated dialog for specifying [DesignationsData].
+@onready var page_type_menu_button: MenuButton = %PageTypeMenuButton ## Used for specifying [DesignationsData].
+@onready var description_line_edit: LineEdit = %DescriptionLineEdit ## Used for specifying [member PageData.description].
+@onready var properties_container: VBoxContainer = %PropertiesContainer ## Contains other general properties of the [PageData].
+@onready var header: HSplitContainer = %Header ## The header of the properties.
+var _apply_callable: Callable
 var _changed_properties: Dictionary[StringName, Variant]
-var initial_values: Dictionary[StringName, Variant]
-var apply_callable: Callable
+var _initial_values: Dictionary[StringName, Variant]
 
 
 func _ready() -> void:
@@ -24,6 +25,7 @@ func _ready() -> void:
 	description_line_edit.text_changed.connect(_on_description_line_edit_text_changed)
 
 
+## Triggers the dialog to be shown
 func activate(page_datas: Array[PageData]) -> void:
 	show()
 	designation_line_edit.text = page_datas[0].get_full_name()
@@ -38,28 +40,20 @@ func activate(page_datas: Array[PageData]) -> void:
 			page_type_menu_button.text = "..."
 		if not description_line_edit.text == page_data.description:
 			description_line_edit.text = "..."
-	initial_values[&"designation"] = designation_line_edit.text
-	initial_values[&"type"] = PageData.Type.values()[page_type_menu_button.text.to_int()]
-	initial_values[&"description"] = description_line_edit.text
+	_initial_values[&"designation"] = designation_line_edit.text
+	_initial_values[&"type"] = PageData.Type.values()[page_type_menu_button.text.to_int()]
+	_initial_values[&"description"] = description_line_edit.text
 	_changed_properties.clear()
-	apply_callable  = apply_changes.bind(page_datas)
-	confirmed.connect(apply_callable, CONNECT_ONE_SHOT)
+	_apply_callable  = apply_changes.bind(page_datas)
+	confirmed.connect(_apply_callable, CONNECT_ONE_SHOT)
 
 
-func _on_canceled() -> void:
-	hide()
-	confirmed.disconnect(apply_callable)
-
-
-func populate_properties(_page_datas: Array[PageData]) -> void:
-	pass
-
-
+## Edits each [PageData] in [param pages_datas] to match the changes made in the dialog.
 func apply_changes(page_datas: Array[PageData]) -> void:
 	for page: PageData in page_datas:
 		for property: StringName in _changed_properties.keys():
 			if property == &"designation":
-				if initial_values[&"designation"] == "...":
+				if _initial_values[&"designation"] == "...":
 					continue
 				var designation_string: String = _changed_properties[property]
 				var page_name: String = designation_string.split("_")[-1]
@@ -71,8 +65,17 @@ func apply_changes(page_datas: Array[PageData]) -> void:
 			page.set(property, _changed_properties[property])
 
 
+func _populate_properties(_page_datas: Array[PageData]) -> void:
+	pass
+
+
+func _on_canceled() -> void:
+	hide()
+	confirmed.disconnect(_apply_callable)
+
+
 func _on_designation_line_edit_text_changed(new_text: String) -> void:
-	if not new_text == initial_values[&"designation"]:
+	if not new_text == _initial_values[&"designation"]:
 		_changed_properties[&"designation"] = new_text
 
 
@@ -82,5 +85,5 @@ func _on_type_changed(type: int) -> void:
 
 
 func _on_description_line_edit_text_changed(new_text: String) -> void:
-	if not new_text == initial_values[&"description"]:
+	if not new_text == _initial_values[&"description"]:
 		_changed_properties[&"description"] = new_text

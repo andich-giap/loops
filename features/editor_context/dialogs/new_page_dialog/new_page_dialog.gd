@@ -1,14 +1,14 @@
 class_name CreateNewPageDialog
 extends ConfirmationDialog
+ ## Dialog that is used to configure the information about a new page to be created.
 
 
-signal page_created(page_data: PageData)
-signal new_page_name_changed(name: String)
-@onready var designation_line_edit: LineEdit = $VBoxContainer/Designation/DesignationLineEdit
-@onready var name_line_edit: LineEdit = $VBoxContainer/Name/NameLineEdit
-@onready var description_line_edit: LineEdit = $VBoxContainer/Description/DescriptionLineEdit
-@onready var type_option_button: OptionButton = $VBoxContainer/Type/TypeOptionButton
-@onready var new_page_name_line_edit: LineEdit = %NameLineEdit
+signal page_created(page_data: PageData) ## Emitted on confirming the page creation.
+signal new_page_name_changed(name: String) ## Emitted when [member name_line_edit] text changes.
+@onready var designation_line_edit: LineEdit = %DesignationLineEdit ## Used for specifying [DesignationsData].
+@onready var name_line_edit: LineEdit = %NameLineEdit ## Used for specifying [member PageData.name].
+@onready var description_line_edit: LineEdit = %DescriptionLineEdit ## Used for specifying [member PageData.description].
+@onready var type_option_button: OptionButton = %TypeOptionButton ## Used for specifying [member PageData.type].
 
 
 func _ready() -> void:
@@ -17,9 +17,10 @@ func _ready() -> void:
 	for type: String in PageData.Type.keys():
 		type = tr(type)
 		type_option_button.add_item(type)
-	new_page_name_line_edit.text_changed.connect(new_page_name_changed.emit)
+	name_line_edit.text_changed.connect(new_page_name_changed.emit)
 
 
+## Triggers the dialog to be shown.
 func activate(last_page_in_tree: PageData) -> void:
 	name_line_edit.theme_type_variation = ""
 	if not last_page_in_tree:
