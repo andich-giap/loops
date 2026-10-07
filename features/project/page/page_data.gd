@@ -1,14 +1,15 @@
 @tool
 class_name PageData
 extends Resource
+## Contains all the information and contents of the page.
 
 
-signal designation_changed
-signal name_changed
-signal description_changed
-signal size_changed(size: Vector2)
-signal grid_interval_changed(grid_interval: float)
-enum Type {
+signal designation_changed ## Emitted when [member designation] is changed.
+signal name_changed ## Emitted when [member name] is changed.
+signal description_changed ## Emitted when [member description] is changed.
+signal size_changed(size: Vector2) ## Emitted when [member size] is changed.
+signal grid_interval_changed(grid_interval: float) ## Emitted when [member grid_interval] is changed.
+enum Type { ## Possible type of the page.
 	GRAPHICS,
 	SCHEMATIC_SINGLE_LINE,
 	SCHEMATIC_MULTI_LINE,
@@ -22,20 +23,20 @@ const PAGE_TYPE_ICONS: Dictionary[Type, Texture2D] = {
 	Type.PID: preload("uid://bidskrrhvig8f"),
 	Type.REPORT: preload("uid://d4jbno55cv12g"),
 }
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var size: Vector2 = Vector2(210.0, 297.0):
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var size: Vector2 = Vector2(210.0, 297.0): ## The size of the page in millimetres.
 	set = set_size
-@export var designation: DesignationsData:
+@export var designation: DesignationsData: ## The designation of the page in the project.
 	set = set_designation
-@export var name: StringName:
+@export var name: StringName: ## The name of the page. Could be represented as 0, 3, 5.1, 10a.
 	set = set_page_name
-@export var type: Type
-@export var description: String:
+@export var type: Type ## The type of the page.
+@export var description: String: ## The description of the page.
 	set = set_description
-@export var contents: PackedScene
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var grid_interval: float = 4.0:
+@export var contents: PackedScene ## The graphical contents of the page that is displayed by [PageViewport].
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var grid_interval: float = 4.0: ## The interval of the [Grid] in [PageViewport].
 	set = set_grid_interval
-@export_storage var project_data: WeakRef
-var is_saved: bool = false
+@export_storage var project_data: WeakRef ## Reference to the [ProjectData].
+var is_saved: bool = false ## Determines wether the page is changed and is it saved or not.
 
 
 func set_size(_size: Vector2) -> void:
@@ -50,6 +51,7 @@ func set_grid_interval(_grid_interval: float) -> void:
 	grid_interval_changed.emit(grid_interval)
 
 
+## Returns the string representation of the [member designation] followed by the [member name].
 func get_full_name() -> StringName:
 	return "_".join([designation.get_string(), name])
 
