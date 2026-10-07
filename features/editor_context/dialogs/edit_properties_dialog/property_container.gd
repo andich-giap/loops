@@ -1,21 +1,25 @@
 @tool
 class_name PropertyContainer
 extends HBoxContainer
+## A container that consists of a [member label] to display property name and
+## a control for displaying and editing the value of the property.
+## 
+## [color=orange]TODO[/color]: Consider breaking up into multiple classes to handle different types separately.
 
 
-signal changed(new_value: Variant)
-var label: Label
-var property: Dictionary:
+signal changed(new_value: Variant) ## Emittet when the value is changed.
+var property: Dictionary: ## A property, that is usually retrieved via [method Object.get_property_list].
 	set = set_property
-var column_width: float = 10.0:
+var label: Label ## Label that displays the name of the property
+var column_width: float = 10.0: ## The width of the label.
 	set = set_column_width
-var value: Variant:
+var value: Variant: ## The value of the property. If you're intending to get the value for setting it in the node after editing in [PropertyContainer] use [method retrieve_value].
 	set = set_value
-var value_node: Control
-var is_enum: bool = false
-var is_changed: bool = false
-var has_multiple_values: bool = false
-var theme_callable: StringName
+var value_node: Control ## The control for displaying and editing the value of the property.
+var is_enum: bool = false ## Determines if the value is enum.
+var is_changed: bool = false ## Determines if the value was changed.
+var has_multiple_values: bool = false ## Determines if there were multiple values to be retrieved.
+var theme_callable: StringName ## Partial name of the callable for setting or getting the value of the theme property.
 var _suffix: String
 
 
@@ -25,11 +29,57 @@ func _ready() -> void:
 		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS_FORCE
 		label.custom_minimum_size.x = column_width
 		if property:
-			set_label_text()
+			_set_label_text()
 		add_child(label)
 	if not property:
 		return
 	value_node = _create_property_control(property)
+
+
+#region setters/getters
+func set_column_width(_column_width: float) -> void:
+	column_width = _column_width
+	if label:
+		label.custom_minimum_size.x = column_width
+
+
+func set_property(_property: Dictionary) -> void:
+	property = _property
+	if property["type"] == TYPE_INT and not property["hint_string"] == "":
+		is_enum = true
+	else:
+		is_enum = false
+	if label:
+		_set_label_text()
+	if value_node:
+		value_node.queue_free()
+		value_node = _create_property_control(property)
+
+
+func set_value(_value: Variant) -> void:
+	if not property:
+		value = _value
+		return
+	match property["type"]:
+		TYPE_FLOAT:
+			var float_value: float
+			if typeof(_value) == TYPE_STRING:
+				var string_value: String = _value
+				float_value = string_value.to_float()
+			else:
+				float_value = _value
+			value = float(float_value)
+		_:
+			value = _value
+#endregion
+
+
+## Returns final correctly formatted value.
+func retrieve_value() -> Variant:
+	if _suffix == "mm":
+		var float_value: float = value
+		return Units.mm_to_px(float_value)
+	return value
 
 
 func _create_property_control(_property: Dictionary) -> Control:
@@ -110,52 +160,9 @@ func _create_property_control(_property: Dictionary) -> Control:
 	return control
 
 
-func set_column_width(_column_width: float) -> void:
-	column_width = _column_width
-	if label:
-		label.custom_minimum_size.x = column_width
-
-
-func set_property(_property: Dictionary) -> void:
-	property = _property
-	if property["type"] == TYPE_INT and not property["hint_string"] == "":
-		is_enum = true
-	else:
-		is_enum = false
-	if label:
-		set_label_text()
-	if value_node:
-		value_node.queue_free()
-		value_node = _create_property_control(property)
-
-
-func set_value(_value: Variant) -> void:
-	if not property:
-		value = _value
-		return
-	match property["type"]:
-		TYPE_FLOAT:
-			var float_value: float
-			if typeof(_value) == TYPE_STRING:
-				@warning_ignore("unsafe_call_argument")
-				float_value = float(_value)
-			else:
-				float_value = _value
-			value = float(float_value)
-		_:
-			value = _value
-
-
-func set_label_text() -> void:
+func _set_label_text() -> void:
 	var property_name: StringName = property["name"]
 	label.text = property_name.to_upper()
-
-
-func retrieve_value() -> Variant:
-	if _suffix == "mm":
-		var float_value: float = value
-		return Units.mm_to_px(float_value)
-	return value
 
 
 func _on_value_node_value_changed(_value: Variant) -> void:
