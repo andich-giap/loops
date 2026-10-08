@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://b8owtewduvlq6"]
+
+[ext_resource type="Script" uid="uid://3wkbk3t14cn3" path="res://features/dpi_tester/dpi_test.gd" id="1_l4kln"]
+[ext_resource type="Script" uid="uid://ursw5lj80ew0" path="res://features/dpi_tester/dpi_test_ruler.gd" id="2_nd1ls"]
+[ext_resource type="Texture2D" uid="uid://dk3aa3nf86b4j" path="res://addons/at-icons/node2d/arrow_counterclockwise.svg" id="2_nq215"]
+
+[node name="DpiTest" type="Panel" unique_id=1603519987]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"BackgroundPanel"
+script = ExtResource("1_l4kln")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1330726600]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=196551433]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Ruler" type="Panel" parent="MarginContainer/VBoxContainer" unique_id=948250150]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+script = ExtResource("2_nd1ls")
+ruler_length = 300.0
+
+[node name="RulerLengthControl" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=142185576]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/RulerLengthControl" unique_id=278511978]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "RULER_LENGTH"
+
+[node name="ResetRulerLengthButton" type="Button" parent="MarginContainer/VBoxContainer/RulerLengthControl" unique_id=1053827866]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+icon = ExtResource("2_nq215")
+
+[node name="RulerLengthSpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/RulerLengthControl" unique_id=1758048186]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+max_value = 1000.0
+rounded = true
+suffix = "mm"
+
+[node name="RulerLengthHSlider" type="HSlider" parent="MarginContainer/VBoxContainer/RulerLengthControl" unique_id=264980529]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1000.0
+
+[node name="DPIControl" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1847646183]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/DPIControl" unique_id=1042830575]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "DPI"
+
+[node name="DPISpinBox" type="SpinBox" parent="MarginContainer/VBoxContainer/DPIControl" unique_id=934380398]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 32.0
+max_value = 600.0
+value = 32.0
