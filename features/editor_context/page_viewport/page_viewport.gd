@@ -20,6 +20,7 @@ var state: State = State.VIEWING: ## The current [enum State].
 @onready var viewport_camera: ViewportCamera = %ViewportCamera ## Reference to [ViewportCamera].
 @onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog ## Dialog that is used to edit the properties of the selected contents.
 @onready var reset_vew_button: Button = %ResetVewButton ## Button for resetting the canvas transform of the viewport.
+@onready var context_menu: PageViewportContextMenu = %PageViewportContextMenu
 
 
 func _ready() -> void:
@@ -27,12 +28,21 @@ func _ready() -> void:
 	if page_data:
 		_update_page_viewport()
 	reset_vew_button.pressed.connect(reset_view)
+	context_menu.hide()
+	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action(&"open_properties") and event.is_pressed():
 		edit_properties_dialog.activate()
 		get_viewport().set_input_as_handled()
+
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
+			show_context_menu()
 
 
 #region setters/getters
@@ -115,6 +125,15 @@ func pack_contents() -> PackedScene:
 ## Resets the canvas transform of the viewport.
 func reset_view() -> void:
 	viewport_camera.viewport.canvas_transform = Transform2D.IDENTITY
+
+
+func show_context_menu() -> void:
+	context_menu.position = get_global_mouse_position()
+	if get_tree().get_first_node_in_group(&"selection"):
+		context_menu.show_items(context_menu.GRAPHICS_SELECTED_ITEMS)
+	else:
+		context_menu.show_items(context_menu.NO_SELECTION_ITEMS)
+	context_menu.show()
 
 
 func _set_can_select(can_select: bool) -> void:
@@ -201,3 +220,7 @@ func _on_project_data_closed() -> void:
 
 func _on_page_data_changed() -> void:
 	name = page_data.name + " " + page_data.description
+
+
+func _on_context_menu_index_pressed(index: int) -> void:
+	print(context_menu.get_item_text(index))

@@ -16,6 +16,8 @@ CUT;Cut;Вырезать
 COPY;Copy;Копировать
 PASTE;Paste;Вставить
 RENAME;Rename;Переименовать
+MOVE;Move;Переместить
+DUPLICATE;Duplicate;Дублировать
 NUMBERING;Numbering;Нумерация
 PROPERTIES;Properties;Свойства
 NEW_PAGE;New Page;Новая Страница

@@ -7,6 +7,14 @@
 [ext_resource type="Texture2D" uid="uid://dp1iial4o6yny" path="res://addons/at-icons/node/arrow_axes_2d_down.svg" id="5_kvkci"]
 [ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="5_x5m46"]
 [ext_resource type="PackedScene" uid="uid://cqsrk6m3o1w2a" path="res://features/editor_context/dialogs/edit_properties_dialog/edit_properties_dialog.tscn" id="6_x60ko"]
+[ext_resource type="Texture2D" uid="uid://dxbq48xios54n" path="res://addons/at-icons/node2d/files.svg" id="8_85lfk"]
+[ext_resource type="Texture2D" uid="uid://co2dbg267dnnc" path="res://addons/at-icons/node2d/scissors.svg" id="9_uc4a7"]
+[ext_resource type="Texture2D" uid="uid://b6wskrflnwf02" path="res://addons/at-icons/node2d/clipboard.svg" id="10_3mgi4"]
+[ext_resource type="Texture2D" uid="uid://capbagnwe8jn3" path="res://addons/at-icons/node2d/move.svg" id="11_vv8iq"]
+[ext_resource type="Texture2D" uid="uid://td175caftmhw" path="res://addons/at-icons/node2d/duplicate.svg" id="12_v32xm"]
+[ext_resource type="Texture2D" uid="uid://cise7ijyppxmj" path="res://addons/at-icons/node3d/trash_can.svg" id="13_j8bff"]
+[ext_resource type="Texture2D" uid="uid://c3p6orknwcka8" path="res://addons/at-icons/node2d/file_sliders.svg" id="14_j4jnu"]
+[ext_resource type="Script" uid="uid://b5csr8ahuf7vv" path="res://features/editor_context/page_viewport/page_viewport_context_menu.gd" id="15_uc4a7"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kvkci"]
 device = -1
@@ -108,6 +116,40 @@ viewport = NodePath("../SubViewport")
 [node name="EditPropertiesDialog" parent="." unique_id=1341264742 instance=ExtResource("6_x60ko")]
 unique_name_in_owner = true
 visible = false
+
+[node name="PageViewportContextMenu" type="PopupMenu" parent="." unique_id=829939467]
+unique_name_in_owner = true
+transparent_bg = false
+oversampling_override = 1.0
+size = Vector2i(150, 184)
+transparent = false
+item_count = 9
+item_0/text = "COPY"
+item_0/icon = ExtResource("8_85lfk")
+item_0/id = 4
+item_1/text = "CUT"
+item_1/icon = ExtResource("9_uc4a7")
+item_1/id = 5
+item_2/text = "PASTE"
+item_2/icon = ExtResource("10_3mgi4")
+item_2/id = 4
+item_3/text = "MOVE"
+item_3/icon = ExtResource("11_vv8iq")
+item_3/id = 4
+item_4/text = "DUPLICATE"
+item_4/icon = ExtResource("12_v32xm")
+item_4/id = 4
+item_5/id = 4
+item_5/separator = true
+item_6/text = "DELETE"
+item_6/icon = ExtResource("13_j8bff")
+item_6/id = 1
+item_7/id = 10
+item_7/separator = true
+item_8/text = "PROPERTIES"
+item_8/icon = ExtResource("14_j4jnu")
+item_8/id = 13
+script = ExtResource("15_uc4a7")
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]
 [connection signal="mouse_exited" from="." to="ViewportCamera" method="set_process_input" binds= [false]]
