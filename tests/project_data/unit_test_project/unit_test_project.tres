@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ProjectData" format=3 uid="uid://bgufeugjlco41"]
+
+[ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="1_8xdtr"]
+[ext_resource type="Resource" uid="uid://cgdkksb1f1fvl" path="res://tests/project_data/unit_test_project/unit_test_project_loops_contents/pages/_1.tres" id="2_kcpjh"]
+[ext_resource type="Resource" path="res://tests/project_data/unit_test_project/unit_test_project_loops_contents/pages/_2.tres" id="3_shco0"]
+[ext_resource type="Script" uid="uid://32r1hyne14j5" path="res://features/project/project_data.gd" id="4_5t7pt"]
+
+[resource]
+script = ExtResource("4_5t7pt")
+name = &"unit_test_project"
+pages = Dictionary[StringName, ExtResource("1_8xdtr")]({
+&"_1": ExtResource("2_kcpjh"),
+&"_2": ExtResource("3_shco0")
+})

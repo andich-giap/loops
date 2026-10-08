@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="PageData" format=3]
+
+[ext_resource type="Script" path="res://features/project/page/page_data.gd" id="1_n0286"]
+
+[resource]
+script = ExtResource("1_n0286")

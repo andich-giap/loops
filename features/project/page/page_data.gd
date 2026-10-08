@@ -39,6 +39,13 @@ const PAGE_TYPE_ICONS: Dictionary[Type, Texture2D] = {
 var is_saved: bool = false ## Determines wether the page is changed and is it saved or not.
 
 
+func _init(_name: StringName = &"1", _designation: DesignationsData = null) -> void:
+	name = _name
+	if not _designation:
+		_designation = DesignationsData.new()
+	designation = _designation
+
+
 func set_size(_size: Vector2) -> void:
 	size = _size
 	emit_changed()

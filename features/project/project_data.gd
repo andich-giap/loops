@@ -20,7 +20,7 @@ func add_page(page_data: PageData) -> void:
 	var save_error: Error = ResourceSaver.save(page_data)
 	if not save_error == OK:
 		printerr("Save error %s relative to path: %s" % [save_error, _resource_path])
-	pages[page_data.designation.get_string() + "_" + page_data.name] = page_data
+	pages[page_data.get_full_name()] = page_data
 	page_data.project_data = weakref(self)
 	page_added.emit(page_data)
 	page_data.name_changed.connect(_on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_PERSIST)

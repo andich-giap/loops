@@ -42,9 +42,7 @@ func activate(last_page_in_tree: PageData) -> void:
 
 func _on_confirmed() -> void:
 	visible = false
-	var page_data: PageData = PageData.new()
-	page_data.designation = DesignationsData.new() # TODO Add conversion from string to DesignationData or implement NewDesignationDialog
-	page_data.name = name_line_edit.text
+	var page_data: PageData = PageData.new(name_line_edit.text)
 	page_data.description = description_line_edit.text
 	
 	var type: PageData.Type

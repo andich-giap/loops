@@ -63,7 +63,8 @@ func setup() -> void:
 func open_project(project_data: ProjectData) -> void:
 	_page_manager_node.open_project(project_data)
 	var pages: Array[PageData] = project_data.pages.values()
-	open_page(pages[0])
+	if not pages.is_empty():
+		open_page(pages[0])
 
 
 ## Opens the page as a [PageViewport].

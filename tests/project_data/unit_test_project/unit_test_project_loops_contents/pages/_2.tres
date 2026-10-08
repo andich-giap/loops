@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PageData" format=3 uid="uid://c2it1hv65hl3g"]
+
+[ext_resource type="Script" uid="uid://dymm05dpsi8fe" path="res://features/project/designation/designations_data.gd" id="1_fmwga"]
+[ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="2_t8dyq"]
+
+[sub_resource type="Resource" id="Resource_0eoac"]
+script = ExtResource("1_fmwga")
+
+[resource]
+script = ExtResource("2_t8dyq")
+designation = SubResource("Resource_0eoac")
+name = &"2"

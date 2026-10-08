@@ -19,7 +19,7 @@ func _create_project() -> void:
 	var project_path: String = path_line_edit.text + "/" + name_line_edit.text + ".tres"
 	if project_name.is_empty():
 		return
-	if not DirAccess.dir_exists_absolute(project_path):
+	if not DirAccess.dir_exists_absolute(project_path.get_base_dir()):
 		## TODO Add warning notification for invalid path.
 		return
 	create_project_requested.emit(project_name, project_path)
