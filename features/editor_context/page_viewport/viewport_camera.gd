@@ -1,10 +1,15 @@
-class_name VewportCamera
+class_name ViewportCamera
 extends Node2D
 ## CAD-like camera that manipulates the [member Viewport.canvas_transform] of [member viewport].
 
 
 const SCALE_STEP: Vector2 = Vector2(1.1, 1.1)
 @export var viewport: Viewport
+
+
+func _ready() -> void:
+	if not viewport:
+		viewport = get_viewport()
 
 
 func _input(event: InputEvent) -> void:

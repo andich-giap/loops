@@ -17,7 +17,7 @@ var state: State = State.VIEWING: ## The current [enum State].
 @onready var contents_layer: CanvasLayer = %ContentsLayer ## Reference to contents layer that holds [member PageData.contents].
 @onready var selection_manager: SelectionManager = %SelectionManager ## Reference to [SelectionManager].
 @onready var grid: Grid = %Grid ## Reference to [Grid].
-@onready var viewport_camera: VewportCamera = %ViewportCamera ## Reference to [ViewportCamera].
+@onready var viewport_camera: ViewportCamera = %ViewportCamera ## Reference to [ViewportCamera].
 @onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog ## Dialog that is used to edit the properties of the selected contents.
 @onready var reset_vew_button: Button = %ResetVewButton ## Button for resetting the canvas transform of the viewport.
 
