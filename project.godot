@@ -50,6 +50,10 @@ folder_colors={
 [gdunit4]
 
 settings/test/test_lookup_folder="tests"
+hooks/session_hooks=Dictionary[String, bool]({
+"res://addons/gdUnit4/src/core/hooks/GdUnitHtmlReporterTestSessionHook.gd": false,
+"res://addons/gdUnit4/src/core/hooks/GdUnitXMLReporterTestSessionHook.gd": false
+})
 
 [global_group]
 

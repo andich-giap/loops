@@ -8,12 +8,16 @@ var root_context_node: RootContext
 
 
 func before() -> void:
-	root_context_node = ROOT_CONTEXT.instantiate()
-	add_child(root_context_node)
-	auto_free(root_context_node)
+	load_root_context()
 
 
 func open_project(project_data: ProjectData) -> void:
 	if not root_context_node:
 		return
 	root_context_node.open_project(project_data)
+
+
+func load_root_context() -> void:
+	root_context_node = ROOT_CONTEXT.instantiate()
+	add_child(root_context_node)
+	auto_free(root_context_node)

@@ -15,4 +15,13 @@ func test_open_page() -> void:
 
 
 func test_delete_page() -> void:
-	pass
+	var pages_count: int = UNIT_TEST_PROJECT.pages.size()
+	var page_data: PageData
+	if UNIT_TEST_PROJECT.pages.is_empty():
+		page_data = PageData.new(&"1")
+		UNIT_TEST_PROJECT.add_page(page_data)
+	else:
+		page_data = UNIT_TEST_PROJECT.pages.values()[0]
+	UNIT_TEST_PROJECT.delete_pages([page_data])
+	var new_pages_count: int = UNIT_TEST_PROJECT.pages.size()
+	assert_int(new_pages_count).is_equal(pages_count - 1)
