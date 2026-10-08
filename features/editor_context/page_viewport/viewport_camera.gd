@@ -4,12 +4,14 @@ extends Node2D
 
 
 const SCALE_STEP: Vector2 = Vector2(1.1, 1.1)
+signal zoom_changed ## Emitted when viewport transform is scaled.
 @export var viewport: Viewport
 
 
 func _ready() -> void:
 	if not viewport:
 		viewport = get_viewport()
+	zoom_changed.connect(_on_zoom_changed)
 
 
 func _input(event: InputEvent) -> void:
@@ -29,3 +31,8 @@ func _input(event: InputEvent) -> void:
 		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			viewport.canvas_transform = viewport.canvas_transform.scaled(SCALE_STEP)
 		viewport.canvas_transform = viewport.canvas_transform.translated(viewport.get_mouse_position())
+		zoom_changed.emit()
+
+
+func _on_zoom_changed() -> void:
+	get_tree().call_group(&"upadate_on_viewport_zoom", &"_on_viewport_zoom_changed")

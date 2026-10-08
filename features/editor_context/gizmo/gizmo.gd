@@ -16,13 +16,18 @@ enum Type { ## Possible shapes of the gizmo.
 }
 @export var type: Type = Type.CIRCLE: ## The type of the gizmo.
 	set = set_type
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var radius: float = 1.0 ## Determines the radius of the [Gizmo] and its grab area.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var radius: float = 1.5: ## Determines the radius of the [Gizmo] and its grab area.
+	get = get_radius
 var is_grabbed: bool = false ## Determines if the gizmo is currently grabbed.
 var graphics_node: Node ## The node the gizmo is being spawned from, basically a parent.
 
 
 func _init() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_MOVE
+
+
+func _ready() -> void:
+	add_to_group(&"upadate_on_viewport_zoom")
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -37,7 +42,7 @@ func _gui_input(event: InputEvent) -> void:
 				released.emit()
 	if event is InputEventMouseMotion and is_grabbed:
 		var place_position: Vector2 = graphics_node.call(&"_get_place_position")
-		position = place_position - _get_radius_vector() / 1.5
+		position = place_position - _get_radius_vector()
 		position_changed.emit(place_position)
 		queue_redraw()
 
@@ -50,12 +55,27 @@ func _draw() -> void:
 			_draw_type_arrow()
 	var is_debug: bool = get_tree().debug_collisions_hint
 	if is_debug:
-		draw_rect(Rect2(Vector2(0, 0), Vector2(1, 1)), ProjectColor.debug_values[ProjectColor.Debug.AREA])
+		var rect: Rect2 = get_rect()
+		rect.position -= position
+		draw_rect(rect, ProjectColor.debug_values[ProjectColor.Debug.AREA])
 
 
+#region setters/getters
 func set_type(_type: Type) -> void:
 	type = _type
 	queue_redraw()
+
+
+func get_radius() -> float:
+	return radius / get_viewport_transform().get_scale().x
+#endregion
+
+
+func set_gizmo_position(_position: Vector2) -> void:
+	#position = _position
+	var gizmo_grab_size: Vector2 = _get_radius_vector()
+	set_begin(_position - gizmo_grab_size)
+	set_end(_position + gizmo_grab_size)
 
 
 func _draw_type_circle() -> void:
@@ -78,3 +98,10 @@ func _draw_type_arrow() -> void:
 
 func _get_radius_vector() -> Vector2:
 	return Vector2(Units.mm_to_px(radius), Units.mm_to_px(radius))
+
+
+## Triggered by [signal ViewportCamera.zoom_changed]. Called on
+## [method SceneTree.call_group] on [code]&"upadate_on_viewport_zoom"[/code] group.
+func _on_viewport_zoom_changed() -> void:
+	queue_redraw()
+	set_gizmo_position(get_rect().get_center())

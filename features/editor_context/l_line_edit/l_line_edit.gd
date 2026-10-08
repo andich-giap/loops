@@ -103,11 +103,7 @@ func set_is_selected(_is_selected: bool) -> void:
 		if gizmos.is_empty():
 			add_gizmos()
 		var gizmo: Gizmo = gizmos[0]
-		var gizmo_position: Vector2 = position
-		gizmo_position.y += get_rect().size.y
-		var gizmo_grab_size: Vector2 = Vector2(Units.mm_to_px(gizmo.radius), Units.mm_to_px(gizmo.radius)) / 1.5
-		gizmo.set_begin(gizmo_position - gizmo_grab_size)
-		gizmo.set_end(gizmo_position + gizmo_grab_size)
+		gizmo.set_gizmo_position(position + Vector2(0.0, get_line_height()))
 		if not gizmo.position_changed.is_connected(_on_gizmo_position_changed):
 			gizmo.position_changed.connect(_on_gizmo_position_changed)
 	else:
@@ -240,6 +236,11 @@ func get_line_width() -> float:
 	return get_rect().size.x
 
 
+## Returns the height of the control
+func get_line_height() -> float:
+	return get_rect().size.y
+
+
 func _on_changed() -> void:
 	_update_gizmo_position()
 	size = Vector2.ZERO
@@ -268,8 +269,4 @@ func _update_gizmo_position() -> void:
 	if gizmos.is_empty():
 		return
 	var gizmo: Gizmo = gizmos[0]
-	var gizmo_position: Vector2 = position
-	gizmo_position.y += get_rect().size.y
-	var gizmo_grab_size: Vector2 = Vector2(Units.mm_to_px(gizmo.radius), Units.mm_to_px(gizmo.radius)) / 1.5
-	gizmo.set_begin(gizmo_position - gizmo_grab_size)
-	gizmo.set_end(gizmo_position + gizmo_grab_size)
+	gizmo.set_gizmo_position(position + Vector2(0.0, get_line_height()))
