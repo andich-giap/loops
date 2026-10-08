@@ -36,15 +36,20 @@ naming/script_name_casing=2
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/at-icons/plugin.cfg", "res://addons/dxf_inspector/plugin.cfg", "res://addons/gd_macros/plugin.cfg")
+enabled=PackedStringArray("res://addons/at-icons/plugin.cfg", "res://addons/dxf_inspector/plugin.cfg", "res://addons/gd_macros/plugin.cfg", "res://addons/gdUnit4/plugin.cfg")
 
 [file_customization]
 
 folder_colors={
 "res://features/": "pink",
 "res://gym/": "green",
-"res://resources/": "yellow"
+"res://resources/": "yellow",
+"res://tests/": "orange"
 }
+
+[gdunit4]
+
+settings/test/test_lookup_folder="tests"
 
 [global_group]
 
