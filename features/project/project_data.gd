@@ -40,3 +40,8 @@ func _on_page_data_name_changed(old_name: StringName, page_data: PageData) -> vo
 	page_data.take_over_path(new_path)
 	ResourceSaver.save(self)
 	page_data.name_changed.connect(_on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_ONE_SHOT)
+
+
+func delete_pages(page_datas: Array[PageData]) -> void:
+	for page_data: PageData in page_datas:
+		pages.erase(page_data.get_full_name())
