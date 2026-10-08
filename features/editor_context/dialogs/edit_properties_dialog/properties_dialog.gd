@@ -83,12 +83,15 @@ func get_properties(edited_nodes: Array[Node]) -> Array[Dictionary]:
 		var script: Script = _script
 		var property_list: Array[Dictionary]
 		var theme_property_list: Dictionary[StringName, Array]
-		if node.has_method("get_editable_properties"):
-			property_list = node.call("get_editable_properties")
+		if node.has_method(&"get_editable_properties"):
+			property_list = node.call(&"get_editable_properties")
+		if node.has_method(&"_validate_property"):
+			for property: Dictionary in property_list:
+				node.call(&"_validate_property", property)
 		else:
 			property_list = script.get_script_property_list()
-		if node.has_method("get_theme_editable_properties"):
-			theme_property_list = node.call("get_theme_editable_properties")
+		if node.has_method(&"get_theme_overridable_properties"):
+			theme_property_list = node.call(&"get_theme_overridable_properties")
 			__theme_properties_per_class[script] = theme_property_list
 		for property: Dictionary in property_list:
 			if property["usage"] & PROPERTY_USAGE_EDITOR:

@@ -112,7 +112,7 @@ func _create_property_control(_property: Dictionary) -> Control:
 				var option_button: OptionButton = OptionButton.new()
 				var enumeration: String = property["hint_string"]
 				for key: String in enumeration.split(","):
-					option_button.add_item(key.split(":")[0])
+					option_button.add_item(key.split(":")[0].to_snake_case().to_upper())
 				var index: int = value
 				if has_multiple_values:
 					option_button.add_item("...")

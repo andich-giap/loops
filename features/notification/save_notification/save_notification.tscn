@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://25s6fsq1freg"]
+
+[ext_resource type="Script" uid="uid://cuwi2jpvrw1oy" path="res://features/notification/notification.gd" id="1_xsien"]
+[ext_resource type="Texture2D" uid="uid://buoq2vb78ds1n" path="res://addons/at-icons/node2d/floppy_disk.svg" id="2_g3r4w"]
+[ext_resource type="Texture2D" uid="uid://00kl2p2pgdxw" path="res://addons/at-icons/control/checkmark_in_square.svg" id="3_im1pj"]
+
+[node name="SaveNotification" type="PanelContainer" unique_id=1404805143]
+custom_minimum_size = Vector2(32, 32)
+theme_type_variation = &"Overlay"
+script = ExtResource("1_xsien")
+
+[node name="FloppyDisk" type="TextureRect" parent="." unique_id=98642971]
+layout_mode = 2
+texture = ExtResource("2_g3r4w")
+expand_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="FloppyDisk" unique_id=786190045]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -14.0
+offset_right = 14.0
+offset_bottom = -2.0
+grow_vertical = 0
+
+[node name="Checkmark" type="TextureRect" parent="FloppyDisk" unique_id=1180737219]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+offset_right = 16.0
+grow_vertical = 0
+pivot_offset_ratio = Vector2(0, 1)
+texture = ExtResource("3_im1pj")
+metadata/_edit_lock_ = true

@@ -4,9 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dxwdlh8uhss5r" path="res://features/root_context/main_menu_context/main_menu_context.tscn" id="2_xyf87"]
 [ext_resource type="PackedScene" uid="uid://gbujm53dgawl" path="res://features/editor_context/editor_context.tscn" id="3_4poga"]
 [ext_resource type="PackedScene" uid="uid://by7xio6vbbjpg" path="res://features/root_context/main_menu_context/dialogs/create_new_project_dialog/create_project_dialog.tscn" id="4_xyf87"]
-[ext_resource type="Script" uid="uid://cuwi2jpvrw1oy" path="res://features/notification/notification.gd" id="5_lk6po"]
-[ext_resource type="Texture2D" uid="uid://00kl2p2pgdxw" path="res://addons/at-icons/control/checkmark_in_square.svg" id="6_2kfo2"]
-[ext_resource type="Texture2D" uid="uid://buoq2vb78ds1n" path="res://addons/at-icons/node2d/floppy_disk.svg" id="6_lk6po"]
+[ext_resource type="PackedScene" uid="uid://25s6fsq1freg" path="res://features/notification/save_notification/save_notification.tscn" id="5_4poga"]
 
 [node name="RootContext" type="Node" unique_id=1412128826]
 script = ExtResource("1_fitu1")
@@ -44,37 +42,7 @@ alignment = 2
 layout_mode = 2
 theme_type_variation = &"NotificationMargin"
 
-[node name="SaveNotification" type="PanelContainer" parent="Notifications/VBoxContainer/MarginContainer" unique_id=1299439183]
+[node name="SaveNotification" parent="Notifications/VBoxContainer/MarginContainer" unique_id=1404805143 instance=ExtResource("5_4poga")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(32, 32)
+visible = false
 layout_mode = 2
-theme_type_variation = &"Overlay"
-script = ExtResource("5_lk6po")
-
-[node name="FloppyDisk" type="TextureRect" parent="Notifications/VBoxContainer/MarginContainer/SaveNotification" unique_id=1222560934]
-layout_mode = 2
-texture = ExtResource("6_lk6po")
-expand_mode = 1
-
-[node name="ColorRect" type="ColorRect" parent="Notifications/VBoxContainer/MarginContainer/SaveNotification/FloppyDisk" unique_id=334735372]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -14.0
-offset_right = 14.0
-offset_bottom = -2.0
-grow_vertical = 0
-
-[node name="Checkmark" type="TextureRect" parent="Notifications/VBoxContainer/MarginContainer/SaveNotification/FloppyDisk" unique_id=767137547]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_top = -16.0
-offset_right = 16.0
-grow_vertical = 0
-pivot_offset_ratio = Vector2(0, 1)
-texture = ExtResource("6_2kfo2")
-metadata/_edit_lock_ = true

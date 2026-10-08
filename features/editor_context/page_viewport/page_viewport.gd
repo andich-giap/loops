@@ -93,19 +93,6 @@ func add_graphics(graphics: Node) -> void:
 	graphics.owner = contents_layer
 
 
-func _set_can_select(can_select: bool) -> void:
-	selection_manager.can_select = can_select
-
-
-func _set_layout_size(page_size: Vector2) -> void:
-	var layout_size: Vector2
-	layout_size.x = Units.mm_to_px(page_size.x)
-	layout_size.y = Units.mm_to_px(page_size.y)
-	if layout:
-		layout.custom_maximum_size = layout_size
-		layout.size = layout_size
-
-
 ## Returns the possible place position takin into account grid if it is visible.
 func get_place_position() -> Vector2:
 	var interval: Vector2 = Vector2(Units.mm_to_px(grid.interval), Units.mm_to_px(grid.interval))
@@ -128,6 +115,19 @@ func pack_contents() -> PackedScene:
 ## Resets the canvas transform of the viewport.
 func reset_view() -> void:
 	viewport_camera.viewport.canvas_transform = Transform2D.IDENTITY
+
+
+func _set_can_select(can_select: bool) -> void:
+	selection_manager.can_select = can_select
+
+
+func _set_layout_size(page_size: Vector2) -> void:
+	var layout_size: Vector2
+	layout_size.x = Units.mm_to_px(page_size.x)
+	layout_size.y = Units.mm_to_px(page_size.y)
+	if layout:
+		layout.custom_maximum_size = layout_size
+		layout.size = layout_size
 
 
 func _add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
@@ -176,7 +176,7 @@ func _add_contents(contents: PackedScene) -> void:
 		child.owner = null
 		child.reparent(contents_layer)
 		child.owner = contents_layer
-		child.set(&"page_viewport", self)
+		child.set(&"_page_viewport", self)
 	new_contents.queue_free()
 
 

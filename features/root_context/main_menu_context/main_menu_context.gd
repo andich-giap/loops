@@ -36,5 +36,6 @@ func setup() -> void:
 func add_recent_project(path: String) -> void:
 	var button: Button = Button.new()
 	button.text = path
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.pressed.connect(open_project_requested.emit.bind(path))
 	recent_projects_container.add_child(button)

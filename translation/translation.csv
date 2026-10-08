@@ -49,3 +49,16 @@ SUBPAGES_HOLD;Hold;Удерживать
 SUBPAGES_NUMBER;Number;Нумеровать
 SUBPAGES_CONVERT_TO_REGULAR;Convert to regular;Преобразовать в основные
 RULER_LENGTH;Ruler length;Длина линейки
+CREATE_PROJECT;Create project;Создать проект
+OPEN_PROJECT;Open project;Открыть проект
+RECENT_PROJECTS;Recent projects;Недавние проекты
+HORIZONTAL_ALIGNMENT;Horizontal alignment;Горизонтальное выравнивание
+HORIZONTAL_ALIGNMENT_LEFT;Left;Слева
+HORIZONTAL_ALIGNMENT_CENTER;Center;По центру
+HORIZONTAL_ALIGNMENT_RIGHT;Right;Справа
+VERTICAL_ALIGNMENT;Vertical alignment;Вертикальное выравнивание
+VERTICAL_ALIGNMENT_BOTTOM;Bottom;Снизу
+VERTICAL_ALIGNMENT_CENTER;Center;По центру
+VERTICAL_ALIGNMENT_TOP;Top;Сверху
+TEXT_COLOR;Text color;Цвет текста
+FONT_SIZE;Font size;Высота шрифта
