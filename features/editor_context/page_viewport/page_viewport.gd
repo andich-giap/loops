@@ -3,6 +3,8 @@ extends SubViewportContainer
 ## A viewport that shows [member PageData.contents].
 
 
+signal copy_graphics_requested(graphics: Array[Node])
+signal paste_graphics_requested
 enum State { ## Possible state when working with the page contents.
 	VIEWING, ## Default view for inspecting the contents visually.
 	PLACING, ## Interactive state for placing or drawing graphics.
@@ -21,6 +23,8 @@ var state: State = State.VIEWING: ## The current [enum State].
 @onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog ## Dialog that is used to edit the properties of the selected contents.
 @onready var reset_vew_button: Button = %ResetVewButton ## Button for resetting the canvas transform of the viewport.
 @onready var context_menu: PageViewportContextMenu = %PageViewportContextMenu
+@onready var modal_tools_manager: ModalToolsManager = %ModalToolsManager
+@onready var modal_tool_preview_layer: CanvasLayer = %ModalToolPreviewLayer
 
 
 func _ready() -> void:
@@ -30,6 +34,9 @@ func _ready() -> void:
 	reset_vew_button.pressed.connect(reset_view)
 	context_menu.hide()
 	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
+	modal_tools_manager.preview_layer = modal_tool_preview_layer
+	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished_executing)
+	modal_tools_manager.selection_requested.connect(request_selection)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -41,7 +48,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT:
+		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
+			and mouse_button_event.is_released():
 			show_context_menu()
 
 
@@ -223,4 +231,68 @@ func _on_page_data_changed() -> void:
 
 
 func _on_context_menu_index_pressed(index: int) -> void:
-	print(context_menu.get_item_text(index))
+	var action: String = context_menu.get_item_text(index)
+	match action:
+		"COPY":
+			copy_graphics(get_tree().get_nodes_in_group(&"selection"))
+		"CUT":
+			cut_graphics(get_tree().get_nodes_in_group(&"selection"))
+		"PASTE":
+			paste_graphics_requested.emit()
+		"MOVE":
+			activate_modal_tool(ModalToolMove, get_tree().get_nodes_in_group(&"selection"))
+		"DUPLICATE":
+			pass
+		"DELETE":
+			pass
+		"PROPERTIES":
+			pass
+
+
+func copy_graphics(graphics: Array[Node]) -> void:
+	if graphics.is_empty():
+		return
+	copy_graphics_requested.emit(graphics)
+
+
+func cut_graphics(graphics: Array[Node]) -> void:
+	if graphics.is_empty():
+		return
+	copy_graphics(graphics)
+	for node: Node in graphics:
+		node.queue_free()
+
+
+func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node]) -> void:
+	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
+	gui_input.connect(modal_tools_manager.handle_input)
+	selection_manager.can_select = false
+	get_tree().call_group(&"selection", &"remove_gizmos")
+
+
+func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
+	match receipt.get_script():
+		MoveReceipt:
+			handle_move_receipt(receipt as MoveReceipt)
+	selection_manager.can_select = true
+	gui_input.disconnect(modal_tools_manager.handle_input)
+	modal_tool_preview_layer.transform = Transform2D.IDENTITY
+
+
+func handle_move_receipt(receipt: MoveReceipt) -> void:
+	for node: Node in receipt.target_nodes:
+		node.set(&"position", node.get(&"position") - receipt.move_vector)
+		if node.has_method(&"update_bounding_box"):
+			node.call(&"update_bounding_box")
+	page_data.is_saved = false
+
+
+func request_selection(query: SelectionQuery) -> void:
+	print(query)
+	selection_manager.can_select = true
+	receive_selection([])
+
+
+func receive_selection(target_nodes: Array[Node], ...args: Array) -> void:
+	modal_tools_manager.receive_selection(target_nodes, args)
+	selection_manager.can_select = false

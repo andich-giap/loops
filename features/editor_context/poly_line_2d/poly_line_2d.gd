@@ -156,12 +156,6 @@ func set_is_selected(_is_selected: bool) -> void:
 		default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
-		for point: int in range(points.size()):
-			var gizmo: Gizmo = gizmos[point]
-			gizmo.set_gizmo_position(get_point_position(point))
-			gizmo.position_changed.connect(_on_gizmo_position_changed.bind(point))
-			gizmo.grabbed.connect(_on_gizmo_grabbed.bind(point))
-			gizmo.released.connect(_on_gizmo_released)
 	else:
 		default_color = color
 		if not gizmos.is_empty():
@@ -222,12 +216,19 @@ func add_gizmos() -> void:
 		var gizmo: Gizmo = Gizmo.new()
 		gizmo.graphics_node = self
 		owner.add_child(gizmo)
+		gizmo.set_gizmo_position(get_point_position(_point) + position)
+		gizmo.position_changed.connect(_on_gizmo_position_changed.bind(_point))
+		gizmo.grabbed.connect(_on_gizmo_grabbed.bind(_point))
+		gizmo.released.connect(_on_gizmo_released)
 		gizmos.append(gizmo)
 
 
 ## Removes gizmos.
 func remove_gizmos() -> void:
 	for gizmo: Gizmo in gizmos:
+		gizmo.position_changed.disconnect(_on_gizmo_position_changed)
+		gizmo.grabbed.disconnect(_on_gizmo_grabbed)
+		gizmo.released.disconnect(_on_gizmo_released)
 		gizmo.queue_free()
 	gizmos.clear()
 
@@ -244,6 +245,9 @@ func get_editable_properties() -> Array[Dictionary]:
 
 ## Recalculates the bounding box of a line.
 func update_bounding_box() -> void:
+	if points.size() == 0:
+		bounding_box = Rect2()
+		return
 	if bounding_box.has_area():
 		bounding_box = bounding_box.expand(points[_active_point])
 	elif points.size() >= 2:
@@ -253,7 +257,7 @@ func update_bounding_box() -> void:
 
 
 func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:
-	set_point_position(point, new_position)
+	set_point_position(point, new_position - position)
 
 
 func _on_gizmo_grabbed(point: int) -> void:

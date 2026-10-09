@@ -74,8 +74,11 @@ func get_selection(_selection_rect: Rect2) -> Array[Node]:
 		if node_rect.intersects(_selection_rect.abs()):
 			if node is PolyLine2D:
 				var poly_line_2d: PolyLine2D = node
+				var poly_line_points: PackedVector2Array = PackedVector2Array()
+				for point: Vector2 in poly_line_2d.points:
+					poly_line_points.append(point + poly_line_2d.position)
 				var intersection: Array[PackedVector2Array] = Geometry2D.intersect_polyline_with_polygon(
-					poly_line_2d.points,
+					poly_line_points,
 					rect2_to_packed_vector2_array(_selection_rect)
 					)
 				if not intersection.is_empty():
@@ -100,8 +103,8 @@ static func rect2_to_packed_vector2_array(rect: Rect2) -> PackedVector2Array:
 ## Adds specified [param node] to "selection" group
 func add_to_selection(node: Node) -> void:
 	node.add_to_group(&"selection")
-	if node.has_method("add_to_selection"):
-		node.call("add_to_selection")
+	if node.has_method(&"add_to_selection"):
+		node.call(&"add_to_selection")
 
 
 ## Returns bounding box of a node if it has such.
@@ -109,10 +112,11 @@ func get_node_rect(node: Node) -> Rect2:
 	var rect: Rect2
 	if node is PolyLine2D:
 		var poly_line_2d: PolyLine2D = node
-		return poly_line_2d.bounding_box
-	if node is LLineEdit:
+		rect = poly_line_2d.bounding_box
+		rect.position += poly_line_2d.position
+	elif node is LLineEdit:
 		var l_line_edit: LLineEdit = node
-		rect = l_line_edit.get_rect()
+		rect = l_line_edit.get_global_rect()
 	return rect
 
 

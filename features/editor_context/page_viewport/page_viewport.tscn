@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://cise7ijyppxmj" path="res://addons/at-icons/node3d/trash_can.svg" id="13_j8bff"]
 [ext_resource type="Texture2D" uid="uid://c3p6orknwcka8" path="res://addons/at-icons/node2d/file_sliders.svg" id="14_j4jnu"]
 [ext_resource type="Script" uid="uid://b5csr8ahuf7vv" path="res://features/editor_context/page_viewport/page_viewport_context_menu.gd" id="15_uc4a7"]
+[ext_resource type="Script" uid="uid://bredekwx8eyim" path="res://features/editor_context/page_viewport/modal_tools/modal_tools_manager.gd" id="16_3mgi4"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kvkci"]
 device = -1
@@ -108,6 +109,13 @@ shortcut = SubResource("Shortcut_g0s4p")
 icon = ExtResource("5_kvkci")
 flat = true
 
+[node name="ModalToolPreviewLayer" type="CanvasLayer" parent="SubViewport" unique_id=1915219701]
+unique_name_in_owner = true
+follow_viewport_enabled = true
+
+[node name="CanvasModulate" type="CanvasModulate" parent="SubViewport/ModalToolPreviewLayer" unique_id=265675988]
+color = Color(1, 1, 1, 0.5019608)
+
 [node name="ViewportCamera" type="Node2D" parent="." unique_id=1987732426 node_paths=PackedStringArray("viewport")]
 unique_name_in_owner = true
 script = ExtResource("5_x5m46")
@@ -122,7 +130,9 @@ unique_name_in_owner = true
 transparent_bg = false
 oversampling_override = 1.0
 size = Vector2i(150, 184)
+transient_to_focused = true
 transparent = false
+mouse_passthrough = true
 item_count = 9
 item_0/text = "COPY"
 item_0/icon = ExtResource("8_85lfk")
@@ -150,6 +160,10 @@ item_8/text = "PROPERTIES"
 item_8/icon = ExtResource("14_j4jnu")
 item_8/id = 13
 script = ExtResource("15_uc4a7")
+
+[node name="ModalToolsManager" type="Node" parent="." unique_id=534449232]
+unique_name_in_owner = true
+script = ExtResource("16_3mgi4")
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]
 [connection signal="mouse_exited" from="." to="ViewportCamera" method="set_process_input" binds= [false]]
