@@ -271,20 +271,11 @@ func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node]) -> void:
 
 
 func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
-	match receipt.get_script():
-		MoveReceipt:
-			handle_move_receipt(receipt as MoveReceipt)
+	receipt.apply_changes()
+	page_data.is_saved = false
 	selection_manager.can_select = true
 	gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
-
-
-func handle_move_receipt(receipt: MoveReceipt) -> void:
-	for node: Node in receipt.target_nodes:
-		node.set(&"position", node.get(&"position") - receipt.move_vector)
-		if node.has_method(&"update_bounding_box"):
-			node.call(&"update_bounding_box")
-	page_data.is_saved = false
 
 
 func request_selection(query: SelectionQuery) -> void:

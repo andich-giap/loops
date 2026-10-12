@@ -27,6 +27,12 @@ func exit(receipt: ModalToolReceipt) -> void:
 	finished.emit(receipt)
 
 
+func receive_selection(target_nodes: Array[Node], ..._args: Array) -> void:
+	_target_nodes = target_nodes
+	print(target_nodes, _args)
+	selection_received.emit()
+
+
 @abstract func handle_input(event: InputEvent) -> void
 
 
@@ -36,9 +42,3 @@ func _add_graphics_preview() -> void:
 	for node: Node in _target_nodes:
 		var preview_node: Node = node.duplicate()
 		_preview_layer.add_child(preview_node)
-
-
-func receive_selection(target_nodes: Array[Node], ..._args: Array) -> void:
-	_target_nodes = target_nodes
-	print(target_nodes, _args)
-	selection_received.emit()
