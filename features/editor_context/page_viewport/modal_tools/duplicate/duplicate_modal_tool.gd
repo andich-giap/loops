@@ -1,4 +1,4 @@
-class_name ModalToolMove
+class_name DuplicateModalTool
 extends ModalTool
 
 
@@ -78,14 +78,14 @@ func handle_input_previewing(event: InputEvent) -> void:
 			return
 		current_state = State.EXECUTING
 		var final_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * mouse_button_event.position
-		execute_move(final_canvas_mouse)
+		execute(final_canvas_mouse)
 
 
-func execute_move(end_position: Vector2) -> void:
+func execute(end_position: Vector2) -> void:
 	end_point = end_position
-	var move_receipt: MoveReceipt = MoveReceipt.new(
+	var duplicate_receipt: DuplicateReceipt = DuplicateReceipt.new(
 		_target_nodes,
 		base_point - end_point
 	)
 	current_state = State.FINISHING
-	exit(move_receipt)
+	exit(duplicate_receipt)
