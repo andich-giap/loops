@@ -99,16 +99,6 @@ func _validate_property(property: Dictionary) -> void:
 #region setters/getters
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
-	if is_selected:
-		if gizmos.is_empty():
-			add_gizmos()
-		var gizmo: Gizmo = gizmos[0]
-		gizmo.set_gizmo_position(position + Vector2(0.0, get_line_height()))
-		if not gizmo.position_changed.is_connected(_on_gizmo_position_changed):
-			gizmo.position_changed.connect(_on_gizmo_position_changed)
-	else:
-		if not gizmos.is_empty():
-			remove_gizmos()
 	queue_redraw()
 
 
@@ -162,6 +152,8 @@ func set_text_vertical_alignment(_vertical_alignment: VerticalAlignment) -> void
 ## Adds text line to the selection.
 func add_to_selection() -> void:
 	is_selected = true
+	if gizmos.is_empty():
+		add_gizmos()
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_selection_color", &"LLineEdit"))
 	queue_redraw()
 
@@ -220,12 +212,16 @@ func add_gizmos() -> void:
 	var gizmo: Gizmo = Gizmo.new()
 	gizmo.graphics_node = self
 	owner.add_child(gizmo)
+	gizmo.set_gizmo_position(position + Vector2(0.0, get_line_height()))
+	if not gizmo.position_changed.is_connected(_on_gizmo_position_changed):
+		gizmo.position_changed.connect(_on_gizmo_position_changed)
 	gizmos.append(gizmo)
 
 
 ## Removes gizmos
 func remove_gizmos() -> void:
 	for gizmo: Gizmo in gizmos:
+		gizmo.position_changed.disconnect(_on_gizmo_position_changed)
 		gizmo.queue_free()
 	gizmos.clear()
 

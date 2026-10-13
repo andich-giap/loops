@@ -28,6 +28,7 @@ func open_page_in_new_tab(page_data: PageData) -> void:
 	add_child(page_viewport)
 
 
+#region setters/getters
 func get_current_page() -> PageViewport:
 	if get_child_count() == 0:
 		return null
@@ -35,6 +36,12 @@ func get_current_page() -> PageViewport:
 	if tab is PageViewport:
 		return tab
 	return null
+#endregion
+
+
+## Triggers [ModalTool] activation in current [PageViewport] without selection.
+func activate_modal_tool(modal_tool: GDScript) -> void:
+	current_page.activate_modal_tool(modal_tool)
 
 
 func _on_tool_bar_graphics_added(graphics: Node) -> void:
