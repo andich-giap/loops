@@ -12,7 +12,7 @@ var single_click_size: float = 3.0 ## The size of the selection rect on a single
 var clear_on_new_selection: bool = true ## If [code]true[/code] when starting the new selection previous selection is cleared unless [kbd]Shift[/kbd] is pressed.
 var contents_layer: CanvasLayer ## Reference to the layer with the contents.
 var _query: SelectionQuery ## Current [SelectionQuery].
-var _selection_receipt: SelectionReceipt ## Current selection.
+var _selection_receipt: SelectionReceipt = SelectionReceipt.new() ## Current selection.
 
 
 func _draw() -> void:
@@ -29,29 +29,8 @@ func set_is_selecting(_is_selecting: bool) -> void:
 	is_selecting = _is_selecting
 	if is_selecting:
 		return
-	process_selection()
+	_get_interactive_selection()
 #endregion
-
-
-func process_selection() -> void:
-	if not _query:
-		_query = SelectionQuery.new()
-	var selection_receipt: SelectionReceipt = get_selection(_query, selection_rect)
-	
-	if selection_receipt.is_empty():
-		return
-	match _query.mode:
-		SelectionQuery.Mode.ADD:
-			add_to_selection(_query, selection_receipt)
-		SelectionQuery.Mode.REPLACE:
-			remove_from_selection(_selection_receipt)
-			add_to_selection(_query, selection_receipt)
-		SelectionQuery.Mode.SUBTRACT:
-			remove_from_selection(selection_receipt)
-	
-	selection_changed.emit(selection_receipt)
-	selection_rect.size = Vector2.ZERO
-	_selection_receipt = selection_receipt
 
 
 ## Returns the array containing the nodes that are under a [param _selection_rect].
@@ -92,6 +71,19 @@ static func rect2_to_packed_vector2_array(rect: Rect2) -> PackedVector2Array:
 	])
 
 
+func handle_receipt(receipt:SelectionReceipt, query: SelectionQuery = _query) -> void:
+	match query.mode:
+		SelectionQuery.Mode.ADD:
+			add_to_selection(query, receipt)
+		SelectionQuery.Mode.REPLACE:
+			remove_from_selection(_selection_receipt)
+			add_to_selection(query, receipt)
+		SelectionQuery.Mode.SUBTRACT:
+			remove_from_selection(receipt)
+	selection_changed.emit(receipt)
+	selection_rect.size = Vector2.ZERO
+
+
 ## Adds specified [param node] to "selection" group
 func add_to_selection(query: SelectionQuery, receipt: SelectionReceipt) -> void:
 	match query.type:
@@ -101,28 +93,35 @@ func add_to_selection(query: SelectionQuery, receipt: SelectionReceipt) -> void:
 					node.call(&"select_points", receipt.selected_points[node])
 				elif node.has_method(&"add_to_selection"):
 					node.call(&"add_to_selection")
+				if not _selection_receipt.selected_points.has(node):
+					_selection_receipt.selected_points[node] = PackedInt32Array()
+				_selection_receipt.selected_points[node].append_array(receipt.selected_points[node])
 		SelectionQuery.Type.NODE:
 			var node: Node = receipt.selected_nodes[0]
 			if node.has_method(&"add_to_selection"):
 				node.call(&"add_to_selection")
+			_selection_receipt.selected_nodes.append(node)
 		SelectionQuery.Type.NODES:
 			for node: Node in receipt.selected_nodes:
 				if node.has_method(&"add_to_selection"):
 					node.call(&"add_to_selection")
+			_selection_receipt.selected_nodes.append_array(receipt.selected_nodes)
 
 
 ## Removes nodes and points from current selection.
 func remove_from_selection(receipt: SelectionReceipt) -> void:
-	if not receipt:
+	if not receipt or receipt.is_empty():
 		return
 	for node: Node in receipt.selected_nodes:
 		if node.has_method(&"remove_from_selection"):
 			node.call(&"remove_from_selection")
+		receipt.selected_nodes.erase(node)
 	for node: Node in receipt.selected_points.keys():
 		if node.has_method(&"deselect_points"):
 			node.call(&"deselect_points", receipt.selected_points[node])
 		elif node.has_method(&"remove_gizmos"):
 			node.call(&"remove_gizmos")
+		receipt.selected_points.erase(node)
 
 
 ## Returns bounding box of a node if it has such.
@@ -140,6 +139,7 @@ func get_node_rect(node: Node) -> Rect2:
 
 ## Clears the selection.
 func clear_selection() -> void:
+	_selection_receipt.clear()
 	get_tree().call_group(&"selection", &"remove_from_selection")
 
 
@@ -149,16 +149,28 @@ func request_selection(query: SelectionQuery) -> void:
 	_query = query
 
 
+## Gets the [SelectionQuery.Mode].
 func get_selection_mode() -> SelectionQuery.Mode:
 	return _query.mode
 
 
+## Sets the [SelectionQuery.Mode].
 func set_selection_mode(mode: SelectionQuery.Mode) -> void:
 	_query.mode = mode
 
 
+## Returns the size of single click selection.
 func get_singale_click_vector() -> Vector2:
 	return Vector2(single_click_size, single_click_size)
+
+
+## Resets query to use default parameters of [SelectionQuery].
+func reset_query() -> void:
+	_query = SelectionQuery.new()
+
+
+func get_current_selection() -> SelectionReceipt:
+	return _selection_receipt
 
 
 ## Determines if a [PolyLine2D] should be selected.
@@ -188,3 +200,8 @@ func _handle_poly_line_2d_selection(
 			)
 		if not intersection.is_empty():
 			receipt.selected_nodes.append(poly_line_2d)
+
+
+func _get_interactive_selection(query: SelectionQuery = _query) -> void:
+	var selection_receipt: SelectionReceipt = get_selection(query, selection_rect)
+	handle_receipt(selection_receipt, query)

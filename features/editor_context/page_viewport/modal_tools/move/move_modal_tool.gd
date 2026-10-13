@@ -13,12 +13,14 @@ enum State {
 var current_state: State = State.STARTING
 var base_point: Vector2
 var end_point: Vector2
+var _selection_query: SelectionQuery = SelectionQuery.new(SelectionQuery.Type.NODES)
 
 
 func enter(target_nodes: Array[Node], preview_layer: CanvasLayer) -> void:
 	super(target_nodes, preview_layer)
 	if target_nodes.is_empty():
-		selection_requested.emit(SelectionQuery.new(SelectionQuery.Type.NODES))
+		selection_requested.emit(_selection_query)
+		selection_received.connect(_on_selection_received)
 		current_state = State.SELECTING
 		return
 	current_state = State.WAITING_FOR_BASE_POINT
@@ -26,29 +28,12 @@ func enter(target_nodes: Array[Node], preview_layer: CanvasLayer) -> void:
 
 func handle_input(event: InputEvent) -> void:
 	match current_state:
-		State.SELECTING:
-			handle_input_selecting(event)
 		State.WAITING_FOR_BASE_POINT:
 			handle_input_waiting_for_base_point(event)
 		State.PREVIEWING:
 			handle_input_previewing(event)
 		_:
 			return
-
-
-func handle_input_selecting(event: InputEvent) -> void:
-	if event is not InputEventMouseButton:
-		return
-	var mouse_button_event: InputEventMouseButton = event
-	if not mouse_button_event.button_index == MOUSE_BUTTON_LEFT \
-		or not mouse_button_event.is_released():
-		return
-	var selected_nodes: Array[Node] = _preview_layer.get_tree().get_nodes_in_group(&"selection")
-	if selected_nodes.is_empty():
-		return
-	_target_nodes = selected_nodes
-	selection_received.emit()
-	current_state = State.WAITING_FOR_BASE_POINT
 
 
 func handle_input_waiting_for_base_point(event: InputEvent) -> void:
@@ -78,10 +63,10 @@ func handle_input_previewing(event: InputEvent) -> void:
 			return
 		current_state = State.EXECUTING
 		var final_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * mouse_button_event.position
-		execute_move(final_canvas_mouse)
+		execute(final_canvas_mouse)
 
 
-func execute_move(end_position: Vector2) -> void:
+func execute(end_position: Vector2) -> void:
 	end_point = end_position
 	var move_receipt: MoveReceipt = MoveReceipt.new(
 		_target_nodes,
@@ -89,3 +74,13 @@ func execute_move(end_position: Vector2) -> void:
 	)
 	current_state = State.FINISHING
 	exit(move_receipt)
+
+
+func _on_selection_received(receipt: SelectionReceipt) -> void:
+	if receipt.is_empty():
+		selection_requested.emit(_selection_query)
+		return
+	_target_nodes = receipt.selected_nodes
+	_target_nodes[0].get_tree().call_group(&"selection", &"remove_gizmos")
+	_add_graphics_preview()
+	current_state = State.WAITING_FOR_BASE_POINT

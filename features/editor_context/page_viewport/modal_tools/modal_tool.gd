@@ -7,7 +7,7 @@ signal started
 signal finished(receipt: ModalToolReceipt)
 @warning_ignore("unused_signal")
 signal selection_requested(selection_query: SelectionQuery)
-signal selection_received
+signal selection_received(receipt: SelectionReceipt)
 var _target_nodes: Array[Node]
 var _preview_layer: CanvasLayer
 
@@ -29,8 +29,7 @@ func exit(receipt: ModalToolReceipt) -> void:
 
 func receive_selection(receipt: SelectionReceipt) -> void:
 	_target_nodes = receipt.selected_nodes
-	print(_target_nodes)
-	selection_received.emit()
+	selection_received.emit(receipt)
 
 
 @abstract func handle_input(event: InputEvent) -> void

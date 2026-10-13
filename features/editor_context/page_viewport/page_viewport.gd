@@ -5,6 +5,7 @@ extends SubViewportContainer
 
 signal copy_graphics_requested(graphics: Array[Node])
 signal paste_graphics_requested
+signal unpress_modal_tool_buttons
 enum State { ## Possible state when working with the page contents.
 	VIEWING, ## Default view for inspecting the contents visually.
 	PLACING, ## Interactive state for placing or drawing graphics.
@@ -29,7 +30,7 @@ var _unsaved_contents: Dictionary[PageData, PackedScene]
 
 func _ready() -> void:
 	selection_manager.contents_layer = contents_layer
-	selection_manager.request_selection(SelectionQuery.new())
+	selection_manager.reset_query()
 	selection_manager.selection_changed.connect(_on_selection_changed)
 	
 	if page_data:
@@ -42,6 +43,7 @@ func _ready() -> void:
 	modal_tools_manager.preview_layer = modal_tool_preview_layer
 	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished_executing)
 	modal_tools_manager.selection_requested.connect(request_selection)
+	modal_tools_manager.execution_cancelled.connect(deactivate_modal_tool)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -56,40 +58,8 @@ func _gui_input(event: InputEvent) -> void:
 		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
 			and mouse_button_event.is_released():
 			show_context_menu()
-	_handle_selection_input(event)
-
-
-func _handle_selection_input(event: InputEvent) -> void:
-	if not selection_manager.can_select:
-		selection_manager.is_selecting = false
-		return
-	if event is InputEventMouseButton:
-		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.shift_pressed:
-			selection_manager.set_selection_mode(SelectionQuery.Mode.ADD)
-		elif mouse_button_event.alt_pressed:
-			selection_manager.set_selection_mode(SelectionQuery.Mode.SUBTRACT)
-		else:
-			selection_manager.set_selection_mode(SelectionQuery.Mode.REPLACE)
-		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
-			if mouse_button_event.is_pressed():
-				selection_manager.is_selecting = true
-				selection_manager.selection_rect.position = get_local_mouse_position()
-			else:
-				if selection_manager.selection_rect.size.is_zero_approx():
-					selection_manager.selection_rect.position = (
-						get_local_mouse_position() 
-						- selection_manager.get_singale_click_vector()
-						/ 2.0
-					)
-					selection_manager.selection_rect.size = selection_manager.get_singale_click_vector()
-				selection_manager.is_selecting = false
-				selection_manager.queue_redraw()
-				return
-	
-	if event is InputEventMouseMotion and selection_manager.is_selecting:
-		selection_manager.selection_rect.end = get_local_mouse_position()
-		selection_manager.queue_redraw()
+	if selection_manager.can_select:
+		_handle_selection_input(event)
 
 
 #region setters/getters
@@ -174,6 +144,7 @@ func reset_view() -> void:
 	viewport_camera.viewport.canvas_transform = Transform2D.IDENTITY
 
 
+## Activates [member context_menu].
 func show_context_menu() -> void:
 	context_menu.position = get_global_mouse_position()
 	if get_tree().get_first_node_in_group(&"selection"):
@@ -198,37 +169,59 @@ func cut_graphics(graphics: Array[Node]) -> void:
 
 
 #region ModalTools
+## Activates modal tool execution.
 func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> void:
+	if not graphics:
+		graphics = selection_manager.get_current_selection().selected_nodes
 	deactivate_modal_tool()
-	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
-	gui_input.connect(modal_tools_manager.handle_input)
 	selection_manager.can_select = false
+	gui_input.connect(modal_tools_manager.handle_input)
 	get_tree().call_group(&"selection", &"remove_gizmos")
+	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
 
 
+## Deactivates modal tool execution.
 func deactivate_modal_tool() -> void:
 	modal_tools_manager.deactivate_modal_tool()
 	if gui_input.is_connected(modal_tools_manager.handle_input):
 		gui_input.disconnect(modal_tools_manager.handle_input)
 
 
+## Sends the [SelectionQuery] to [member selection_manager].
 func request_selection(query: SelectionQuery) -> void:
-	print(query)
-	selection_manager.query_selection(query)
-	selection_manager.selection_changed.connect(receive_selection)
+	selection_manager.request_selection(query)
+	selection_manager.selection_changed.connect(_receive_selection, CONNECT_ONE_SHOT)
 
 
-func receive_selection(receipt: SelectionReceipt) -> void:
+func _receive_selection(receipt: SelectionReceipt) -> void:
 	modal_tools_manager.receive_selection(receipt)
+	selection_manager.reset_query()
 	selection_manager.can_select = false
 
 
 func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
+	if receipt is DuplicateReceipt:
+		var duplicate_receipt: DuplicateReceipt = receipt
+		duplicate_receipt.nodes_added.connect(_on_duplicate_nodes_added, CONNECT_ONE_SHOT)
 	receipt.apply_changes()
 	page_data.is_saved = false
 	selection_manager.can_select = true
+	selection_manager.reset_query()
 	gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
+	unpress_modal_tool_buttons.emit()
+	get_viewport().set_input_as_handled()
+
+
+func _on_duplicate_nodes_added(duplicate_nodes: Array[Node]) -> void:
+	for node: Node in duplicate_nodes:
+		add_graphics(node)
+	var selection_receipt: SelectionReceipt = SelectionReceipt.new()
+	selection_receipt.selected_nodes = duplicate_nodes
+	selection_manager.handle_receipt(
+		selection_receipt,
+		SelectionQuery.new()
+	)
 #endregion
 
 
@@ -337,5 +330,38 @@ func _on_context_menu_index_pressed(index: int) -> void:
 			pass
 
 
-func _on_selection_changed(receipt: SelectionReceipt) -> void:
+func _on_selection_changed(_receipt: SelectionReceipt) -> void:
 	pass
+
+
+func _handle_selection_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if mouse_button_event.shift_pressed:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.ADD)
+		elif mouse_button_event.alt_pressed:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.SUBTRACT)
+		else:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.REPLACE)
+		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
+			if mouse_button_event.is_pressed():
+				selection_manager.is_selecting = true
+				selection_manager.selection_rect.position = selection_manager.get_local_mouse_position()
+			else:
+				if selection_manager.selection_rect.size.is_zero_approx():
+					selection_manager.selection_rect.position = (
+						selection_manager.get_local_mouse_position() 
+						- selection_manager.get_singale_click_vector() / 2.0
+					)
+					selection_manager.selection_rect.size = selection_manager.get_singale_click_vector()
+				selection_manager.is_selecting = false
+				selection_manager.queue_redraw()
+				return
+	
+	if event is InputEventMouseMotion and selection_manager.is_selecting:
+		selection_manager.selection_rect.end = selection_manager.get_local_mouse_position()
+		selection_manager.queue_redraw()
+	
+	
+	if event.is_action(&"ui_cancel"):
+		selection_manager.clear_selection()

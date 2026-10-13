@@ -60,6 +60,8 @@ func setup() -> void:
 	
 	_page_manager_node.open_page_requested.connect(open_page)
 	_page_manager_node.close_project_requested.connect(_handle_close_project)
+	
+	_pages_tab_container.unpress_modal_tool_buttons.connect(_tool_bar_node.modal_tools_bar.unpress_button)
 
 
 ## Opens the project with the given [param project_data]. [param project_data] can be retrieved via [method RootContext.load_project].
