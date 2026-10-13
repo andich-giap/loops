@@ -256,15 +256,15 @@ func update_bounding_box() -> void:
 			bounding_box = bounding_box.expand(point)
 
 
+## Selects individual points
 func select_points(_points: PackedInt32Array = []) -> void:
 	remove_gizmos()
 	add_gizmos()
-	if _points.is_empty():
-		_points = PackedInt32Array(range(gizmos.size()))
 	for gizmo: int in _points:
 		gizmos[gizmo].is_selected = true
 
 
+## Deselects individual points.
 func deselect_points(_points: PackedInt32Array = []) -> void:
 	if _points.is_empty():
 		_points = PackedInt32Array(range(gizmos.size()))

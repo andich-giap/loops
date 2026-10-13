@@ -3,6 +3,7 @@ extends TabContainer
 ## Contains opened pages as [PageViewport]s.
 
 
+signal unpress_modal_tool_buttons
 const PAGE_VIEWPORT: PackedScene = preload("uid://fuajg8iy61yx")
 var current_page: PageViewport: ## Returns focused [PageViewport] or [code]null[/code] if there are no pages opened.
 	get = get_current_page
@@ -24,6 +25,7 @@ func open_page(page_data: PageData) -> void:
 ## Opens the page as a [PageViewport].
 func open_page_in_new_tab(page_data: PageData) -> void:
 	var page_viewport: PageViewport = PAGE_VIEWPORT.instantiate()
+	page_viewport.unpress_modal_tool_buttons.connect(unpress_modal_tool_buttons.emit)
 	page_viewport.page_data = page_data
 	add_child(page_viewport)
 

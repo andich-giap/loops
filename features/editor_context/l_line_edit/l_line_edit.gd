@@ -154,6 +154,7 @@ func add_to_selection() -> void:
 	is_selected = true
 	if gizmos.is_empty():
 		add_gizmos()
+	add_to_group(&"selection")
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"text_selection_color", &"LLineEdit"))
 	queue_redraw()
 
