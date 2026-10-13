@@ -58,8 +58,11 @@ func _gui_input(event: InputEvent) -> void:
 		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
 			and mouse_button_event.is_released():
 			show_context_menu()
-	if selection_manager.can_select:
+	if state == State.VIEWING and selection_manager.can_select:
 		_handle_selection_input(event)
+	else:
+		selection_manager.selection_rect.size = Vector2.ZERO
+		selection_manager.queue_redraw()
 
 
 #region setters/getters
@@ -116,7 +119,8 @@ func add_graphics(graphics: Node) -> void:
 		_add_poly_line_2d(graphics as PolyLine2D)
 	if graphics is LLineEdit:
 		_add_l_line_edit(graphics as LLineEdit)
-	contents_layer.add_child(graphics)
+	if not graphics.get_parent() == contents_layer:
+		contents_layer.add_child(graphics)
 	graphics.owner = contents_layer
 
 
@@ -174,7 +178,7 @@ func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> vo
 	if not graphics:
 		graphics = selection_manager.get_current_selection().selected_nodes
 	deactivate_modal_tool()
-	selection_manager.can_select = false
+	_set_can_select(false)
 	gui_input.connect(modal_tools_manager.handle_input)
 	get_tree().call_group(&"selection", &"remove_gizmos")
 	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
@@ -196,32 +200,18 @@ func request_selection(query: SelectionQuery) -> void:
 func _receive_selection(receipt: SelectionReceipt) -> void:
 	modal_tools_manager.receive_selection(receipt)
 	selection_manager.reset_query()
-	selection_manager.can_select = false
+	_set_can_select(false)
 
 
 func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
-	if receipt is DuplicateReceipt:
-		var duplicate_receipt: DuplicateReceipt = receipt
-		duplicate_receipt.nodes_added.connect(_on_duplicate_nodes_added, CONNECT_ONE_SHOT)
-	receipt.apply_changes()
+	receipt.apply_changes(self)
 	page_data.is_saved = false
-	selection_manager.can_select = true
+	_set_can_select(true)
 	selection_manager.reset_query()
 	gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
 	unpress_modal_tool_buttons.emit()
 	get_viewport().set_input_as_handled()
-
-
-func _on_duplicate_nodes_added(duplicate_nodes: Array[Node]) -> void:
-	for node: Node in duplicate_nodes:
-		add_graphics(node)
-	var selection_receipt: SelectionReceipt = SelectionReceipt.new()
-	selection_receipt.selected_nodes = duplicate_nodes
-	selection_manager.handle_receipt(
-		selection_receipt,
-		SelectionQuery.new()
-	)
 #endregion
 
 
@@ -243,6 +233,7 @@ func _add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
 	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING), CONNECT_ONE_SHOT)
+	poly_line_2d.points_editing_toggled.connect(_on_poly_line_2d_point_editing_toggled)
 
 
 func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
@@ -251,6 +242,7 @@ func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 	l_line_edit.editing_toggled.connect(_on_l_line_edit_editing_toggled)
 	l_line_edit.finished_placing.connect(set_state.bind(State.EDITING), CONNECT_ONE_SHOT)
+	l_line_edit.position_editing_toggled.connect(_on_l_line_edit_editing_toggled)
 
 
 func _update_page_viewport() -> void:
@@ -283,9 +275,18 @@ func _add_contents(contents: PackedScene) -> void:
 	for child: Node in new_contents.get_children():
 		child.owner = null
 		child.reparent(contents_layer)
-		child.owner = contents_layer
-		child.set(&"_page_viewport", self)
+		add_graphics(child)
 	new_contents.queue_free()
+	page_data.is_saved = true
+
+
+func _on_poly_line_2d_point_editing_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		state = State.EDITING
+	else:
+		state = State.VIEWING
+	get_viewport().set_input_as_handled()
+	selection_manager.is_selecting = false
 
 
 func _on_l_line_edit_editing_toggled(toggled_on: bool) -> void:
@@ -293,6 +294,8 @@ func _on_l_line_edit_editing_toggled(toggled_on: bool) -> void:
 		state = State.EDITING
 	else:
 		state = State.VIEWING
+	get_viewport().set_input_as_handled()
+	selection_manager.is_selecting = false
 
 
 func _on_page_data_content_changed() -> void:
@@ -355,6 +358,7 @@ func _handle_selection_input(event: InputEvent) -> void:
 					)
 					selection_manager.selection_rect.size = selection_manager.get_singale_click_vector()
 				selection_manager.is_selecting = false
+				selection_manager.request_user_selection_check()
 				selection_manager.queue_redraw()
 				return
 	

@@ -7,6 +7,7 @@ extends Line2D
 signal changed ## Emmited on changing the line [member decoration], [member segment_step], [member decoration_size] or point position is changed.
 signal deleted ## Emmited on deleting the line.
 signal finished_drawing ## Emitted on confirming the drawing of the line after creating.
+signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 enum DecorationType { ## Tye type line decorations.
 	NONE, ## No decorations.
 	LINE, ## A short line decoration at 45 degrees angele.
@@ -278,6 +279,7 @@ func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:
 
 func _on_gizmo_grabbed(point: int) -> void:
 	_previous_point_position = get_point_position(point)
+	points_editing_toggled.emit(true)
 
 
 func _on_gizmo_released() -> void:
@@ -286,6 +288,7 @@ func _on_gizmo_released() -> void:
 		bounding_box = bounding_box.expand(point_position)
 	changed.emit()
 	queue_redraw()
+	points_editing_toggled.emit(false)
 
 
 func _get_place_position() -> Vector2:
