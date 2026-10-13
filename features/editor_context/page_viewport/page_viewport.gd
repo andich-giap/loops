@@ -60,6 +60,9 @@ func _gui_input(event: InputEvent) -> void:
 			show_context_menu()
 	if selection_manager.can_select:
 		_handle_selection_input(event)
+	else:
+		selection_manager.selection_rect.size = Vector2.ZERO
+		selection_manager.queue_redraw()
 
 
 #region setters/getters
@@ -174,7 +177,7 @@ func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> vo
 	if not graphics:
 		graphics = selection_manager.get_current_selection().selected_nodes
 	deactivate_modal_tool()
-	selection_manager.can_select = false
+	_set_can_select(false)
 	gui_input.connect(modal_tools_manager.handle_input)
 	get_tree().call_group(&"selection", &"remove_gizmos")
 	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
@@ -196,32 +199,18 @@ func request_selection(query: SelectionQuery) -> void:
 func _receive_selection(receipt: SelectionReceipt) -> void:
 	modal_tools_manager.receive_selection(receipt)
 	selection_manager.reset_query()
-	selection_manager.can_select = false
+	_set_can_select(false)
 
 
 func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
-	if receipt is DuplicateReceipt:
-		var duplicate_receipt: DuplicateReceipt = receipt
-		duplicate_receipt.nodes_added.connect(_on_duplicate_nodes_added, CONNECT_ONE_SHOT)
-	receipt.apply_changes()
+	receipt.apply_changes(self)
 	page_data.is_saved = false
-	selection_manager.can_select = true
+	_set_can_select(true)
 	selection_manager.reset_query()
 	gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
 	unpress_modal_tool_buttons.emit()
 	get_viewport().set_input_as_handled()
-
-
-func _on_duplicate_nodes_added(duplicate_nodes: Array[Node]) -> void:
-	for node: Node in duplicate_nodes:
-		add_graphics(node)
-	var selection_receipt: SelectionReceipt = SelectionReceipt.new()
-	selection_receipt.selected_nodes = duplicate_nodes
-	selection_manager.handle_receipt(
-		selection_receipt,
-		SelectionQuery.new()
-	)
 #endregion
 
 
