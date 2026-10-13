@@ -6,6 +6,7 @@ extends LineEdit
 signal changed ## Emitted when the position is changed
 signal deleted ## Emitted on deleting the [LLineEdit].
 signal finished_placing ## Emitted on placing the [LLineEdit] after its creation.
+signal position_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"text",
 		&"horizontal_alignment",
@@ -217,11 +218,15 @@ func add_gizmos() -> void:
 	if not gizmo.position_changed.is_connected(_on_gizmo_position_changed):
 		gizmo.position_changed.connect(_on_gizmo_position_changed)
 	gizmos.append(gizmo)
+	gizmo.grabbed.connect(position_editing_toggled.emit.bind(true))
+	gizmo.released.connect(position_editing_toggled.emit.bind(false))
 
 
 ## Removes gizmos
 func remove_gizmos() -> void:
 	for gizmo: Gizmo in gizmos:
+		gizmo.grabbed.disconnect(position_editing_toggled.emit)
+		gizmo.released.disconnect(position_editing_toggled.emit)
 		gizmo.position_changed.disconnect(_on_gizmo_position_changed)
 		gizmo.queue_free()
 	gizmos.clear()

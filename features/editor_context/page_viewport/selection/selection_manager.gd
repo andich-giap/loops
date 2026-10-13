@@ -29,7 +29,6 @@ func set_is_selecting(_is_selecting: bool) -> void:
 	is_selecting = _is_selecting
 	if is_selecting:
 		return
-	_get_interactive_selection()
 #endregion
 
 
@@ -171,6 +170,10 @@ func reset_query() -> void:
 
 func get_current_selection() -> SelectionReceipt:
 	return _selection_receipt
+
+
+func request_user_selection_check() -> void:
+	_get_interactive_selection()
 
 
 ## Determines if a [PolyLine2D] should be selected.
