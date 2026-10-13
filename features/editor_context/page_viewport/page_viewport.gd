@@ -12,9 +12,9 @@ enum State { ## Possible state when working with the page contents.
 }
 @export var page_data: PageData: ## Reference to [PageData].
 	set = set_page_data
-var _unsaved_contents: Dictionary[PageData, PackedScene]
 var state: State = State.VIEWING: ## The current [enum State].
 	set = set_state
+var _unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var layout: Panel = %Layout ## Reference to layout that sits behind the User access.
 @onready var contents_layer: CanvasLayer = %ContentsLayer ## Reference to contents layer that holds [member PageData.contents].
 @onready var selection_manager: SelectionManager = %SelectionManager ## Reference to [SelectionManager].
@@ -29,10 +29,15 @@ var state: State = State.VIEWING: ## The current [enum State].
 
 func _ready() -> void:
 	selection_manager.contents_layer = contents_layer
+	selection_manager.request_selection(SelectionQuery.new())
+	selection_manager.selection_changed.connect(_on_selection_changed)
+	
 	if page_data:
 		_update_page_viewport()
+	
 	reset_vew_button.pressed.connect(reset_view)
 	context_menu.hide()
+	
 	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
 	modal_tools_manager.preview_layer = modal_tool_preview_layer
 	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished_executing)
@@ -51,6 +56,40 @@ func _gui_input(event: InputEvent) -> void:
 		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
 			and mouse_button_event.is_released():
 			show_context_menu()
+	_handle_selection_input(event)
+
+
+func _handle_selection_input(event: InputEvent) -> void:
+	if not selection_manager.can_select:
+		selection_manager.is_selecting = false
+		return
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if mouse_button_event.shift_pressed:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.ADD)
+		elif mouse_button_event.alt_pressed:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.SUBTRACT)
+		else:
+			selection_manager.set_selection_mode(SelectionQuery.Mode.REPLACE)
+		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
+			if mouse_button_event.is_pressed():
+				selection_manager.is_selecting = true
+				selection_manager.selection_rect.position = get_local_mouse_position()
+			else:
+				if selection_manager.selection_rect.size.is_zero_approx():
+					selection_manager.selection_rect.position = (
+						get_local_mouse_position() 
+						- selection_manager.get_singale_click_vector()
+						/ 2.0
+					)
+					selection_manager.selection_rect.size = selection_manager.get_singale_click_vector()
+				selection_manager.is_selecting = false
+				selection_manager.queue_redraw()
+				return
+	
+	if event is InputEventMouseMotion and selection_manager.is_selecting:
+		selection_manager.selection_rect.end = get_local_mouse_position()
+		selection_manager.queue_redraw()
 
 
 #region setters/getters
@@ -142,6 +181,55 @@ func show_context_menu() -> void:
 	else:
 		context_menu.show_items(context_menu.NO_SELECTION_ITEMS)
 	context_menu.show()
+
+
+func copy_graphics(graphics: Array[Node]) -> void:
+	if graphics.is_empty():
+		return
+	copy_graphics_requested.emit(graphics)
+
+
+func cut_graphics(graphics: Array[Node]) -> void:
+	if graphics.is_empty():
+		return
+	copy_graphics(graphics)
+	for node: Node in graphics:
+		node.queue_free()
+
+
+#region ModalTools
+func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> void:
+	deactivate_modal_tool()
+	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
+	gui_input.connect(modal_tools_manager.handle_input)
+	selection_manager.can_select = false
+	get_tree().call_group(&"selection", &"remove_gizmos")
+
+
+func deactivate_modal_tool() -> void:
+	modal_tools_manager.deactivate_modal_tool()
+	if gui_input.is_connected(modal_tools_manager.handle_input):
+		gui_input.disconnect(modal_tools_manager.handle_input)
+
+
+func request_selection(query: SelectionQuery) -> void:
+	print(query)
+	selection_manager.query_selection(query)
+	selection_manager.selection_changed.connect(receive_selection)
+
+
+func receive_selection(receipt: SelectionReceipt) -> void:
+	modal_tools_manager.receive_selection(receipt)
+	selection_manager.can_select = false
+
+
+func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
+	receipt.apply_changes()
+	page_data.is_saved = false
+	selection_manager.can_select = true
+	gui_input.disconnect(modal_tools_manager.handle_input)
+	modal_tool_preview_layer.transform = Transform2D.IDENTITY
+#endregion
 
 
 func _set_can_select(can_select: bool) -> void:
@@ -240,50 +328,14 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"PASTE":
 			paste_graphics_requested.emit()
 		"MOVE":
-			activate_modal_tool(ModalToolMove, get_tree().get_nodes_in_group(&"selection"))
+			activate_modal_tool(MoveModalTool, get_tree().get_nodes_in_group(&"selection"))
 		"DUPLICATE":
-			pass
+			activate_modal_tool(DuplicateModalTool, get_tree().get_nodes_in_group(&"selection"))
 		"DELETE":
 			pass
 		"PROPERTIES":
 			pass
 
 
-func copy_graphics(graphics: Array[Node]) -> void:
-	if graphics.is_empty():
-		return
-	copy_graphics_requested.emit(graphics)
-
-
-func cut_graphics(graphics: Array[Node]) -> void:
-	if graphics.is_empty():
-		return
-	copy_graphics(graphics)
-	for node: Node in graphics:
-		node.queue_free()
-
-
-func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node]) -> void:
-	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
-	gui_input.connect(modal_tools_manager.handle_input)
-	selection_manager.can_select = false
-	get_tree().call_group(&"selection", &"remove_gizmos")
-
-
-func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
-	receipt.apply_changes()
-	page_data.is_saved = false
-	selection_manager.can_select = true
-	gui_input.disconnect(modal_tools_manager.handle_input)
-	modal_tool_preview_layer.transform = Transform2D.IDENTITY
-
-
-func request_selection(query: SelectionQuery) -> void:
-	print(query)
-	selection_manager.can_select = true
-	receive_selection([])
-
-
-func receive_selection(target_nodes: Array[Node], ...args: Array) -> void:
-	modal_tools_manager.receive_selection(target_nodes, args)
-	selection_manager.can_select = false
+func _on_selection_changed(receipt: SelectionReceipt) -> void:
+	pass

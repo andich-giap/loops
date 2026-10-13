@@ -3,8 +3,11 @@
 [ext_resource type="Script" uid="uid://drl4ffbyst8b" path="res://features/editor_context/tool_bar/toolbar.gd" id="1_xtbyg"]
 [ext_resource type="PackedScene" uid="uid://bchcrsaxd56ht" path="res://features/editor_context/tool_bar/draw_tool_bar/draw_tool_bar.tscn" id="2_wb132"]
 [ext_resource type="PackedScene" uid="uid://cdhf0aptl3bu3" path="res://features/editor_context/tool_bar/modes_bar/modes_bar.tscn" id="3_lquya"]
+[ext_resource type="PackedScene" uid="uid://cnq5skfbddol8" path="res://features/editor_context/tool_bar/modal_tools_bar/modal_tools_bar.tscn" id="4_hgm1m"]
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_n77dm"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_hgm1m"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_62iwn"]
 
 [node name="ToolBar" type="HBoxContainer" unique_id=1888273831]
 theme_type_variation = &"ToolBar"
@@ -17,7 +20,7 @@ theme_type_variation = &"ToolsPanel"
 [node name="DrawToolBar" parent="DrawToolsPanel" unique_id=737868671 instance=ExtResource("2_wb132")]
 unique_name_in_owner = true
 layout_mode = 2
-button_group = SubResource("ButtonGroup_n77dm")
+button_group = SubResource("ButtonGroup_hgm1m")
 
 [node name="ModesPanel" type="PanelContainer" parent="." unique_id=6023102]
 layout_mode = 2
@@ -26,3 +29,12 @@ theme_type_variation = &"ToolsPanel"
 [node name="ModesBar" parent="ModesPanel" unique_id=1352189373 instance=ExtResource("3_lquya")]
 unique_name_in_owner = true
 layout_mode = 2
+
+[node name="ModalToolsPanel" type="PanelContainer" parent="." unique_id=419694124]
+layout_mode = 2
+theme_type_variation = &"ToolsPanel"
+
+[node name="ModalToolsBar" parent="ModalToolsPanel" unique_id=635271432 instance=ExtResource("4_hgm1m")]
+unique_name_in_owner = true
+layout_mode = 2
+button_group = SubResource("ButtonGroup_62iwn")

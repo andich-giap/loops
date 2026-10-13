@@ -14,16 +14,16 @@ func _ready() -> void:
 		button_group.pressed.connect(_on_button_group_button_pressed)
 
 
+## Unpresses the currently pressed button of the [member button_group].
+func unpress_button() -> void:
+	var pressed_button: BaseButton = button_group.get_pressed_button()
+	if pressed_button:
+		pressed_button.button_pressed = false
+
+
 func _on_button_group_button_pressed(button: BaseButton) -> void:
 	match button.name:
 		"DrawLine":
 			add_draw_line_requested.emit()
 		"AddText":
 			add_text_requested.emit()
-
-
-## Unpresses the currently pressed button of the [member button_group].
-func unpress_button() -> void:
-	var pressed_button: BaseButton = button_group.get_pressed_button()
-	if pressed_button:
-		pressed_button.button_pressed = false

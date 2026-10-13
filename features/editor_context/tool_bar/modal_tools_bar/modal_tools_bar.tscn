@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://cnq5skfbddol8"]
+
+[ext_resource type="Texture2D" uid="uid://capbagnwe8jn3" path="res://addons/at-icons/node2d/move.svg" id="1_6153h"]
+[ext_resource type="Script" uid="uid://d2qjtqq4n4rnf" path="res://features/editor_context/tool_bar/modal_tools_bar/modal_tools_bar.gd" id="1_tcf81"]
+[ext_resource type="Texture2D" uid="uid://td175caftmhw" path="res://addons/at-icons/node2d/duplicate.svg" id="2_tcf81"]
+[ext_resource type="Texture2D" uid="uid://b4nmjywfb4vwg" path="res://addons/at-icons/node2d/motion_vector.svg" id="3_0kcwd"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_k2o0e"]
+
+[node name="ModalToolsBar" type="HBoxContainer" unique_id=635271432]
+script = ExtResource("1_tcf81")
+button_group = SubResource("ButtonGroup_k2o0e")
+
+[node name="Move" type="Button" parent="." unique_id=781230463]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_k2o0e")
+icon = ExtResource("1_6153h")
+
+[node name="Duplicate" type="Button" parent="." unique_id=1529088825]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_k2o0e")
+icon = ExtResource("2_tcf81")
+
+[node name="GrowLine" type="Button" parent="." unique_id=1906806426]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_k2o0e")
+icon = ExtResource("3_0kcwd")

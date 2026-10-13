@@ -15,3 +15,5 @@ func apply_changes() -> void:
 		node.set(&"position", node.get(&"position") - move_vector)
 		if node.has_method(&"update_bounding_box"):
 			node.call(&"update_bounding_box")
+		if node.has_method(&"remove_from_selection"):
+			node.call(&"remove_from_selection")

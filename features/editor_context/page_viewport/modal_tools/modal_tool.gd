@@ -27,9 +27,9 @@ func exit(receipt: ModalToolReceipt) -> void:
 	finished.emit(receipt)
 
 
-func receive_selection(target_nodes: Array[Node], ..._args: Array) -> void:
-	_target_nodes = target_nodes
-	print(target_nodes, _args)
+func receive_selection(receipt: SelectionReceipt) -> void:
+	_target_nodes = receipt.selected_nodes
+	print(_target_nodes)
 	selection_received.emit()
 
 

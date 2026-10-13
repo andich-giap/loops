@@ -17,6 +17,10 @@ func activate_modal_tool(modal_tool: GDScript, target_nodes: Array[Node]) -> voi
 	active_tool.selection_received.connect(selection_received.emit)
 
 
+func deactivate_modal_tool() -> void:
+	active_tool = null
+
+
 func handle_input(event: InputEvent) -> void:
 	if not active_tool:
 		return
@@ -27,5 +31,5 @@ func _on_active_tool_finished(receipt: ModalToolReceipt) -> void:
 	modal_tool_finished_executing.emit(receipt)
 
 
-func receive_selection(target_nodes: Array[Node], ...args: Array) -> void:
-	active_tool.receive_selection(target_nodes, args)
+func receive_selection(receipt: SelectionReceipt) -> void:
+	active_tool.receive_selection(receipt)

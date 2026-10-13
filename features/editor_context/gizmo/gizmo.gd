@@ -18,8 +18,11 @@ enum Type { ## Possible shapes of the gizmo.
 	set = set_type
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var radius: float = 1.5: ## Determines the radius of the [Gizmo] and its grab area.
 	get = get_radius
-var is_grabbed: bool = false ## Determines if the gizmo is currently grabbed.
+var is_grabbed: bool = false: ## Determines if the gizmo is currently grabbed.
+	set = set_is_grabbed
 var graphics_node: Node ## The node the gizmo is being spawned from, basically a parent.
+var is_selected: bool = false: ## Determines if the gizmo is currently selected.
+	set = set_is_selected
 
 
 func _init() -> void:
@@ -48,11 +51,16 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
+	var color: Color = get_theme_color(&"normal_color", &"Gizmo")
+	if is_selected:
+		color = get_theme_color(&"selected_color", &"Gizmo")
+	if is_grabbed:
+		color = get_theme_color(&"selected_color", &"Gizmo")
 	match type:
 		Type.CIRCLE:
-			_draw_type_circle()
+			_draw_type_circle(color)
 		Type.ARROW:
-			_draw_type_arrow()
+			_draw_type_arrow(color)
 	var is_debug: bool = get_tree().debug_collisions_hint
 	if is_debug:
 		var rect: Rect2 = get_rect()
@@ -68,6 +76,16 @@ func set_type(_type: Type) -> void:
 
 func get_radius() -> float:
 	return radius / get_viewport_transform().get_scale().x
+
+
+func set_is_grabbed(_is_grabbed: bool) -> void:
+	is_grabbed = _is_grabbed
+	queue_redraw()
+
+
+func set_is_selected(_is_selected: bool) -> void:
+	is_selected = _is_selected
+	queue_redraw()
 #endregion
 
 
@@ -78,21 +96,21 @@ func set_gizmo_position(_position: Vector2) -> void:
 	set_end(_position + gizmo_grab_size)
 
 
-func _draw_type_circle() -> void:
+func _draw_type_circle(color: Color) -> void:
 	var circle_position: Vector2 = (get_end() - get_begin()) / 2
 	
 	draw_circle(circle_position, Units.mm_to_px(radius), Color.BLACK)
-	draw_circle(circle_position, Units.mm_to_px(radius / 2.0), Color.WHITE)
+	draw_circle(circle_position, Units.mm_to_px(radius / 2.0), color)
 
 
-func _draw_type_arrow() -> void:
+func _draw_type_arrow(color: Color) -> void:
 	draw_colored_polygon(
 		[
 			Vector2( 0, 0.0),
 			Vector2( 6.0, 0.0),
 			Vector2( 3.0, 6.0)
 		],
-		Color.AQUA
+		color
 	)
 
 

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://crukg31usr104"]
 
 [ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_uke43"]
-[ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection_manager.gd" id="3_3hfee"]
+[ext_resource type="Script" uid="uid://jqqnhrauy8dp" path="res://features/editor_context/page_viewport/selection/selection_manager.gd" id="3_3hfee"]
 [ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="3_h16ng"]
 
 [sub_resource type="GDScript" id="GDScript_3hfee"]

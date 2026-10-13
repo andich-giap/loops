@@ -256,6 +256,22 @@ func update_bounding_box() -> void:
 			bounding_box = bounding_box.expand(point)
 
 
+func select_points(_points: PackedInt32Array = []) -> void:
+	remove_gizmos()
+	add_gizmos()
+	if _points.is_empty():
+		_points = PackedInt32Array(range(gizmos.size()))
+	for gizmo: int in _points:
+		gizmos[gizmo].is_selected = true
+
+
+func deselect_points(_points: PackedInt32Array = []) -> void:
+	if _points.is_empty():
+		_points = PackedInt32Array(range(gizmos.size()))
+	for gizmo: int in _points:
+		gizmos[gizmo].is_selected = false
+
+
 func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:
 	set_point_position(point, new_position - position)
 
