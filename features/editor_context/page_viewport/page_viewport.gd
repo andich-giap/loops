@@ -47,18 +47,19 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action(&"open_properties") and event.is_pressed():
-		edit_properties_dialog.activate()
-		get_viewport().set_input_as_handled()
 	if event.is_action(&"close_viewport") and event.is_released():
 		queue_free()
 
 
 func _gui_input(event: InputEvent) -> void:
+	if event.is_action(&"open_properties") and event.is_pressed():
+		edit_properties_dialog.activate(selection_manager.get_current_selection().selected_nodes)
+		get_viewport().set_input_as_handled()
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
-			and mouse_button_event.is_released():
+			and mouse_button_event.is_released() \
+			and state == State.VIEWING:
 			show_context_menu()
 	if state == State.VIEWING and selection_manager.can_select:
 		_handle_selection_input(event)
