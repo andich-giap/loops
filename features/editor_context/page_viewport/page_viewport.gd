@@ -22,7 +22,7 @@ var _unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var grid: Grid = %Grid ## Reference to [Grid].
 @onready var viewport_camera: ViewportCamera = %ViewportCamera ## Reference to [ViewportCamera].
 @onready var edit_properties_dialog: PropertiesDialog = %EditPropertiesDialog ## Dialog that is used to edit the properties of the selected contents.
-@onready var reset_vew_button: Button = %ResetVewButton ## Button for resetting the canvas transform of the viewport.
+@onready var reset_view_button: Button = %ResetViewButton ## Button for resetting the canvas transform of the viewport.
 @onready var context_menu: PageViewportContextMenu = %PageViewportContextMenu
 @onready var modal_tools_manager: ModalToolsManager = %ModalToolsManager
 @onready var modal_tool_preview_layer: CanvasLayer = %ModalToolPreviewLayer
@@ -36,7 +36,7 @@ func _ready() -> void:
 	if page_data:
 		_update_page_viewport()
 	
-	reset_vew_button.pressed.connect(reset_view)
+	reset_view_button.pressed.connect(reset_view)
 	context_menu.hide()
 	
 	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
@@ -70,6 +70,8 @@ func _gui_input(event: InputEvent) -> void:
 
 #region setters/getters
 func set_page_data(_page_data: PageData) -> void:
+	if page_data == _page_data:
+		return
 	var project_data: ProjectData
 	if page_data:
 		project_data = page_data.project_data.get_ref()
@@ -268,6 +270,7 @@ func _update_page_viewport() -> void:
 
 func _clear_contents() -> void:
 	for node: Node in contents_layer.get_children():
+		contents_layer.remove_child(node)
 		node.queue_free()
 
 

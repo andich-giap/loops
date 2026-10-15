@@ -104,7 +104,7 @@ custom_minimum_size = Vector2(32, 32)
 offset_right = 68.0
 offset_bottom = 32.0
 
-[node name="ResetVewButton" type="Button" parent="SubViewport/OverlayLayer/HBoxContainer" unique_id=1329922900]
+[node name="ResetViewButton" type="Button" parent="SubViewport/OverlayLayer/HBoxContainer" unique_id=1329922900]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
