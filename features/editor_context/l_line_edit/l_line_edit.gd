@@ -272,3 +272,7 @@ func _update_gizmo_position() -> void:
 		return
 	var gizmo: Gizmo = gizmos[0]
 	gizmo.set_gizmo_position(position + Vector2(0.0, get_line_height()))
+
+
+func set_font_size(font_size: int) -> void:
+	add_theme_font_size_override(&"font_size", font_size)
