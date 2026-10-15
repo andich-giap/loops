@@ -112,6 +112,8 @@ func remove_from_selection(receipt: SelectionReceipt) -> void:
 	if not receipt or receipt.is_empty():
 		return
 	for node: Node in receipt.selected_nodes:
+		if not is_instance_valid(node):
+			continue
 		if node.has_method(&"remove_from_selection"):
 			node.call(&"remove_from_selection")
 		receipt.selected_nodes.erase(node)
