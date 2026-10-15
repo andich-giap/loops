@@ -86,11 +86,7 @@ func _input(event: InputEvent) -> void:
 	
 	if is_active and event.is_action(&"ui_cancel"):
 		stop_drawing()
-	
-	if is_selected and event.is_action(&"delete"):
-		remove_gizmos()
-		deleted.emit()
-		queue_free()
+		
 
 
 func _draw() -> void:
@@ -271,6 +267,12 @@ func deselect_points(_points: PackedInt32Array = []) -> void:
 		_points = PackedInt32Array(range(gizmos.size()))
 	for gizmo: int in _points:
 		gizmos[gizmo].is_selected = false
+
+
+func delete() -> void:
+	remove_gizmos()
+	deleted.emit()
+	queue_free()
 
 
 func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:

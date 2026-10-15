@@ -387,8 +387,4 @@ func _get_selected_nodes() -> Array[Node]:
 
 func _call_selected_nodes(method: StringName) -> void:
 	var nodes: Array[Node] = _get_selected_nodes()
-	if nodes.is_empty():
-		return
-	for node: Node in nodes:
-		if node.has_method(method):
-			node.call(method)
+	Utils.call_nodes(nodes, method)

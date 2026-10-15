@@ -58,6 +58,7 @@ hooks/session_hooks=Dictionary[String, bool]({
 [global_group]
 
 persists=""
+upadate_on_viewport_zoom=""
 
 [gui]
 

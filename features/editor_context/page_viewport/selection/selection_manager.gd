@@ -88,22 +88,18 @@ func add_to_selection(query: SelectionQuery, receipt: SelectionReceipt) -> void:
 	match query.type:
 		SelectionQuery.Type.POINT:
 			for node: Node in receipt.selected_points.keys():
-				if node.has_method(&"select_points"):
-					node.call(&"select_points", receipt.selected_points[node])
-				elif node.has_method(&"add_to_selection"):
-					node.call(&"add_to_selection")
+				Utils.call_node(node, &"select_points", [receipt.selected_points[node]])
+				Utils.call_node(node, &"add_to_selection")
 				if not _selection_receipt.selected_points.has(node):
 					_selection_receipt.selected_points[node] = PackedInt32Array()
 				_selection_receipt.selected_points[node].append_array(receipt.selected_points[node])
 		SelectionQuery.Type.NODE:
 			var node: Node = receipt.selected_nodes[0]
-			if node.has_method(&"add_to_selection"):
-				node.call(&"add_to_selection")
+			Utils.call_node(node, &"add_to_selection")
 			_selection_receipt.selected_nodes.append(node)
 		SelectionQuery.Type.NODES:
 			for node: Node in receipt.selected_nodes:
-				if node.has_method(&"add_to_selection"):
-					node.call(&"add_to_selection")
+				Utils.call_node(node, &"add_to_selection")
 			_selection_receipt.selected_nodes.append_array(receipt.selected_nodes)
 
 
@@ -114,15 +110,12 @@ func remove_from_selection(receipt: SelectionReceipt) -> void:
 	for node: Node in receipt.selected_nodes:
 		if not is_instance_valid(node):
 			continue
-		if node.has_method(&"remove_from_selection"):
-			node.call(&"remove_from_selection")
+		Utils.call_node(node, &"remove_from_selection")
 	for node: Node in receipt.selected_points.keys():
 		if not is_instance_valid(node):
 			continue
-		if node.has_method(&"deselect_points"):
-			node.call(&"deselect_points", receipt.selected_points[node])
-		elif node.has_method(&"remove_gizmos"):
-			node.call(&"remove_gizmos")
+		Utils.call_node(node, &"deselect_points", [receipt.selected_points[node]])
+		Utils.call_node(node, &"remove_gizmos")
 	receipt.selected_nodes.clear()
 	receipt.selected_points.clear()
 
@@ -142,9 +135,8 @@ func get_node_rect(node: Node) -> Rect2:
 
 ## Clears the selection.
 func clear_selection() -> void:
-	_selection_receipt.call_selected_nodes(&"remove_from_selection")
+	Utils.call_nodes(_selection_receipt.selected_nodes, &"remove_from_selection")
 	_selection_receipt.clear()
-	#get_tree().call_group(&"selection", &"remove_from_selection")
 
 
 ## Receives a [SelectionQuery] to process further selection.

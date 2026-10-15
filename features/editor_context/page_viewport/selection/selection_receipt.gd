@@ -16,11 +16,3 @@ func is_empty() -> bool:
 	if selected_nodes.is_empty() and selected_points.is_empty():
 		return true
 	return false
-
-
-func call_selected_nodes(method: StringName) -> void:
-	if selected_nodes.is_empty():
-		return
-	for node: Node in selected_nodes:
-		if node.has_method(method):
-			node.call(method)

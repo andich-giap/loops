@@ -61,24 +61,3 @@ func _on_grid_toggled(toggled_on: bool) -> void:
 			continue
 		var page_viewport: PageViewport = child
 		page_viewport.grid.visible = toggled_on
-
-
-#func _on_dxf_inspector_tree_item_selected(source: Tree) -> void:
-	#var selected_item: TreeItem = source.get_next_selected(null)
-	#while selected_item:
-		#var graphics: Node
-		#match selected_item.get_text(0):
-			#"ENTITIES":
-				#for child: TreeItem in selected_item.get_children():
-					#child.select(0)
-			#"LINE":
-				#graphics = _dxf_get_poly_line_2d_from_tree_item(selected_item)
-			#"TEXT":
-				#graphics = _dxf_get_l_line_edit_from_tree_item(selected_item)
-		#if not graphics:
-			#selected_item = source.get_next_selected(selected_item)
-			#continue
-		#current_page.add_graphics(graphics)
-		#if graphics.has_method("queue_redraw"):
-			#graphics.call("queue_redraw")
-		#selected_item = source.get_next_selected(selected_item)

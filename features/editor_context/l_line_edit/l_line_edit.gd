@@ -68,10 +68,6 @@ func _input(event: InputEvent) -> void:
 		if event.is_action(&"ui_cancel"):
 			finished_placing.emit()
 			queue_free()
-	if event.is_action(&"delete") and not is_editing() and is_selected:
-		deleted.emit()
-		remove_gizmos()
-		queue_free()
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -244,6 +240,13 @@ func get_line_width() -> float:
 ## Returns the height of the control
 func get_line_height() -> float:
 	return get_rect().size.y
+
+
+## Delete the [LLineEdit].
+func delete() -> void:
+	remove_gizmos()
+	deleted.emit()
+	queue_free()
 
 
 func _on_changed() -> void:
