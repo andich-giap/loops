@@ -6,6 +6,7 @@ extends LineEdit
 signal changed ## Emitted when the position is changed
 signal deleted ## Emitted on deleting the [LLineEdit].
 signal finished_placing ## Emitted on placing the [LLineEdit] after its creation.
+signal text_editing_toggled(toggled_on: bool) ## Emitted when triggering [method edit].
 signal position_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"text",
@@ -174,6 +175,7 @@ func remove_from_selection() -> void:
 
 ## Focuses to the editing state.
 func edit_text() -> void:
+	text_editing_toggled.emit(true)
 	selecting_enabled = true
 	editable = true
 	caret_force_displayed = true
@@ -183,6 +185,7 @@ func edit_text() -> void:
 
 ## Executes when User exited the focus of the line edit.
 func finish_editing() -> void:
+	text_editing_toggled.emit(false)
 	var rect: Rect2 = get_rect()
 	rect.position = Vector2.ZERO
 	if rect.has_point(get_local_mouse_position()):
