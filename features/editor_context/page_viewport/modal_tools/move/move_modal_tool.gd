@@ -81,6 +81,6 @@ func _on_selection_received(receipt: SelectionReceipt) -> void:
 		selection_requested.emit(_selection_query)
 		return
 	_target_nodes = receipt.selected_nodes
-	_target_nodes[0].get_tree().call_group(&"selection", &"remove_gizmos")
+	receipt.call_selected_nodes(&"remove_gizmos")
 	_add_graphics_preview()
 	current_state = State.WAITING_FOR_BASE_POINT

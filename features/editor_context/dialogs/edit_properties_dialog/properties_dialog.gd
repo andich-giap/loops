@@ -27,9 +27,9 @@ func _ready() -> void:
 
 
 ## Shows the dialog and edits selected nodes. 
-func activate(nodes_to_edit: Array[Node] = []) -> void:
+func activate(nodes_to_edit: Array[Node]) -> void:
 	if nodes_to_edit.is_empty():
-		nodes_to_edit = get_tree().get_nodes_in_group(&"selection")
+		return
 	edit_properties(nodes_to_edit)
 
 

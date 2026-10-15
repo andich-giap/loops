@@ -53,7 +53,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if event.is_action(&"open_properties") and event.is_pressed():
-		edit_properties_dialog.activate(selection_manager.get_current_selection().selected_nodes)
+		edit_properties_dialog.activate(_get_selected_nodes())
 		get_viewport().set_input_as_handled()
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
@@ -75,7 +75,8 @@ func set_page_data(_page_data: PageData) -> void:
 	var project_data: ProjectData
 	if page_data:
 		project_data = page_data.project_data.get_ref()
-		project_data.closed.disconnect(_on_project_data_closed)
+		if project_data:
+			project_data.closed.disconnect(_on_project_data_closed)
 		page_data.grid_interval_changed.disconnect(_on_page_data_grid_interval_changed)
 		if not page_data.is_saved:
 			_unsaved_contents[page_data] = pack_contents()
@@ -156,7 +157,7 @@ func reset_view() -> void:
 ## Activates [member context_menu].
 func show_context_menu() -> void:
 	context_menu.position = get_global_mouse_position()
-	if get_tree().get_first_node_in_group(&"selection"):
+	if _get_selected_nodes():
 		context_menu.show_items(context_menu.GRAPHICS_SELECTED_ITEMS)
 	else:
 		context_menu.show_items(context_menu.NO_SELECTION_ITEMS)
@@ -181,19 +182,19 @@ func cut_graphics(graphics: Array[Node]) -> void:
 ## Activates modal tool execution.
 func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> void:
 	if not graphics:
-		graphics = selection_manager.get_current_selection().selected_nodes
+		graphics = _get_selected_nodes()
 	deactivate_modal_tool()
 	_set_can_select(false)
 	gui_input.connect(modal_tools_manager.handle_input)
-	get_tree().call_group(&"selection", &"remove_gizmos")
+	_call_selected_nodes(&"remove_gizmos")
 	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
 
 
 ## Deactivates modal tool execution.
 func deactivate_modal_tool() -> void:
-	modal_tools_manager.deactivate_modal_tool()
 	if gui_input.is_connected(modal_tools_manager.handle_input):
 		gui_input.disconnect(modal_tools_manager.handle_input)
+	modal_tools_manager.deactivate_modal_tool()
 
 
 ## Sends the [SelectionQuery] to [member selection_manager].
@@ -245,9 +246,10 @@ func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit._page_viewport = self
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
-	l_line_edit.editing_toggled.connect(_on_l_line_edit_editing_toggled)
+	l_line_edit.text_editing_toggled.connect(_on_l_line_edit_editing_toggled)
 	l_line_edit.finished_placing.connect(set_state.bind(State.EDITING), CONNECT_ONE_SHOT)
 	l_line_edit.position_editing_toggled.connect(_on_l_line_edit_editing_toggled)
+	l_line_edit.size = Vector2.ZERO
 
 
 func _update_page_viewport() -> void:
@@ -324,19 +326,19 @@ func _on_context_menu_index_pressed(index: int) -> void:
 	var action: String = context_menu.get_item_text(index)
 	match action:
 		"COPY":
-			copy_graphics(get_tree().get_nodes_in_group(&"selection"))
+			copy_graphics(_get_selected_nodes())
 		"CUT":
-			cut_graphics(get_tree().get_nodes_in_group(&"selection"))
+			cut_graphics(_get_selected_nodes())
 		"PASTE":
 			paste_graphics_requested.emit()
 		"MOVE":
-			activate_modal_tool(MoveModalTool, get_tree().get_nodes_in_group(&"selection"))
+			activate_modal_tool(MoveModalTool, _get_selected_nodes())
 		"DUPLICATE":
-			activate_modal_tool(DuplicateModalTool, get_tree().get_nodes_in_group(&"selection"))
+			activate_modal_tool(DuplicateModalTool, _get_selected_nodes())
 		"DELETE":
 			pass
 		"PROPERTIES":
-			edit_properties_dialog.activate(selection_manager.get_current_selection().selected_nodes)
+			edit_properties_dialog.activate(_get_selected_nodes())
 
 
 func _on_selection_changed(_receipt: SelectionReceipt) -> void:
@@ -360,9 +362,9 @@ func _handle_selection_input(event: InputEvent) -> void:
 				if selection_manager.selection_rect.size.is_zero_approx():
 					selection_manager.selection_rect.position = (
 						selection_manager.get_local_mouse_position() 
-						- selection_manager.get_singale_click_vector() / 2.0
+						- selection_manager.get_single_click_vector() / 2.0
 					)
-					selection_manager.selection_rect.size = selection_manager.get_singale_click_vector()
+					selection_manager.selection_rect.size = selection_manager.get_single_click_vector()
 				selection_manager.is_selecting = false
 				selection_manager.request_user_selection_check()
 				selection_manager.queue_redraw()
@@ -377,3 +379,16 @@ func _handle_selection_input(event: InputEvent) -> void:
 		selection_manager.clear_selection()
 		selection_manager.reset_query()
 		selection_manager.can_select = true
+
+
+func _get_selected_nodes() -> Array[Node]:
+	return selection_manager.get_current_selection().selected_nodes
+
+
+func _call_selected_nodes(method: StringName) -> void:
+	var nodes: Array[Node] = _get_selected_nodes()
+	if nodes.is_empty():
+		return
+	for node: Node in nodes:
+		if node.has_method(method):
+			node.call(method)
