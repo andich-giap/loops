@@ -11,7 +11,7 @@ var selection_rect: Rect2 ## Current [Rect2] of the selection.
 var single_click_size: float = 3.0 ## The size of the selection rect on a single click.
 var clear_on_new_selection: bool = true ## If [code]true[/code] when starting the new selection previous selection is cleared unless [kbd]Shift[/kbd] is pressed.
 var contents_layer: CanvasLayer ## Reference to the layer with the contents.
-var _query: SelectionQuery ## Current [SelectionQuery].
+var _query: SelectionQuery = SelectionQuery.new() ## Current [SelectionQuery].
 var _selection_receipt: SelectionReceipt = SelectionReceipt.new() ## Current selection.
 
 
@@ -116,13 +116,15 @@ func remove_from_selection(receipt: SelectionReceipt) -> void:
 			continue
 		if node.has_method(&"remove_from_selection"):
 			node.call(&"remove_from_selection")
-		receipt.selected_nodes.erase(node)
 	for node: Node in receipt.selected_points.keys():
+		if not is_instance_valid(node):
+			continue
 		if node.has_method(&"deselect_points"):
 			node.call(&"deselect_points", receipt.selected_points[node])
 		elif node.has_method(&"remove_gizmos"):
 			node.call(&"remove_gizmos")
-		receipt.selected_points.erase(node)
+	receipt.selected_nodes.clear()
+	receipt.selected_points.clear()
 
 
 ## Returns bounding box of a node if it has such.
@@ -140,8 +142,9 @@ func get_node_rect(node: Node) -> Rect2:
 
 ## Clears the selection.
 func clear_selection() -> void:
+	_selection_receipt.call_selected_nodes(&"remove_from_selection")
 	_selection_receipt.clear()
-	get_tree().call_group(&"selection", &"remove_from_selection")
+	#get_tree().call_group(&"selection", &"remove_from_selection")
 
 
 ## Receives a [SelectionQuery] to process further selection.
@@ -161,7 +164,7 @@ func set_selection_mode(mode: SelectionQuery.Mode) -> void:
 
 
 ## Returns the size of single click selection.
-func get_singale_click_vector() -> Vector2:
+func get_single_click_vector() -> Vector2:
 	return Vector2(single_click_size, single_click_size)
 
 
