@@ -99,15 +99,20 @@ follow_viewport_enabled = true
 [node name="OverlayLayer" type="CanvasLayer" parent="SubViewport" unique_id=1624929297]
 unique_name_in_owner = true
 
-[node name="ResetVewButton" type="Button" parent="SubViewport/OverlayLayer" unique_id=1329922900]
+[node name="HBoxContainer" type="HBoxContainer" parent="SubViewport/OverlayLayer" unique_id=1197764138]
+custom_minimum_size = Vector2(32, 32)
+offset_right = 68.0
+offset_bottom = 32.0
+
+[node name="ResetVewButton" type="Button" parent="SubViewport/OverlayLayer/HBoxContainer" unique_id=1329922900]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 24)
-offset_right = 8.0
-offset_bottom = 6.0
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
 tooltip_text = "RESET_VIEW"
 shortcut = SubResource("Shortcut_g0s4p")
 icon = ExtResource("5_kvkci")
 flat = true
+icon_alignment = 1
 
 [node name="ModalToolPreviewLayer" type="CanvasLayer" parent="SubViewport" unique_id=1915219701]
 unique_name_in_owner = true
