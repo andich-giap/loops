@@ -50,6 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action(&"open_properties") and event.is_pressed():
 		edit_properties_dialog.activate()
 		get_viewport().set_input_as_handled()
+	if event.is_action(&"close_viewport") and event.is_released():
+		queue_free()
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -330,7 +332,7 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"DELETE":
 			pass
 		"PROPERTIES":
-			pass
+			edit_properties_dialog.activate(selection_manager.get_current_selection().selected_nodes)
 
 
 func _on_selection_changed(_receipt: SelectionReceipt) -> void:
@@ -369,3 +371,5 @@ func _handle_selection_input(event: InputEvent) -> void:
 	
 	if event.is_action(&"ui_cancel"):
 		selection_manager.clear_selection()
+		selection_manager.reset_query()
+		selection_manager.can_select = true
