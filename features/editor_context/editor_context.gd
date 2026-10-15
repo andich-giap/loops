@@ -54,9 +54,7 @@ func setup() -> void:
 	_tool_bar_node.add_text_requested.connect(add_text)
 	_tool_bar_node.ortho_requested.connect(toggle_ortho)
 	_tool_bar_node.grid_requested.connect(toggle_grid)
-	_tool_bar_node.move_requested.connect(_pages_tab_container.activate_modal_tool.bind(MoveModalTool))
-	_tool_bar_node.duplicate_requested.connect(_pages_tab_container.activate_modal_tool.bind(DuplicateModalTool))
-	_tool_bar_node.grow_line_requested.connect(_pages_tab_container.activate_modal_tool.bind(ModalTool))
+	_tool_bar_node.modal_tool_activation_requested.connect(_pages_tab_container.activate_modal_tool)
 	
 	_page_manager_node.open_page_requested.connect(open_page)
 	_page_manager_node.close_project_requested.connect(_handle_close_project)

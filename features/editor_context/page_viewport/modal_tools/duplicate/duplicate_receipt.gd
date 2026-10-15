@@ -14,7 +14,7 @@ func apply_changes(page_viewport: PageViewport) -> void:
 	var duplicate_nodes: Array[Node]
 	for node: Node in target_nodes:
 		var duplicate_node: Node = node.duplicate()
-		Utils.call_node(duplicate_node, &"set", [&"position", duplicate_node.get(&"position") - move_vector])
+		duplicate_node.call(&"set", &"position", duplicate_node.get(&"position") - move_vector)
 		Utils.call_node(duplicate_node, &"update_bounding_box")
 		duplicate_nodes.append(duplicate_node)
 	
