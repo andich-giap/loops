@@ -26,6 +26,7 @@ var _unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var context_menu: PageViewportContextMenu = %PageViewportContextMenu
 @onready var modal_tools_manager: ModalToolsManager = %ModalToolsManager
 @onready var modal_tool_preview_layer: CanvasLayer = %ModalToolPreviewLayer
+@onready var sub_viewport: SubViewport = %SubViewport
 
 
 func _ready() -> void:
@@ -61,6 +62,7 @@ func _gui_input(event: InputEvent) -> void:
 			and mouse_button_event.is_released() \
 			and state == State.VIEWING:
 			show_context_menu()
+		_handle_l_line_edit_input(mouse_button_event)
 	if state == State.VIEWING and selection_manager.can_select:
 		_handle_selection_input(event)
 	else:
@@ -181,6 +183,8 @@ func cut_graphics(graphics: Array[Node]) -> void:
 #region ModalTools
 ## Activates modal tool execution.
 func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> void:
+	if not state == State.VIEWING:
+		return
 	if not graphics:
 		graphics = _get_selected_nodes()
 	deactivate_modal_tool()
@@ -336,7 +340,7 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"DUPLICATE":
 			activate_modal_tool(DuplicateModalTool, _get_selected_nodes())
 		"DELETE":
-			pass
+			activate_modal_tool(DeleteModalTool, _get_selected_nodes())
 		"PROPERTIES":
 			edit_properties_dialog.activate(_get_selected_nodes())
 
@@ -374,11 +378,31 @@ func _handle_selection_input(event: InputEvent) -> void:
 		selection_manager.selection_rect.end = selection_manager.get_local_mouse_position()
 		selection_manager.queue_redraw()
 	
-	
 	if event.is_action(&"ui_cancel"):
 		selection_manager.clear_selection()
 		selection_manager.reset_query()
 		selection_manager.can_select = true
+
+
+func _handle_l_line_edit_input(mouse_button_event: InputEventMouseButton) -> void:
+	if not (
+		mouse_button_event.pressed
+		and mouse_button_event.button_index == MOUSE_BUTTON_LEFT
+	):
+		return
+	
+	if state == State.EDITING:
+		var focused_control: Control = sub_viewport.gui_get_focus_owner()
+		if focused_control is LLineEdit:
+			var hovered_control: Control = sub_viewport.gui_get_hovered_control()
+			if not hovered_control == focused_control:
+				var l_line_edit: LLineEdit = focused_control
+				l_line_edit.finish_editing()
+	elif state == State.VIEWING and mouse_button_event.double_click:
+		var hovered_control: Control = sub_viewport.gui_get_hovered_control()
+		if hovered_control and hovered_control is LLineEdit:
+			var l_line_edit: LLineEdit = hovered_control
+			l_line_edit.edit_text()
 
 
 func _get_selected_nodes() -> Array[Node]:

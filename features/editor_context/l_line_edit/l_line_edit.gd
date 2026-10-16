@@ -47,7 +47,7 @@ func _ready() -> void:
 	caret_force_displayed = false
 	selecting_enabled = false
 	changed.connect(_on_changed)
-	text_submitted.connect(_on_text_submitted)
+	text_submitted.connect(finish_editing.unbind(1))
 	focus_exited.connect(finish_editing)
 	add_theme_color_override(&"text_color", get_theme_color(&"clear_button_color", &"LLineEdit"))
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"clear_button_color", &"LLineEdit"))
@@ -68,13 +68,6 @@ func _input(event: InputEvent) -> void:
 		if event.is_action(&"ui_cancel"):
 			finished_placing.emit()
 			queue_free()
-
-
-func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.double_click:
-			edit_text()
 
 
 func _draw() -> void:
@@ -252,11 +245,6 @@ func delete() -> void:
 func _on_changed() -> void:
 	_update_gizmo_position()
 	size = Vector2.ZERO
-
-
-func _on_text_submitted(_new_text: String) -> void:
-	editable = false
-	caret_force_displayed = false
 
 
 func _get_place_position() -> Vector2:

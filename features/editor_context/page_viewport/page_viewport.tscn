@@ -12,7 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://b6wskrflnwf02" path="res://addons/at-icons/node2d/clipboard.svg" id="10_3mgi4"]
 [ext_resource type="Texture2D" uid="uid://capbagnwe8jn3" path="res://addons/at-icons/node2d/move.svg" id="11_vv8iq"]
 [ext_resource type="Texture2D" uid="uid://td175caftmhw" path="res://addons/at-icons/node2d/duplicate.svg" id="12_v32xm"]
-[ext_resource type="Texture2D" uid="uid://cise7ijyppxmj" path="res://addons/at-icons/node3d/trash_can.svg" id="13_j8bff"]
+[ext_resource type="Texture2D" uid="uid://bgaokgo4ivbwr" path="res://addons/at-icons/node/trash_can.svg" id="13_3mgi4"]
 [ext_resource type="Texture2D" uid="uid://c3p6orknwcka8" path="res://addons/at-icons/node2d/file_sliders.svg" id="14_j4jnu"]
 [ext_resource type="Script" uid="uid://b5csr8ahuf7vv" path="res://features/editor_context/page_viewport/page_viewport_context_menu.gd" id="15_uc4a7"]
 [ext_resource type="Script" uid="uid://bredekwx8eyim" path="res://features/editor_context/page_viewport/modal_tools/modal_tools_manager.gd" id="16_3mgi4"]
@@ -31,11 +31,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_behavior_recursive = 1
 stretch = true
+mouse_target = true
 script = ExtResource("1_r585w")
 metadata/_tab_index = 0
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=293528000]
+unique_name_in_owner = true
 handle_input_locally = false
 gui_snap_controls_to_pixels = false
 size = Vector2i(1152, 648)
@@ -75,6 +78,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_type_variation = &"Grid"
 script = ExtResource("2_r585w")
 metadata/_custom_type_script = "uid://bdkax8ga5cpf4"
@@ -90,6 +94,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("2_h7mtx")
 
 [node name="ContentsLayer" type="CanvasLayer" parent="SubViewport" unique_id=1034811757]
@@ -157,7 +162,7 @@ item_4/id = 4
 item_5/id = 4
 item_5/separator = true
 item_6/text = "DELETE"
-item_6/icon = ExtResource("13_j8bff")
+item_6/icon = ExtResource("13_3mgi4")
 item_6/id = 1
 item_7/id = 10
 item_7/separator = true
