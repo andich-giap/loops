@@ -1,3 +1,4 @@
+@icon("res://addons/at-icons/node2d/video_camera.svg")
 class_name ViewportCamera
 extends Node2D
 ## CAD-like camera that manipulates the [member Viewport.canvas_transform] of [member viewport].

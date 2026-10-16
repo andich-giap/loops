@@ -50,18 +50,16 @@ func setup() -> void:
 	_menu_button_bar_node.close_project_requested.connect(_handle_close_project)
 	_menu_button_bar_node.show_page_manager_requested.connect(toggle_page_manager)
 	
-	_tool_bar_node.add_draw_line_requested.connect(add_draw_line)
-	_tool_bar_node.add_text_requested.connect(add_text)
 	_tool_bar_node.ortho_requested.connect(toggle_ortho)
 	_tool_bar_node.grid_requested.connect(toggle_grid)
-	_tool_bar_node.move_requested.connect(_pages_tab_container.activate_modal_tool.bind(MoveModalTool))
-	_tool_bar_node.duplicate_requested.connect(_pages_tab_container.activate_modal_tool.bind(DuplicateModalTool))
-	_tool_bar_node.grow_line_requested.connect(_pages_tab_container.activate_modal_tool.bind(ModalTool))
+	_tool_bar_node.modal_tool_activation_requested.connect(_pages_tab_container.activate_modal_tool)
 	
 	_page_manager_node.open_page_requested.connect(open_page)
 	_page_manager_node.close_project_requested.connect(_handle_close_project)
 	
-	_pages_tab_container.unpress_modal_tool_buttons.connect(_tool_bar_node.modal_tools_bar.unpress_button)
+	_pages_tab_container.unpress_modal_tool_buttons.connect(_tool_bar_node.unpress_modal_tool_buttons)
+	
+	_dxf_inspector_node.add_graphics_requested.connect(_on_dxf_inspector_node_add_graphics_requested)
 
 
 ## Opens the project with the given [param project_data]. [param project_data] can be retrieved via [method RootContext.load_project].
@@ -100,29 +98,10 @@ func toggle_grid(toggled_on: bool) -> void:
 		page_viewport.grid.visible = toggled_on
 
 
-## Adds a [PolyLine2D] to the current [PageViewport].
-func add_draw_line() -> void:
-	var page: PageViewport = _pages_tab_container.current_page
-	if not page:
-		return
-	var poly_line_2d: PolyLine2D = PolyLine2D.new(true)
-	page.add_graphics(poly_line_2d)
-	poly_line_2d.finished_drawing.connect(_unpress_draw_button)
-
-
-## Adds a [LLineEdit] to the current [PageViewport].
-func add_text() -> void:
-	var page: PageViewport = _pages_tab_container.current_page
-	if not page:
-		return
-	var l_line_edit: LLineEdit = LLineEdit.new(true)
-	page.add_graphics(l_line_edit)
-	l_line_edit.finished_placing.connect(_unpress_draw_button)
-
-
 func _handle_close_project(project_data: ProjectData = null) -> void:
 	close_project_requested.emit(project_data)
 
 
-func _unpress_draw_button() -> void:
-	_tool_bar_node.draw_tool_bar.button_group.get_pressed_button().button_pressed = false
+func _on_dxf_inspector_node_add_graphics_requested(graphics: Array[Node]) -> void:
+	for node: Node in graphics:
+		_pages_tab_container.current_page.add_graphics(node)

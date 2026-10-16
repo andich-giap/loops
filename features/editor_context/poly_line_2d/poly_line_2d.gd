@@ -23,7 +23,6 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"closed",
 		&"width",
 	]
-static var default_width: float = Units.mm_to_px(1.0) ## The default width of the line.
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(3.0): ## Distance between decorations.
 	set = set_segment_step
@@ -45,14 +44,14 @@ var _page_viewport: PageViewport
 
 
 func _init(edit: bool = false) -> void:
-	width = default_width
+	if width == 10.0:
+		width = Units.mm_to_px(1.0)
 	default_color = color
 	is_active = edit
 
 
 func _input(event: InputEvent) -> void:
 	if is_active and event is InputEventMouseMotion:
-		# Draw new point position on mouse hover
 		_check_for_closest_point_to_cursor()
 		if _active_point >= 0 and points.size() > 0:
 			var place_position: Vector2 = _get_place_position()
@@ -87,11 +86,7 @@ func _input(event: InputEvent) -> void:
 	
 	if is_active and event.is_action(&"ui_cancel"):
 		stop_drawing()
-	
-	if is_selected and event.is_action(&"delete"):
-		remove_gizmos()
-		deleted.emit()
-		queue_free()
+		
 
 
 func _draw() -> void:
@@ -126,6 +121,7 @@ func _draw() -> void:
 func _validate_property(property: Dictionary) -> void:
 	if property["name"] == &"width":
 		property["hint_string"] = "suffix: mm"
+		property["usage"] = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_EDITOR
 
 
 #region getters/setters
@@ -273,6 +269,12 @@ func deselect_points(_points: PackedInt32Array = []) -> void:
 		gizmos[gizmo].is_selected = false
 
 
+func delete() -> void:
+	remove_gizmos()
+	deleted.emit()
+	queue_free()
+
+
 func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:
 	set_point_position(point, new_position - position)
 
@@ -292,7 +294,7 @@ func _on_gizmo_released() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var place_position: Vector2 = _page_viewport.get_place_position()
+	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
 	if Grid.is_orthogonal and not get_point_count() <= 1:
 		if abs((place_position - _previous_point_position).normalized().dot(Vector2.RIGHT)) <= 0.5:
 			place_position = Vector2(_previous_point_position.x, place_position.y)

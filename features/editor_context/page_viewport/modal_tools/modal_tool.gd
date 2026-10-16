@@ -5,11 +5,18 @@ extends RefCounted
 
 signal started
 signal finished(receipt: ModalToolReceipt)
-@warning_ignore("unused_signal")
+@warning_ignore_start("unused_signal")
 signal selection_requested(selection_query: SelectionQuery)
+signal request_place_position
+@warning_ignore_restore("unused_signal")
 signal selection_received(receipt: SelectionReceipt)
 var _target_nodes: Array[Node]
 var _preview_layer: CanvasLayer
+var _page_viewport: PageViewport
+
+
+func _init(page_viewport: PageViewport = null) -> void:
+	_page_viewport = page_viewport
 
 
 func enter(target_nodes: Array[Node], preview_layer: CanvasLayer) -> void:
@@ -41,3 +48,7 @@ func _add_graphics_preview() -> void:
 	for node: Node in _target_nodes:
 		var preview_node: Node = node.duplicate()
 		_preview_layer.add_child(preview_node)
+
+
+func deactivate_modal_tool() -> void:
+	pass

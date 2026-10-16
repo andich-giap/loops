@@ -4,10 +4,9 @@ extends HBoxContainer
 ## adding [PolyLine2D], [LLineEdit] and other graphics.
 
 
-signal move_requested ## Emitted for [EditorContext] to execute [MoveModalTool].
-signal duplicate_requested ## Emitted for [EditorContext] to create [DuplicateModalTool].
-signal grow_line_requested ## Emitted for [EditorContext] to create [GrowLineModalTool].
+signal modal_tool_activation_requested(tool: ModalTool) ## Emitted for [EditorContext] to execute [ModalTool].
 @export var button_group: ButtonGroup ## Used for disabling the ability to press multiple buttons at once and to unpress the active button.
+@export var modal_tools: Dictionary[StringName, GDScript]
 
 
 func _ready() -> void:
@@ -23,10 +22,6 @@ func unpress_button() -> void:
 
 
 func _on_button_group_button_pressed(button: BaseButton) -> void:
-	match button.name:
-		"Move":
-			move_requested.emit()
-		"Duplicate":
-			duplicate_requested.emit()
-		"GrowLine":
-			grow_line_requested.emit()
+	if not modal_tools.has(button.name):
+		return
+	modal_tool_activation_requested.emit(modal_tools[button.name])

@@ -1,3 +1,4 @@
+@icon("res://addons/at-icons/control/selection_square.svg")
 class_name SelectionManager
 extends Control
 ## Manages Users input for selecting page contents in [PageViewport].
@@ -11,7 +12,7 @@ var selection_rect: Rect2 ## Current [Rect2] of the selection.
 var single_click_size: float = 3.0 ## The size of the selection rect on a single click.
 var clear_on_new_selection: bool = true ## If [code]true[/code] when starting the new selection previous selection is cleared unless [kbd]Shift[/kbd] is pressed.
 var contents_layer: CanvasLayer ## Reference to the layer with the contents.
-var _query: SelectionQuery ## Current [SelectionQuery].
+var _query: SelectionQuery = SelectionQuery.new() ## Current [SelectionQuery].
 var _selection_receipt: SelectionReceipt = SelectionReceipt.new() ## Current selection.
 
 
@@ -88,22 +89,18 @@ func add_to_selection(query: SelectionQuery, receipt: SelectionReceipt) -> void:
 	match query.type:
 		SelectionQuery.Type.POINT:
 			for node: Node in receipt.selected_points.keys():
-				if node.has_method(&"select_points"):
-					node.call(&"select_points", receipt.selected_points[node])
-				elif node.has_method(&"add_to_selection"):
-					node.call(&"add_to_selection")
+				Utils.call_node(node, &"select_points", [receipt.selected_points[node]])
+				Utils.call_node(node, &"add_to_selection")
 				if not _selection_receipt.selected_points.has(node):
 					_selection_receipt.selected_points[node] = PackedInt32Array()
 				_selection_receipt.selected_points[node].append_array(receipt.selected_points[node])
 		SelectionQuery.Type.NODE:
 			var node: Node = receipt.selected_nodes[0]
-			if node.has_method(&"add_to_selection"):
-				node.call(&"add_to_selection")
+			Utils.call_node(node, &"add_to_selection")
 			_selection_receipt.selected_nodes.append(node)
 		SelectionQuery.Type.NODES:
 			for node: Node in receipt.selected_nodes:
-				if node.has_method(&"add_to_selection"):
-					node.call(&"add_to_selection")
+				Utils.call_node(node, &"add_to_selection")
 			_selection_receipt.selected_nodes.append_array(receipt.selected_nodes)
 
 
@@ -112,15 +109,16 @@ func remove_from_selection(receipt: SelectionReceipt) -> void:
 	if not receipt or receipt.is_empty():
 		return
 	for node: Node in receipt.selected_nodes:
-		if node.has_method(&"remove_from_selection"):
-			node.call(&"remove_from_selection")
-		receipt.selected_nodes.erase(node)
+		if not is_instance_valid(node):
+			continue
+		Utils.call_node(node, &"remove_from_selection")
 	for node: Node in receipt.selected_points.keys():
-		if node.has_method(&"deselect_points"):
-			node.call(&"deselect_points", receipt.selected_points[node])
-		elif node.has_method(&"remove_gizmos"):
-			node.call(&"remove_gizmos")
-		receipt.selected_points.erase(node)
+		if not is_instance_valid(node):
+			continue
+		Utils.call_node(node, &"deselect_points", [receipt.selected_points[node]])
+		Utils.call_node(node, &"remove_gizmos")
+	receipt.selected_nodes.clear()
+	receipt.selected_points.clear()
 
 
 ## Returns bounding box of a node if it has such.
@@ -138,8 +136,8 @@ func get_node_rect(node: Node) -> Rect2:
 
 ## Clears the selection.
 func clear_selection() -> void:
+	Utils.call_nodes(_selection_receipt.selected_nodes, &"remove_from_selection")
 	_selection_receipt.clear()
-	get_tree().call_group(&"selection", &"remove_from_selection")
 
 
 ## Receives a [SelectionQuery] to process further selection.
@@ -159,7 +157,7 @@ func set_selection_mode(mode: SelectionQuery.Mode) -> void:
 
 
 ## Returns the size of single click selection.
-func get_singale_click_vector() -> Vector2:
+func get_single_click_vector() -> Vector2:
 	return Vector2(single_click_size, single_click_size)
 
 

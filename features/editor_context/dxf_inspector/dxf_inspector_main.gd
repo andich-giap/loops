@@ -3,10 +3,15 @@ class_name DXFInspector
 extends Control
 
 
-@onready var tree: Tree = %Tree
-@onready var reload_button: Button = $%ReloadButton
+signal file_changed(path: String)
+signal add_graphics_requested(graphics: Array[Node])
 var file: FileAccess
 var tree_root: TreeItem
+@onready var tree: Tree = %Tree
+@onready var reload_button: Button = $%ReloadButton
+@onready var instanciate_button: Button = %InstanciateButton
+@onready var open_file_button: Button = %OpenFileButton
+@onready var open_file_dialog: FileDialog = %OpenFileDialog
 
 
 func _ready() -> void:
@@ -14,10 +19,12 @@ func _ready() -> void:
 		reload_button.queue_free()
 	else:
 		reload_button.visible = true
+	open_file_button.pressed.connect(open_file_dialog.show)
+	open_file_dialog.file_selected.connect(_on_open_file_dialog_files_selected)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	tree_root = tree.create_item()
-	file = open("res://addons/dxf_inspector/test/test.dxf")
+	instanciate_button.pressed.connect(_on_instanciate_button_pressed)
+	file = open("D:/Work_Андич/Новополоцк/СООО ЛЛК-Нафтан/19LUBO/КонтурыСостоянийРСУ.dxf")
 	if not file:
 		return
 	_populate_tree(file)
@@ -86,6 +93,8 @@ static func get_header_variables(_file: FileAccess) -> Array[String]:
 
 
 func _populate_tree(_file: FileAccess) -> void:
+	tree.clear()
+	tree_root = tree.create_item()
 	var section_tree_item: TreeItem
 	while _file.get_position() < _file.get_length():
 		var line: String = _file.get_line()
@@ -271,3 +280,72 @@ func _handle_entities(_file: FileAccess, section_tree_item: TreeItem) -> void:
 		variable_tree_item = section_tree_item.create_child()
 		variable_tree_item.set_text(0, variable_name.strip_edges() + " " + variable_value)
 		line = _file.get_line()
+
+
+func _on_instanciate_button_pressed() -> void:
+	var root_children: Array[TreeItem] = tree.get_root().get_children()
+	var entities_item: TreeItem
+	for child: TreeItem in root_children:
+		if child.get_text(0) == "ENTITIES":
+			entities_item = child
+			break
+	var graphics: Array[Node]
+	for entity: TreeItem in entities_item.get_children():
+		if entity.get_text(0) == "MTEXT":
+			graphics.append(_dxf_get_l_line_edit_from_tree_item(entity))
+		elif entity.get_text(0) == "LINE":
+			graphics.append(_dxf_get_poly_line_2d_from_tree_item(entity))
+	if graphics.is_empty():
+		return
+	add_graphics_requested.emit(graphics)
+
+
+func _dxf_get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
+	var poly_line_2d: PolyLine2D = PolyLine2D.new()
+	var positions: Array[Vector2]
+	positions.resize(2)
+	positions.fill(Vector2.ZERO)
+	poly_line_2d.width = 0.25
+	for child: TreeItem in tree_item.get_children():
+		var variable_name: String = child.get_text(0).split(" ")[0]
+		var variable_value: String = child.get_text(0).split(" ")[1]
+		match variable_name:
+			"10":
+				positions[0] += Vector2(float(variable_value), 0.0)
+			"20":
+				positions[0] -= Vector2(0.0, float(variable_value))
+			"11":
+				positions[1] += Vector2(float(variable_value), 0.0)
+			"21":
+				positions[1] -= Vector2(0.0, float(variable_value))
+	for point_position: Vector2 in positions:
+		poly_line_2d.add_point(point_position)
+	poly_line_2d.update_bounding_box()
+	return poly_line_2d
+
+
+func _dxf_get_l_line_edit_from_tree_item(tree_item: TreeItem) -> LLineEdit:
+	var l_line_edit: LLineEdit = LLineEdit.new()
+	for child: TreeItem in tree_item.get_children():
+		var child_text: PackedStringArray = child.get_text(0).split(" ")
+		var variable_name: String = child_text[0]
+		child_text.remove_at(0)
+		var variable_value: String = " ".join(child_text)
+		match variable_name:
+			"1":
+				var string_components: PackedStringArray = variable_value.split("\\")
+				var text: String = string_components[-1].erase(0, 1)
+				l_line_edit.text = text
+			"10":
+				l_line_edit.position.x = float(variable_value)
+			"20":
+				l_line_edit.position.y = - float(variable_value)
+			"40":
+				l_line_edit.set_font_size(int(Units.mm_to_px(float(variable_value)/2)))
+	return l_line_edit
+
+
+func _on_open_file_dialog_files_selected(path: String) -> void:
+	file = open(path)
+	file_changed.emit(path)
+	_populate_tree(file)

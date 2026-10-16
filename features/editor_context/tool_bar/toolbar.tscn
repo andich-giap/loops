@@ -1,13 +1,45 @@
 [gd_scene format=3 uid="uid://dk2mbb7vuk7lp"]
 
 [ext_resource type="Script" uid="uid://drl4ffbyst8b" path="res://features/editor_context/tool_bar/toolbar.gd" id="1_xtbyg"]
-[ext_resource type="PackedScene" uid="uid://bchcrsaxd56ht" path="res://features/editor_context/tool_bar/draw_tool_bar/draw_tool_bar.tscn" id="2_wb132"]
+[ext_resource type="Script" uid="uid://d2qjtqq4n4rnf" path="res://features/editor_context/tool_bar/modal_tools_bar/modal_tools_bar.gd" id="2_jxje3"]
 [ext_resource type="PackedScene" uid="uid://cdhf0aptl3bu3" path="res://features/editor_context/tool_bar/modes_bar/modes_bar.tscn" id="3_lquya"]
-[ext_resource type="PackedScene" uid="uid://cnq5skfbddol8" path="res://features/editor_context/tool_bar/modal_tools_bar/modal_tools_bar.tscn" id="4_hgm1m"]
+[ext_resource type="Script" uid="uid://dpncr3inxslo2" path="res://features/editor_context/page_viewport/modal_tools/add_l_line_edit/add_l_line_edit_modal_tool.gd" id="3_mqasr"]
+[ext_resource type="Texture2D" uid="uid://b65ryda45mopc" path="res://addons/at-icons/node2d/pencil.svg" id="4_55cd8"]
+[ext_resource type="Texture2D" uid="uid://bky6dhn4j7mk6" path="res://addons/at-icons/node2d/text.svg" id="5_s75jq"]
+[ext_resource type="Script" uid="uid://b4e1mf1yur4jo" path="res://features/editor_context/page_viewport/modal_tools/move/move_modal_tool.gd" id="7_d6ggl"]
+[ext_resource type="Script" uid="uid://bqwdxf4dwqgxu" path="res://features/editor_context/page_viewport/modal_tools/duplicate/duplicate_modal_tool.gd" id="8_6sqa6"]
+[ext_resource type="Script" uid="uid://dx310obvqo300" path="res://features/editor_context/page_viewport/modal_tools/delete/delete_modal_tool.gd" id="9_83eyu"]
+[ext_resource type="Texture2D" uid="uid://capbagnwe8jn3" path="res://addons/at-icons/node2d/move.svg" id="10_h3n0e"]
+[ext_resource type="Texture2D" uid="uid://td175caftmhw" path="res://addons/at-icons/node2d/duplicate.svg" id="11_apeg0"]
+[ext_resource type="Texture2D" uid="uid://b4nmjywfb4vwg" path="res://addons/at-icons/node2d/motion_vector.svg" id="12_68f48"]
+[ext_resource type="Texture2D" uid="uid://bgaokgo4ivbwr" path="res://addons/at-icons/node/trash_can.svg" id="13_vix2p"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_hgm1m"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_62iwn"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_0kcwd"]
+device = -1
+physical_keycode = 86
+unicode = 118
+
+[sub_resource type="Shortcut" id="Shortcut_nlc4c"]
+events = [SubResource("InputEventKey_0kcwd")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_dxu7i"]
+device = -1
+physical_keycode = 68
+unicode = 100
+
+[sub_resource type="Shortcut" id="Shortcut_gh3nv"]
+events = [SubResource("InputEventKey_dxu7i")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_nlc4c"]
+device = -1
+physical_keycode = 4194312
+
+[sub_resource type="Shortcut" id="Shortcut_dxu7i"]
+events = [SubResource("InputEventKey_nlc4c")]
 
 [node name="ToolBar" type="HBoxContainer" unique_id=1888273831]
 theme_type_variation = &"ToolBar"
@@ -17,10 +49,30 @@ script = ExtResource("1_xtbyg")
 layout_mode = 2
 theme_type_variation = &"ToolsPanel"
 
-[node name="DrawToolBar" parent="DrawToolsPanel" unique_id=737868671 instance=ExtResource("2_wb132")]
+[node name="DrawToolsBar" type="HBoxContainer" parent="DrawToolsPanel" unique_id=737868671]
 unique_name_in_owner = true
 layout_mode = 2
+script = ExtResource("2_jxje3")
 button_group = SubResource("ButtonGroup_hgm1m")
+modal_tools = Dictionary[StringName, GDScript]({
+&"AddLLineEdit": ExtResource("3_mqasr")
+})
+
+[node name="AddPolyLine2D" type="Button" parent="DrawToolsPanel/DrawToolsBar" unique_id=576955418]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "POLY_LINE_2D"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_hgm1m")
+icon = ExtResource("4_55cd8")
+
+[node name="AddLLineEdit" type="Button" parent="DrawToolsPanel/DrawToolsBar" unique_id=1182738604]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+tooltip_text = "L_LINE_EDIT"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_hgm1m")
+icon = ExtResource("5_s75jq")
 
 [node name="ModesPanel" type="PanelContainer" parent="." unique_id=6023102]
 layout_mode = 2
@@ -34,7 +86,44 @@ layout_mode = 2
 layout_mode = 2
 theme_type_variation = &"ToolsPanel"
 
-[node name="ModalToolsBar" parent="ModalToolsPanel" unique_id=635271432 instance=ExtResource("4_hgm1m")]
+[node name="ModalToolsBar" type="HBoxContainer" parent="ModalToolsPanel" unique_id=635271432]
 unique_name_in_owner = true
 layout_mode = 2
+script = ExtResource("2_jxje3")
 button_group = SubResource("ButtonGroup_62iwn")
+modal_tools = Dictionary[StringName, GDScript]({
+&"Delete": ExtResource("9_83eyu"),
+&"Duplicate": ExtResource("8_6sqa6"),
+&"Move": ExtResource("7_d6ggl")
+})
+
+[node name="Move" type="Button" parent="ModalToolsPanel/ModalToolsBar" unique_id=781230463]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_62iwn")
+shortcut = SubResource("Shortcut_nlc4c")
+icon = ExtResource("10_h3n0e")
+
+[node name="Duplicate" type="Button" parent="ModalToolsPanel/ModalToolsBar" unique_id=1529088825]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_62iwn")
+shortcut = SubResource("Shortcut_gh3nv")
+icon = ExtResource("11_apeg0")
+
+[node name="GrowLine" type="Button" parent="ModalToolsPanel/ModalToolsBar" unique_id=1906806426]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_62iwn")
+icon = ExtResource("12_68f48")
+
+[node name="Delete" type="Button" parent="ModalToolsPanel/ModalToolsBar" unique_id=2050229148]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_62iwn")
+shortcut = SubResource("Shortcut_dxu7i")
+icon = ExtResource("13_vix2p")
