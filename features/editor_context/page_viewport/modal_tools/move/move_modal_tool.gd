@@ -37,32 +37,36 @@ func handle_input(event: InputEvent) -> void:
 
 
 func handle_input_waiting_for_base_point(event: InputEvent) -> void:
+	var snapped_position: Vector2
 	if event is InputEventMouseMotion:
-		pass ## TODO: Query for snapping preview?
+		snapped_position = _page_viewport.get_snapped_position().snapped_position
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if not mouse_button_event.button_index == MOUSE_BUTTON_LEFT \
 			or not mouse_button_event.is_released():
 			return
+		snapped_position = _page_viewport.get_snapped_position().snapped_position
 		var canvas_transform: Transform2D = _preview_layer.get_viewport().canvas_transform
-		base_point = canvas_transform.affine_inverse() * mouse_button_event.position
+		base_point = canvas_transform.affine_inverse() * snapped_position
 		current_state = State.PREVIEWING
 
 
 func handle_input_previewing(event: InputEvent) -> void:
-	var canvas_transform: Transform2D = _preview_layer.get_viewport().canvas_transform
 	if event is InputEventMouseMotion:
-		var mouse_motion_event: InputEventMouseMotion = event
-		var current_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * mouse_motion_event.position
+		var canvas_transform: Transform2D = _preview_layer.get_viewport().canvas_transform
+		var snapped_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
+		var current_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * snapped_position
 		var canvas_delta: Vector2 = current_canvas_mouse - base_point
 		_preview_layer.transform = Transform2D.IDENTITY.translated(canvas_delta)
 	if event is InputEventMouseButton:
+		var canvas_transform: Transform2D = _preview_layer.get_viewport().canvas_transform
+		var snapped_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
 		var mouse_button_event: InputEventMouseButton = event
 		if not mouse_button_event.button_index == MOUSE_BUTTON_LEFT \
 			or not mouse_button_event.is_released():
 			return
 		current_state = State.EXECUTING
-		var final_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * mouse_button_event.position
+		var final_canvas_mouse: Vector2 = canvas_transform.affine_inverse() * snapped_position
 		execute(final_canvas_mouse)
 
 

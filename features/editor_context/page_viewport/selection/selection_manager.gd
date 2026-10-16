@@ -1,3 +1,4 @@
+@icon("res://addons/at-icons/control/selection_square.svg")
 class_name SelectionManager
 extends Control
 ## Manages Users input for selecting page contents in [PageViewport].

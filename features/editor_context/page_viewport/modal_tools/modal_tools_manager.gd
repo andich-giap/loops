@@ -1,3 +1,4 @@
+@icon("res://addons/at-icons/node/wrench.svg")
 class_name ModalToolsManager
 extends Node
 
@@ -10,8 +11,8 @@ var active_tool: ModalTool
 var preview_layer: CanvasLayer
 
 
-func activate_modal_tool(modal_tool: GDScript, target_nodes: Array[Node]) -> void:
-	active_tool = modal_tool.new()
+func activate_modal_tool(modal_tool: GDScript, target_nodes: Array[Node], page_viewport: PageViewport) -> void:
+	active_tool = modal_tool.new(page_viewport)
 	active_tool.finished.connect(_on_active_tool_finished)
 	active_tool.selection_requested.connect(selection_requested.emit)
 	active_tool.selection_received.connect(selection_received.emit)
@@ -19,6 +20,9 @@ func activate_modal_tool(modal_tool: GDScript, target_nodes: Array[Node]) -> voi
 
 
 func deactivate_modal_tool() -> void:
+	if not active_tool:
+		return
+	active_tool.deactivate_modal_tool()
 	active_tool = null
 
 

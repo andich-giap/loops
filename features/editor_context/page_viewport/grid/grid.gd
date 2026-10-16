@@ -1,11 +1,11 @@
-@tool
+@tool @icon("res://addons/at-icons/control/grid_fine.svg")
 class_name Grid
 extends PanelContainer
 ## A Panel that is shows a grid pattern
 
 
 static var is_orthogonal: bool = false ## Determines if the orthogonal logic of the placement of the graphics is applied by the [PageViewport].
-static var interval: float = 10.0: ## Interval between grid points in millimetres.
+var interval: float = 10.0: ## Interval between grid points in pixels.
 	set = set_interval
 const GRID_MATERIAL: ShaderMaterial = preload("uid://csvrt4x5w11m0")
 var _shader_material: ShaderMaterial

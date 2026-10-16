@@ -6,6 +6,7 @@ extends HBoxContainer
 
 signal modal_tool_activation_requested(tool: ModalTool) ## Emitted for [EditorContext] to execute [ModalTool].
 @export var button_group: ButtonGroup ## Used for disabling the ability to press multiple buttons at once and to unpress the active button.
+@export var modal_tools: Dictionary[StringName, GDScript]
 
 
 func _ready() -> void:
@@ -21,12 +22,6 @@ func unpress_button() -> void:
 
 
 func _on_button_group_button_pressed(button: BaseButton) -> void:
-	match button.name:
-		"Move":
-			modal_tool_activation_requested.emit(MoveModalTool)
-		"Duplicate":
-			modal_tool_activation_requested.emit(DuplicateModalTool)
-		"GrowLine":
-			pass
-		"Delete":
-			modal_tool_activation_requested.emit(DeleteModalTool)
+	if not modal_tools.has(button.name):
+		return
+	modal_tool_activation_requested.emit(modal_tools[button.name])

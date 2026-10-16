@@ -27,9 +27,13 @@ var _unsaved_contents: Dictionary[PageData, PackedScene]
 @onready var modal_tools_manager: ModalToolsManager = %ModalToolsManager
 @onready var modal_tool_preview_layer: CanvasLayer = %ModalToolPreviewLayer
 @onready var sub_viewport: SubViewport = %SubViewport
+@onready var snap_engine: SnapEngine = %SnapEngine
+@onready var snapping_preview: SnappingPreview = %SnappingPreview
 
 
 func _ready() -> void:
+	_setup_snap_engine()
+	
 	selection_manager.contents_layer = contents_layer
 	selection_manager.reset_query()
 	selection_manager.selection_changed.connect(_on_selection_changed)
@@ -53,6 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	queue_redraw()
 	if event.is_action(&"open_properties") and event.is_pressed():
 		edit_properties_dialog.activate(_get_selected_nodes())
 		get_viewport().set_input_as_handled()
@@ -132,16 +137,10 @@ func add_graphics(graphics: Node) -> void:
 	graphics.owner = contents_layer
 
 
-## Returns the possible place position takin into account grid if it is visible.
-func get_place_position() -> Vector2:
-	var interval: Vector2 = Vector2(Units.mm_to_px(grid.interval), Units.mm_to_px(grid.interval))
-	var place_position: Vector2
-	var local_mouse_position: Vector2 = viewport_camera.viewport.canvas_transform.affine_inverse() * viewport_camera.viewport.get_mouse_position()
-	if grid.visible:
-		place_position = snapped(local_mouse_position, interval)
-	else:
-		place_position = local_mouse_position
-	return place_position
+## Returns the possible place position takin into account snapping.
+func get_snapped_position() -> SnapReceipt:
+	var receipt: SnapReceipt = snap_engine.resolve_snap(contents_layer.get_children())
+	return receipt
 
 
 ## Pack the contents to the scene.
@@ -191,7 +190,7 @@ func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> vo
 	_set_can_select(false)
 	gui_input.connect(modal_tools_manager.handle_input)
 	_call_selected_nodes(&"remove_gizmos")
-	modal_tools_manager.activate_modal_tool(modal_tool, graphics)
+	modal_tools_manager.activate_modal_tool(modal_tool, graphics, self)
 
 
 ## Deactivates modal tool execution.
@@ -199,6 +198,8 @@ func deactivate_modal_tool() -> void:
 	if gui_input.is_connected(modal_tools_manager.handle_input):
 		gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tools_manager.deactivate_modal_tool()
+	snapping_preview.clear()
+	unpress_modal_tool_buttons.emit()
 
 
 ## Sends the [SelectionQuery] to [member selection_manager].
@@ -222,6 +223,7 @@ func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
 	unpress_modal_tool_buttons.emit()
 	get_viewport().set_input_as_handled()
+	snapping_preview.clear()
 #endregion
 
 
@@ -411,4 +413,46 @@ func _get_selected_nodes() -> Array[Node]:
 
 func _call_selected_nodes(method: StringName) -> void:
 	var nodes: Array[Node] = _get_selected_nodes()
-	Utils.call_nodes(nodes, method)
+	if not nodes.is_empty():
+		Utils.call_nodes(nodes, method)
+
+
+func _setup_snap_engine() -> void:
+	var grid_constraint: GridConstraint = GridConstraint.new(grid)
+	grid_constraint.priority = 0
+	
+	var vertex_constraint: VertexConstraint = VertexConstraint.new()
+	vertex_constraint.priority = 1
+	
+	var midpoint_constraint: MidpointConstraint = MidpointConstraint.new()
+	midpoint_constraint.priority = 1
+	
+	snap_engine.snap_constraints = [
+		grid_constraint,
+		vertex_constraint,
+		midpoint_constraint,
+	]
+	snap_engine.viewport = sub_viewport
+	snap_engine.snap_changed.connect(snapping_preview.update)
+
+
+#func _draw() -> void:
+	#if snap_engine.snap_constraints.is_empty():
+		#return
+	#var snap_decoration_size: float = 6.0
+	#var receipt: SnapReceipt = get_snapped_position()
+	#match receipt.snap_type:
+		#SnapConstraint.Type.NONE:
+			#draw_circle(receipt.snapped_position, snap_decoration_size, Color.RED)
+		#SnapConstraint.Type.GRID:
+			#draw_circle(receipt.snapped_position, snap_decoration_size, Color.RED, false)
+		#SnapConstraint.Type.VERTEX:
+			#var rect: Rect2 = Rect2()
+			#rect.position = receipt.snapped_position - Vector2(snap_decoration_size, snap_decoration_size)
+			#rect.size = Vector2(snap_decoration_size, snap_decoration_size) * 2
+			#draw_rect(rect, Color.RED, false, 2.0)
+		#SnapConstraint.Type.MIDPOINT:
+			#var p1: Vector2 = receipt.snapped_position + Vector2(0, -snap_decoration_size)        # Верхняя точка
+			#var p2: Vector2 = receipt.snapped_position + Vector2(snap_decoration_size, snap_decoration_size)   # Правая нижняя
+			#var p3: Vector2 = receipt.snapped_position + Vector2(-snap_decoration_size, snap_decoration_size)  # Левая нижняя
+			#draw_polyline(PackedVector2Array([p1, p2, p3, p1]), Color.RED, 2.0)
