@@ -42,4 +42,6 @@ func _on_active_tool_finished(receipt: ModalToolReceipt) -> void:
 
 
 func receive_selection(receipt: SelectionReceipt) -> void:
+	if not active_tool:
+		return
 	active_tool.receive_selection(receipt)
