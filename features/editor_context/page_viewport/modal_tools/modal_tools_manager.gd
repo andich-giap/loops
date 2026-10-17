@@ -38,6 +38,7 @@ func handle_input(event: InputEvent) -> void:
 
 func _on_active_tool_finished(receipt: ModalToolReceipt) -> void:
 	modal_tool_finished_executing.emit(receipt)
+	active_tool = null
 
 
 func receive_selection(receipt: SelectionReceipt) -> void:

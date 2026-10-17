@@ -46,4 +46,5 @@ func exit(receipt: ModalToolReceipt) -> void:
 
 
 func deactivate_modal_tool() -> void:
-	l_line_edit.queue_free()
+	if not current_state == State.FINISHING:
+		l_line_edit.queue_free()

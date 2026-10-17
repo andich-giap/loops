@@ -5,7 +5,7 @@ extends LineEdit
 
 signal changed ## Emitted when the position is changed
 signal deleted ## Emitted on deleting the [LLineEdit].
-signal finished_placing ## Emitted on placing the [LLineEdit] after its creation.
+#signal finished_placing ## Emitted on placing the [LLineEdit] after its creation.
 signal text_editing_toggled(toggled_on: bool) ## Emitted when triggering [method edit].
 signal position_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
@@ -43,7 +43,6 @@ func _ready() -> void:
 	selecting_enabled = false
 	changed.connect(_on_changed)
 	text_submitted.connect(finish_editing.unbind(1))
-	focus_exited.connect(finish_editing)
 	add_theme_color_override(&"text_color", get_theme_color(&"clear_button_color", &"LLineEdit"))
 	add_theme_color_override(&"font_uneditable_color", get_theme_color(&"clear_button_color", &"LLineEdit"))
 
@@ -150,7 +149,7 @@ func edit_text() -> void:
 	size = Vector2.ZERO
 
 
-## Executes when User exited the focus of the line edit.
+## Executes when User exited the focus of the line edit or submits the text.
 func finish_editing() -> void:
 	text_editing_toggled.emit(false)
 	var rect: Rect2 = get_rect()
