@@ -20,7 +20,8 @@ func clear() -> void:
 
 
 func _draw() -> void:
-	if not current_receipt or not current_receipt.snap_successful:
+	if not current_receipt \
+		or not current_receipt.snap_successful:
 		return
 	
 	var glyph_size: float = 6.0 / get_viewport_transform().x.length()

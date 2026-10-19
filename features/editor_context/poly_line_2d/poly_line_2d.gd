@@ -294,7 +294,7 @@ func _on_gizmo_released() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
+	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position_canvas_space
 	if Grid.is_orthogonal and not get_point_count() <= 1:
 		if abs((place_position - _previous_point_position).normalized().dot(Vector2.RIGHT)) <= 0.5:
 			place_position = Vector2(_previous_point_position.x, place_position.y)

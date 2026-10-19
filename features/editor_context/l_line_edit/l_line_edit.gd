@@ -5,7 +5,6 @@ extends LineEdit
 
 signal changed ## Emitted when the position is changed
 signal deleted ## Emitted on deleting the [LLineEdit].
-#signal finished_placing ## Emitted on placing the [LLineEdit] after its creation.
 signal text_editing_toggled(toggled_on: bool) ## Emitted when triggering [method edit].
 signal position_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
@@ -225,7 +224,7 @@ func _on_changed() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
+	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position_canvas_space
 	return place_position
 
 
