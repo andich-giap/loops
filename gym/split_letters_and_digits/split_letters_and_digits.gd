@@ -7,7 +7,7 @@ var values: PackedStringArray
 
 
 func _run() -> void:
-	values = values_string.strip_edges().strip_escapes().split("\n")
+	values = values_string.strip_edges().split("\n")
 	var delimited_values: Array[String]
 	for value: String in values:
 		delimited_values.append(delimit_string(value))

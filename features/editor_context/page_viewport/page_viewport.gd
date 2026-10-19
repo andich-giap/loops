@@ -6,16 +6,16 @@ extends SubViewportContainer
 signal copy_graphics_requested(graphics: Array[Node])
 signal paste_graphics_requested
 signal unpress_modal_tool_buttons
-enum State { ## Possible state when working with the page contents.
-	VIEWING, ## Default view for inspecting the contents visually.
-	PLACING, ## Interactive state for placing or drawing graphics.
-	EDITING, ## Interactive state for editing the text lines.
+enum Mode { ## Possible state when working with the page contents.
+	IDLE, ## Default view for inspecting the contents visually.
+	TOOL, ## Interactive state for placing or drawing graphics.
 }
 @export var page_data: PageData: ## Reference to [PageData].
 	set = set_page_data
-var state: State = State.VIEWING: ## The current [enum State].
-	set = set_state
+var _mode: Mode = Mode.IDLE ## The current [enum Mode].
 var _unsaved_contents: Dictionary[PageData, PackedScene]
+var _editing_nodes: Array[Node] = []
+var _suspend_refresh: bool = false
 @onready var layout: Panel = %Layout ## Reference to layout that sits behind the User access.
 @onready var contents_layer: CanvasLayer = %ContentsLayer ## Reference to contents layer that holds [member PageData.contents].
 @onready var selection_manager: SelectionManager = %SelectionManager ## Reference to [SelectionManager].
@@ -46,9 +46,9 @@ func _ready() -> void:
 	
 	context_menu.index_pressed.connect(_on_context_menu_index_pressed)
 	modal_tools_manager.preview_layer = modal_tool_preview_layer
-	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished_executing)
+	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished)
 	modal_tools_manager.selection_requested.connect(request_selection)
-	modal_tools_manager.execution_cancelled.connect(deactivate_modal_tool)
+	modal_tools_manager.execution_cancelled.connect(stop_tool.bind(true))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,22 +57,43 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	queue_redraw()
+	if event.is_action(&"ui_cancel") and event.is_pressed():
+		_handle_escape()
+		accept_event()
+		return
+	
+	# Priority 1: Node editing.
+	if is_editing_nodes() and _is_click_outside_editing(event):
+		_finish_all_editing()
+		accept_event()
+		return
+	
+	# Priority 2: ModalTool.handle_input().
+	if is_tool_active():
+		return  # modal_tools_manager.handle_input is connected to gui_input
+	
+	# Priority 3: Idle-only input.
 	if event.is_action(&"open_properties") and event.is_pressed():
 		edit_properties_dialog.activate(_get_selected_nodes())
-		get_viewport().set_input_as_handled()
+		accept_event()
+		return
+	
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.button_index == MouseButton.MOUSE_BUTTON_RIGHT \
-			and mouse_button_event.is_released() \
-			and state == State.VIEWING:
-			show_context_menu()
-		_handle_l_line_edit_input(mouse_button_event)
-	if state == State.VIEWING and selection_manager.can_select:
-		_handle_selection_input(event)
-	else:
-		selection_manager.selection_rect.size = Vector2.ZERO
-		selection_manager.queue_redraw()
+		if mouse_button_event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.is_released():
+				show_context_menu()
+			accept_event()
+			return
+		
+		if mouse_button_event.double_click:
+			var hovered: Control = sub_viewport.gui_get_hovered_control()
+			if hovered is LLineEdit:
+				begin_node_edit(hovered)
+				(hovered as LLineEdit).edit_text()
+				return
+	
+	_handle_selection_input(event)
 
 
 #region setters/getters
@@ -96,17 +117,6 @@ func set_page_data(_page_data: PageData) -> void:
 		project_data.closed.connect(_on_project_data_closed)
 	if not page_data.changed.is_connected(_on_page_data_changed):
 		page_data.changed.connect(_on_page_data_changed)
-
-
-func set_state(_state: State) -> void:
-	state = _state
-	match state:
-		State.VIEWING:
-			_set_can_select(true)
-		State.PLACING:
-			_set_can_select(false)
-		State.EDITING:
-			_set_can_select(false)
 #endregion
 
 
@@ -181,25 +191,30 @@ func cut_graphics(graphics: Array[Node]) -> void:
 
 #region ModalTools
 ## Activates modal tool execution.
-func activate_modal_tool(modal_tool: GDScript, graphics: Array[Node] = []) -> void:
-	if not state == State.VIEWING:
-		return
-	if not graphics:
-		graphics = _get_selected_nodes()
-	deactivate_modal_tool()
-	_set_can_select(false)
+func start_tool(modal_tool: GDScript, nodes: Array[Node] = []) -> void:
+	if is_tool_active():
+		stop_tool()
+	if is_editing_nodes():
+		_finish_all_editing()
+	_mode = Mode.TOOL
 	gui_input.connect(modal_tools_manager.handle_input)
-	_call_selected_nodes(&"remove_gizmos")
-	modal_tools_manager.activate_modal_tool(modal_tool, graphics, self)
+	modal_tools_manager.activate_modal_tool(modal_tool, nodes, self)
+	_refresh_interaction()
 
 
 ## Deactivates modal tool execution.
-func deactivate_modal_tool() -> void:
+func stop_tool(cancel: bool = true) -> void:
+	if not is_tool_active():
+		return
+	if cancel:
+		modal_tools_manager.deactivate_modal_tool()
 	if gui_input.is_connected(modal_tools_manager.handle_input):
 		gui_input.disconnect(modal_tools_manager.handle_input)
-	modal_tools_manager.deactivate_modal_tool()
-	snapping_preview.clear()
+	modal_tools_manager.active_tool = null
+	_mode = Mode.IDLE
 	unpress_modal_tool_buttons.emit()
+	snapping_preview.clear()
+	_refresh_interaction()
 
 
 ## Sends the [SelectionQuery] to [member selection_manager].
@@ -211,24 +226,71 @@ func request_selection(query: SelectionQuery) -> void:
 func _receive_selection(receipt: SelectionReceipt) -> void:
 	modal_tools_manager.receive_selection(receipt)
 	selection_manager.reset_query()
-	_set_can_select(false)
 
 
-func _on_modal_tool_finished_executing(receipt: ModalToolReceipt) -> void:
+func _on_modal_tool_finished(receipt: ModalToolReceipt) -> void:
 	receipt.apply_changes(self)
 	page_data.is_saved = false
-	_set_can_select(true)
 	selection_manager.reset_query()
-	gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tool_preview_layer.transform = Transform2D.IDENTITY
-	unpress_modal_tool_buttons.emit()
 	get_viewport().set_input_as_handled()
-	snapping_preview.clear()
+	stop_tool(false)
 #endregion
 
 
-func _set_can_select(can_select: bool) -> void:
-	selection_manager.can_select = can_select
+#region Node editing
+func begin_node_edit(node: Node) -> void:
+	if node in _editing_nodes:
+		return
+	_editing_nodes.append(node)
+	if not _suspend_refresh:
+		_refresh_interaction()
+
+
+func end_node_edit(node: Node) -> void:
+	_editing_nodes.erase(node)
+	if not _suspend_refresh:
+		_refresh_interaction()
+
+
+func is_idle() -> bool:
+	return _mode == Mode.IDLE and _editing_nodes.is_empty()
+
+
+func is_editing_nodes() -> bool:
+	return not _editing_nodes.is_empty()
+
+
+func is_tool_active() -> bool:
+	return _mode == Mode.TOOL
+
+
+func _on_node_editing_toggled(toggled_on: bool, node: Node) -> void:
+	if toggled_on:
+		begin_node_edit(node)
+	else:
+		end_node_edit(node)
+
+
+func _refresh_interaction() -> void:
+	var idle: bool = is_idle()
+	selection_manager.can_select = idle
+	snapping_preview.visible = not idle
+	modal_tool_preview_layer.visible = is_tool_active()
+	if idle:
+		_call_selected_nodes(&"add_gizmos")
+	else:
+		_call_selected_nodes(&"remove_gizmos")
+
+
+func _finish_all_editing() -> void:
+	_suspend_refresh = true
+	for node: Node in _editing_nodes.duplicate(): # Safe for erasing from _editing_nodes midway of the for loop.
+		Utils.call_node(node, &"finish_editing")
+		end_node_edit(node)
+	_suspend_refresh = false
+	_refresh_interaction()
+#endregion
 
 
 func _set_layout_size(page_size: Vector2) -> void:
@@ -244,16 +306,16 @@ func _add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d._page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
-	poly_line_2d.finished_drawing.connect(set_state.bind(State.VIEWING), CONNECT_ONE_SHOT)
-	poly_line_2d.points_editing_toggled.connect(_on_poly_line_2d_point_editing_toggled)
+	#poly_line_2d.finished_drawing.connect(set_mode.bind(Mode.IDLE), CONNECT_ONE_SHOT)
+	poly_line_2d.points_editing_toggled.connect(_on_node_editing_toggled.bind(poly_line_2d))
 
 
 func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit._page_viewport = self
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
-	l_line_edit.text_editing_toggled.connect(_on_l_line_edit_editing_toggled)
-	l_line_edit.position_editing_toggled.connect(_on_l_line_edit_editing_toggled)
+	l_line_edit.text_editing_toggled.connect(_on_node_editing_toggled.bind(l_line_edit))
+	l_line_edit.position_editing_toggled.connect(_on_node_editing_toggled.bind(l_line_edit))
 	l_line_edit.size = Vector2.ZERO
 
 
@@ -295,18 +357,18 @@ func _add_contents(contents: PackedScene) -> void:
 
 func _on_poly_line_2d_point_editing_toggled(toggled_on: bool) -> void:
 	if toggled_on:
-		state = State.EDITING
+		_mode = Mode.TOOL
 	else:
-		state = State.VIEWING
+		_mode = Mode.IDLE
 	get_viewport().set_input_as_handled()
 	selection_manager.is_selecting = false
 
 
 func _on_l_line_edit_editing_toggled(toggled_on: bool) -> void:
 	if toggled_on:
-		state = State.EDITING
+		_mode = Mode.TOOL
 	else:
-		state = State.VIEWING
+		_mode = Mode.IDLE
 	get_viewport().set_input_as_handled()
 	selection_manager.is_selecting = false
 
@@ -337,11 +399,11 @@ func _on_context_menu_index_pressed(index: int) -> void:
 		"PASTE":
 			paste_graphics_requested.emit()
 		"MOVE":
-			activate_modal_tool(MoveModalTool, _get_selected_nodes())
+			start_tool(MoveModalTool, _get_selected_nodes())
 		"DUPLICATE":
-			activate_modal_tool(DuplicateModalTool, _get_selected_nodes())
+			start_tool(DuplicateModalTool, _get_selected_nodes())
 		"DELETE":
-			activate_modal_tool(DeleteModalTool, _get_selected_nodes())
+			start_tool(DeleteModalTool, _get_selected_nodes())
 		"PROPERTIES":
 			edit_properties_dialog.activate(_get_selected_nodes())
 
@@ -385,25 +447,16 @@ func _handle_selection_input(event: InputEvent) -> void:
 		selection_manager.can_select = true
 
 
-func _handle_l_line_edit_input(mouse_button_event: InputEventMouseButton) -> void:
-	if not (
-		mouse_button_event.pressed
-		and mouse_button_event.button_index == MOUSE_BUTTON_LEFT
-	):
-		return
-	
-	if state == State.EDITING:
-		var focused_control: Control = sub_viewport.gui_get_focus_owner()
-		if focused_control is LLineEdit:
-			var hovered_control: Control = sub_viewport.gui_get_hovered_control()
-			if not hovered_control == focused_control:
-				var l_line_edit: LLineEdit = focused_control
-				l_line_edit.finish_editing()
-	elif state == State.VIEWING and mouse_button_event.double_click:
-		var hovered_control: Control = sub_viewport.gui_get_hovered_control()
-		if hovered_control and hovered_control is LLineEdit:
-			var l_line_edit: LLineEdit = hovered_control
-			l_line_edit.edit_text()
+func _is_click_outside_editing(event: InputEvent) -> bool:
+	if not event is InputEventMouseButton:
+		return false
+	var mouse_event: InputEventMouseButton = event
+	if not mouse_event.is_pressed() or mouse_event.button_index != MOUSE_BUTTON_LEFT:
+		return false
+	var hovered: Control = sub_viewport.gui_get_hovered_control()
+	if hovered is LLineEdit:
+		return false
+	return true
 
 
 func _get_selected_nodes() -> Array[Node]:
@@ -435,23 +488,11 @@ func _setup_snap_engine() -> void:
 	snap_engine.snap_changed.connect(snapping_preview.update)
 
 
-#func _draw() -> void:
-	#if snap_engine.snap_constraints.is_empty():
-		#return
-	#var snap_decoration_size: float = 6.0
-	#var receipt: SnapReceipt = get_snapped_position()
-	#match receipt.snap_type:
-		#SnapConstraint.Type.NONE:
-			#draw_circle(receipt.snapped_position, snap_decoration_size, Color.RED)
-		#SnapConstraint.Type.GRID:
-			#draw_circle(receipt.snapped_position, snap_decoration_size, Color.RED, false)
-		#SnapConstraint.Type.VERTEX:
-			#var rect: Rect2 = Rect2()
-			#rect.position = receipt.snapped_position - Vector2(snap_decoration_size, snap_decoration_size)
-			#rect.size = Vector2(snap_decoration_size, snap_decoration_size) * 2
-			#draw_rect(rect, Color.RED, false, 2.0)
-		#SnapConstraint.Type.MIDPOINT:
-			#var p1: Vector2 = receipt.snapped_position + Vector2(0, -snap_decoration_size)        # Верхняя точка
-			#var p2: Vector2 = receipt.snapped_position + Vector2(snap_decoration_size, snap_decoration_size)   # Правая нижняя
-			#var p3: Vector2 = receipt.snapped_position + Vector2(-snap_decoration_size, snap_decoration_size)  # Левая нижняя
-			#draw_polyline(PackedVector2Array([p1, p2, p3, p1]), Color.RED, 2.0)
+func _handle_escape() -> void:
+	if is_tool_active():
+		stop_tool(true)
+		return
+	if is_editing_nodes():
+		_finish_all_editing()
+		return
+	selection_manager.clear_selection()
