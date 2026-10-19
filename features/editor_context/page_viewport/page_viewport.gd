@@ -16,6 +16,7 @@ var _mode: Mode = Mode.IDLE ## The current [enum Mode].
 var _unsaved_contents: Dictionary[PageData, PackedScene]
 var _editing_nodes: Array[Node] = []
 var _suspend_refresh: bool = false
+var _tool_needs_selection: bool = false
 @onready var layout: Panel = %Layout ## Reference to layout that sits behind the User access.
 @onready var contents_layer: CanvasLayer = %ContentsLayer ## Reference to contents layer that holds [member PageData.contents].
 @onready var selection_manager: SelectionManager = %SelectionManager ## Reference to [SelectionManager].
@@ -48,7 +49,6 @@ func _ready() -> void:
 	modal_tools_manager.preview_layer = modal_tool_preview_layer
 	modal_tools_manager.modal_tool_finished_executing.connect(_on_modal_tool_finished)
 	modal_tools_manager.selection_requested.connect(request_selection)
-	modal_tools_manager.execution_cancelled.connect(stop_tool.bind(true))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -70,7 +70,9 @@ func _gui_input(event: InputEvent) -> void:
 	
 	# Priority 2: ModalTool.handle_input().
 	if is_tool_active():
-		return  # modal_tools_manager.handle_input is connected to gui_input
+		if _tool_needs_selection:
+			_handle_selection_input(event)
+		return
 	
 	# Priority 3: Idle-only input.
 	if event.is_action(&"open_properties") and event.is_pressed():
@@ -89,7 +91,6 @@ func _gui_input(event: InputEvent) -> void:
 		if mouse_button_event.double_click:
 			var hovered: Control = sub_viewport.gui_get_hovered_control()
 			if hovered is LLineEdit:
-				begin_node_edit(hovered)
 				(hovered as LLineEdit).edit_text()
 				return
 	
@@ -196,8 +197,11 @@ func start_tool(modal_tool: GDScript, nodes: Array[Node] = []) -> void:
 		stop_tool()
 	if is_editing_nodes():
 		_finish_all_editing()
+	if nodes.is_empty():
+		nodes = _get_selected_nodes()
 	_mode = Mode.TOOL
 	gui_input.connect(modal_tools_manager.handle_input)
+	_call_selected_nodes(&"remove_gizmos")
 	modal_tools_manager.activate_modal_tool(modal_tool, nodes, self)
 	_refresh_interaction()
 
@@ -206,8 +210,11 @@ func start_tool(modal_tool: GDScript, nodes: Array[Node] = []) -> void:
 func stop_tool(cancel: bool = true) -> void:
 	if not is_tool_active():
 		return
+	_tool_needs_selection = false
 	if cancel:
 		modal_tools_manager.deactivate_modal_tool()
+		if selection_manager.selection_changed.is_connected(_receive_selection):
+			selection_manager.selection_changed.disconnect(_receive_selection)
 	if gui_input.is_connected(modal_tools_manager.handle_input):
 		gui_input.disconnect(modal_tools_manager.handle_input)
 	modal_tools_manager.active_tool = null
@@ -219,11 +226,13 @@ func stop_tool(cancel: bool = true) -> void:
 
 ## Sends the [SelectionQuery] to [member selection_manager].
 func request_selection(query: SelectionQuery) -> void:
+	_tool_needs_selection = true
 	selection_manager.request_selection(query)
 	selection_manager.selection_changed.connect(_receive_selection, CONNECT_ONE_SHOT)
 
 
 func _receive_selection(receipt: SelectionReceipt) -> void:
+	_tool_needs_selection = false
 	modal_tools_manager.receive_selection(receipt)
 	selection_manager.reset_query()
 
@@ -274,13 +283,9 @@ func _on_node_editing_toggled(toggled_on: bool, node: Node) -> void:
 
 func _refresh_interaction() -> void:
 	var idle: bool = is_idle()
-	selection_manager.can_select = idle
+	selection_manager.can_select = idle or _tool_needs_selection
 	snapping_preview.visible = not idle
 	modal_tool_preview_layer.visible = is_tool_active()
-	if idle:
-		_call_selected_nodes(&"add_gizmos")
-	else:
-		_call_selected_nodes(&"remove_gizmos")
 
 
 func _finish_all_editing() -> void:
@@ -306,7 +311,6 @@ func _add_poly_line_2d(poly_line_2d: PolyLine2D) -> void:
 	poly_line_2d._page_viewport = self
 	poly_line_2d.changed.connect(_on_page_data_content_changed)
 	poly_line_2d.deleted.connect(_on_page_data_content_changed)
-	#poly_line_2d.finished_drawing.connect(set_mode.bind(Mode.IDLE), CONNECT_ONE_SHOT)
 	poly_line_2d.points_editing_toggled.connect(_on_node_editing_toggled.bind(poly_line_2d))
 
 
@@ -320,6 +324,8 @@ func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
 
 
 func _update_page_viewport() -> void:
+	_editing_nodes.clear()
+	_suspend_refresh = false
 	_clear_contents()
 	if not page_data:
 		## TODO handle case for closing page
@@ -440,11 +446,6 @@ func _handle_selection_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and selection_manager.is_selecting:
 		selection_manager.selection_rect.end = selection_manager.get_local_mouse_position()
 		selection_manager.queue_redraw()
-	
-	if event.is_action(&"ui_cancel"):
-		selection_manager.clear_selection()
-		selection_manager.reset_query()
-		selection_manager.can_select = true
 
 
 func _is_click_outside_editing(event: InputEvent) -> bool:
