@@ -253,7 +253,6 @@ func _add_l_line_edit(l_line_edit: LLineEdit) -> void:
 	l_line_edit.changed.connect(_on_page_data_content_changed)
 	l_line_edit.deleted.connect(_on_page_data_content_changed)
 	l_line_edit.text_editing_toggled.connect(_on_l_line_edit_editing_toggled)
-	l_line_edit.finished_placing.connect(set_state.bind(State.EDITING), CONNECT_ONE_SHOT)
 	l_line_edit.position_editing_toggled.connect(_on_l_line_edit_editing_toggled)
 	l_line_edit.size = Vector2.ZERO
 
