@@ -43,14 +43,13 @@ func get_current_page() -> PageViewport:
 
 ## Triggers [ModalTool] activation in current [PageViewport] without selection.
 func activate_modal_tool(modal_tool: GDScript) -> void:
-	current_page.activate_modal_tool(modal_tool)
+	current_page.start_tool(modal_tool)
 
 
 func _on_tool_bar_graphics_added(graphics: Node) -> void:
 	var current_page_viewport: PageViewport = get_current_tab_control() as PageViewport
 	if not current_page_viewport or not current_page_viewport.page_data:
 		graphics.queue_free()
-		#draw_tool_bar.unpress_button()
 		return
 	current_page_viewport.add_graphics(graphics)
 
