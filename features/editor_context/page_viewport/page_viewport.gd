@@ -54,6 +54,15 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action(&"close_viewport") and event.is_released():
 		queue_free()
+		return
+	
+	
+	if event.is_action(&"open_properties") and event.is_pressed():
+		if not is_idle():
+			return
+		edit_properties_dialog.activate(_get_selected_nodes())
+		accept_event()
+		return
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -72,12 +81,6 @@ func _gui_input(event: InputEvent) -> void:
 	if is_tool_active():
 		if _tool_needs_selection:
 			_handle_selection_input(event)
-		return
-	
-	# Priority 3: Idle-only input.
-	if event.is_action(&"open_properties") and event.is_pressed():
-		edit_properties_dialog.activate(_get_selected_nodes())
-		accept_event()
 		return
 	
 	if event is InputEventMouseButton:
