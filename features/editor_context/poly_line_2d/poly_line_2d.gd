@@ -26,7 +26,7 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"width",
 	]
 @export var color: Color = Color.BLACK ## Color of the line.
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(2.0): ## Distance between decorations.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
 	set = set_segment_step
 @export var decoration: DecorationType: ## The type of decoration.
 	set = set_decoration
@@ -45,7 +45,7 @@ var _page_viewport: PageViewport
 func _init() -> void:
 	if width == 10.0:
 		width = Units.mm_to_px(0.5)
-	default_color = color
+	color = Color(0.0, 0.0, 0.0, 0.0)
 
 
 func _ready() -> void:
@@ -60,38 +60,58 @@ func _draw() -> void:
 	var half_decoration: float = Units.mm_to_px(decoration_size) * 0.5
 	var base: Vector2 = TICK_BASE * half_decoration
 	
-	var segment_length_mm: float = Units.mm_to_px(segment_length)
 	for point: int in range(points.size() - 1):
 		var current_position: Vector2 = get_point_position(point)
 		var next_position: Vector2 = get_point_position(point + 1)
 		
 		var delta: Vector2 = next_position - current_position
 		var line_length: float = delta.length()
-		var segment_count: int = int(line_length / segment_length_mm)
-		if segment_count == 0:
-			continue
-		var step: Vector2 = delta * (segment_length_mm / line_length)
-
-		var angle: float = delta.angle()
-		var start: Vector2 = base.rotated(angle)
-		var end: Vector2 = -start
+		var segment_count: int = int(line_length / segment_length)
+		
+		var step: Vector2 = delta * (segment_length / line_length)
 		
 		var decoration_position: Vector2 = current_position
+		
+		if decoration == DecorationType.SEGMENTED:
+			if line_length <= segment_length:
+				draw_line(
+					current_position,
+					next_position,
+					Color.RED,
+					width
+				)
+				continue
+			segment_count += 1
+		else:
+			if segment_count == 0:
+				continue
 		
 		for segment: int in segment_count:
 			decoration_position += step
 			match decoration:
 				DecorationType.NONE:
 					pass
+				
 				DecorationType.SEGMENTED:
-					pass
+					var pos: Vector2 = decoration_position - step
+					draw_line(
+						pos,
+						pos.move_toward(next_position, segment_length / 2),
+						Color.RED,
+						width,
+					)
+				
 				DecorationType.DASH:
+					var angle: float = delta.angle()
+					var start: Vector2 = base.rotated(angle)
+					var end: Vector2 = -start
 					draw_line(
 						decoration_position + start,
 						decoration_position + end,
 						default_color,
 						width
 					)
+				
 				DecorationType.CIRCLE:
 					draw_circle(
 						decoration_position,
@@ -269,59 +289,6 @@ func _get_place_position() -> Vector2:
 		else:
 			place_position = Vector2(place_position.x, _previous_point_position.y)
 	return place_position
-
-
-func _draw_decoration(decoration_position: Vector2, _decoration_size: float, distance_to_end: float = 0.0, is_end_point: bool = false, current_position: Vector2 = Vector2.ZERO, next_position: Vector2 = Vector2.ZERO) -> void:
-	match decoration:
-		DecorationType.NONE:
-			return
-		DecorationType.DASH:
-			var angle: float = current_position.angle_to_point(next_position)
-			var factor: float = remap(angle, 0.0, PI/4, 0.0, 1.0)
-			var start: Vector2 = (Vector2(-1, 1) / sqrt(2.0) * _decoration_size) / 2.0
-			var end: Vector2 = (Vector2(1, -1) / sqrt(2.0) * _decoration_size) / 2.0
-			start = start.rotated(PI/4 * factor)
-			end = end.rotated(PI/4 * factor)
-			draw_line(
-				decoration_position + start,
-				decoration_position + end,
-				default_color,
-				Units.mm_to_px(width) / 2.0
-			)
-	
-	
-	return
-	
-	match decoration:
-		DecorationType.NONE:
-			return
-		DecorationType.CIRCLE:
-			if is_end_point:
-				draw_circle(
-					decoration_position,
-					Units.mm_to_px(decoration_size),
-					default_color,
-					false,
-					Units.mm_to_px(width)
-				)
-				return
-			var end_vector: Vector2 = (next_position - current_position).normalized()
-			var end_position: Vector2 = decoration_position + end_vector * (Units.mm_to_px(segment_length) - Units.mm_to_px(decoration_size))
-			if distance_to_end < Units.mm_to_px(segment_length) * 2.0:
-				end_position = decoration_position + end_vector * ((decoration_position - next_position).length() - Units.mm_to_px(decoration_size))
-			draw_line(
-				decoration_position + end_vector * Units.mm_to_px(decoration_size),
-				end_position,
-				default_color,
-				Units.mm_to_px(width),
-			)
-			draw_circle(
-				decoration_position,
-				Units.mm_to_px(decoration_size),
-				default_color,
-				false,
-				Units.mm_to_px(width)
-			)
 
 
 func _check_for_closest_point_to_cursor() -> void:
