@@ -37,6 +37,10 @@ COLOR;Color;Цвет
 CLOSED;Closed;Закрыто
 SEGMENT_LENGTH;Segment Length;Длина Сегмента
 DECORATION;Decoration;Оформление
+NONE;None;Нет
+SEGMENTED;Segmented;Штриховка
+DASH;Dash;Косая
+CIRCLE;Circle;Окружность
 DECORATION_SIZE;Decoration Size;Размер Оформления
 WIDTH;Width;Толщина
 POLY_LINE_2D;Polyline;Полилиния
@@ -64,3 +68,10 @@ VERTICAL_ALIGNMENT_CENTER;Center;По центру
 VERTICAL_ALIGNMENT_TOP;Top;Сверху
 TEXT_COLOR;Text color;Цвет текста
 FONT_SIZE;Font size;Высота шрифта
+JOINT_MODE;Joint mode;Вид сочленения
+SHARP;Sharp;Острое
+BEVEL;Bevel;Фаска
+ROUND;Round;Скругление
+BEGIN_CAP_MODE;Begin cap mode;Вид начала линии
+END_CAP_MODE;End cap mode;Вид конца линии
+BOX;BOX;Квадрат

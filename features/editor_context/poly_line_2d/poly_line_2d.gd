@@ -2,12 +2,14 @@
 class_name PolyLine2D
 extends Line2D
 ## An interactive [Line2D] that is used to create simple graphics.
+# TODO Currently when decoration is set to SEGMENTED there is no
+# implementation for the joint_mode BEVEL.
 
 
 signal changed ## Emmited on changing the line [member decoration], [member segment_step], [member decoration_size] or point position is changed.
 signal deleted ## Emmited on deleting the line.
 signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
-enum DecorationType { ## Tye type line decorations.
+enum DecorationType { ## Type of line decorations.
 	NONE, ## No decorations.
 	SEGMENTED,
 	DASH, ## A short line decoration at 45 degrees angele.
@@ -24,6 +26,9 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"decoration_size",
 		&"closed",
 		&"width",
+		&"joint_mode",
+		&"begin_cap_mode",
+		&"end_cap_mode",
 	]
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
@@ -45,10 +50,10 @@ var _page_viewport: PageViewport
 func _init() -> void:
 	if width == 10.0:
 		width = Units.mm_to_px(0.5)
-	color = Color(0.0, 0.0, 0.0, 0.0)
 
 
 func _ready() -> void:
+	default_color = color
 	_update_bounding_box()
 
 
@@ -73,18 +78,37 @@ func _draw() -> void:
 		var decoration_position: Vector2 = current_position
 		
 		if decoration == DecorationType.SEGMENTED:
-			if line_length <= segment_length:
-				draw_line(
-					current_position,
-					next_position,
-					Color.RED,
-					width
-				)
-				continue
-			segment_count += 1
+			default_color = Color.TRANSPARENT
+			
+			draw_dashed_line(
+				current_position,
+				next_position,
+				color,
+				width,
+				decoration_size,
+			)
+			
+			if point > 0:
+				if joint_mode == LineJointMode.LINE_JOINT_SHARP:
+					var previous_point_position: Vector2 = get_point_position(point - 1)
+					draw_polyline(
+						PackedVector2Array([
+							current_position + current_position.direction_to(previous_point_position) * width,
+							current_position,
+							current_position + current_position.direction_to(next_position) * width,
+						]),
+						color,
+						width
+					)
+				elif joint_mode == LineJointMode.LINE_JOINT_ROUND:
+					draw_circle(
+						current_position,
+						width / 2.0,
+						color,
+					)
+			continue
 		else:
-			if segment_count == 0:
-				continue
+			default_color = color
 		
 		for segment: int in segment_count:
 			decoration_position += step
@@ -93,13 +117,7 @@ func _draw() -> void:
 					pass
 				
 				DecorationType.SEGMENTED:
-					var pos: Vector2 = decoration_position - step
-					draw_line(
-						pos,
-						pos.move_toward(next_position, segment_length / 2),
-						Color.RED,
-						width,
-					)
+					pass
 				
 				DecorationType.DASH:
 					var angle: float = delta.angle()
@@ -108,7 +126,7 @@ func _draw() -> void:
 					draw_line(
 						decoration_position + start,
 						decoration_position + end,
-						default_color,
+						color,
 						width
 					)
 				
@@ -116,10 +134,46 @@ func _draw() -> void:
 					draw_circle(
 						decoration_position,
 						decoration_size,
-						default_color,
+						color,
 						false,
 						width
 					)
+	
+	if decoration == DecorationType.SEGMENTED:
+		if begin_cap_mode == LineCapMode.LINE_CAP_BOX:
+			draw_line(
+				points[0],
+				points[0] + points[0].direction_to(points[1]) * -width / 2.0,
+				color,
+				width
+			)
+		elif begin_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			draw_circle(
+				points[0],
+				width / 2.0,
+				color,
+			)
+		if end_cap_mode == LineCapMode.LINE_CAP_BOX:
+			draw_line(
+				points[-1],
+				points[-1] + points[-1].direction_to(points[-2]) * -width / 2.0,
+				color,
+				width
+			)
+		elif end_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			draw_circle(
+				points[-1],
+				width / 2.0,
+				color,
+			)
+	
+	
+	if is_selected:
+		draw_polyline(
+			points,
+			ProjectColor.selection_values[ProjectColor.Selection.LINE],
+			width
+		)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -150,11 +204,9 @@ func set_decoration_size(_decoration_size: float) -> void:
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
 	if is_selected:
-		default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
 	else:
-		default_color = color
 		if not gizmos.is_empty():
 			remove_gizmos()
 	queue_redraw()

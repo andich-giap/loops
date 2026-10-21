@@ -320,7 +320,6 @@ func _dxf_get_poly_line_2d_from_tree_item(tree_item: TreeItem) -> PolyLine2D:
 				positions[1] -= Vector2(0.0, float(variable_value))
 	for point_position: Vector2 in positions:
 		poly_line_2d.add_point(point_position)
-	poly_line_2d.update_bounding_box()
 	return poly_line_2d
 
 
