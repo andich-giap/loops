@@ -8,3 +8,4 @@ func _init(_target_nodes: Array[Node]) -> void:
 
 func apply_changes(_page_viewport: PageViewport) -> void:
 	Utils.call_nodes(target_nodes, &"delete")
+	_page_viewport.selection_manager.clear_selection()

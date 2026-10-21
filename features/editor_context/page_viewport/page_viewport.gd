@@ -54,6 +54,15 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action(&"close_viewport") and event.is_released():
 		queue_free()
+		return
+	
+	
+	if event.is_action(&"open_properties") and event.is_pressed():
+		if not is_idle():
+			return
+		edit_properties_dialog.activate(_get_selected_nodes())
+		accept_event()
+		return
 
 
 func _gui_input(event: InputEvent) -> void:
@@ -72,12 +81,6 @@ func _gui_input(event: InputEvent) -> void:
 	if is_tool_active():
 		if _tool_needs_selection:
 			_handle_selection_input(event)
-		return
-	
-	# Priority 3: Idle-only input.
-	if event.is_action(&"open_properties") and event.is_pressed():
-		edit_properties_dialog.activate(_get_selected_nodes())
-		accept_event()
 		return
 	
 	if event is InputEventMouseButton:
@@ -252,12 +255,14 @@ func begin_node_edit(node: Node) -> void:
 	if node in _editing_nodes:
 		return
 	_editing_nodes.append(node)
+	snap_engine.exclude_from_snapping([node])
 	if not _suspend_refresh:
 		_refresh_interaction()
 
 
 func end_node_edit(node: Node) -> void:
 	_editing_nodes.erase(node)
+	snap_engine.clear_excluded_nodes()
 	if not _suspend_refresh:
 		_refresh_interaction()
 
@@ -284,6 +289,7 @@ func _on_node_editing_toggled(toggled_on: bool, node: Node) -> void:
 func _refresh_interaction() -> void:
 	var idle: bool = is_idle()
 	selection_manager.can_select = idle or _tool_needs_selection
+	selection_manager.is_selecting = false
 	snapping_preview.visible = not idle
 	modal_tool_preview_layer.visible = is_tool_active()
 
@@ -419,6 +425,8 @@ func _on_selection_changed(_receipt: SelectionReceipt) -> void:
 
 
 func _handle_selection_input(event: InputEvent) -> void:
+	if not selection_manager.can_select:
+		return
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if mouse_button_event.shift_pressed:
@@ -431,7 +439,7 @@ func _handle_selection_input(event: InputEvent) -> void:
 			if mouse_button_event.is_pressed():
 				selection_manager.is_selecting = true
 				selection_manager.selection_rect.position = selection_manager.get_local_mouse_position()
-			else:
+			elif mouse_button_event.is_released():
 				if selection_manager.selection_rect.size.is_zero_approx():
 					selection_manager.selection_rect.position = (
 						selection_manager.get_local_mouse_position() 

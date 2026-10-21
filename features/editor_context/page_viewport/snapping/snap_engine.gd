@@ -6,6 +6,7 @@ extends Node
 signal snap_changed(receipt: SnapReceipt)
 @export var viewport: Viewport ## Needed for transform considerations
 var snap_constraints: Array[SnapConstraint] = []
+var _excluded_nodes: Array[Node]
 
 
 func _ready() -> void:
@@ -14,6 +15,12 @@ func _ready() -> void:
 
 
 func resolve_snap(context_nodes: Array[Node], mouse_position: Vector2 = _get_mouse_position()) -> SnapReceipt:
+	for node: Node in context_nodes.duplicate():
+		if _excluded_nodes.has(node):
+			context_nodes.erase(node)
+		if node is Gizmo:
+			context_nodes.erase(node)
+	
 	var canvas_transform: Transform2D = viewport.canvas_transform
 	var zoom_factor: float = canvas_transform.x.length()
 	var receipt: SnapReceipt
@@ -67,3 +74,11 @@ func _process_results(results: Dictionary[SnapConstraint, SnapReceipt]) -> SnapR
 func _get_mouse_position() -> Vector2:
 	var canvas_transform: Transform2D = viewport.canvas_transform
 	return canvas_transform.affine_inverse() * viewport.get_mouse_position()
+
+
+func exclude_from_snapping(nodes: Array[Node]) -> void:
+	_excluded_nodes.append_array(nodes)
+
+
+func clear_excluded_nodes() -> void:
+	_excluded_nodes.clear()

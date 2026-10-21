@@ -22,7 +22,7 @@ static var debug_values: Dictionary[Debug, Color] = {
 static var selection_values: Dictionary[Selection, Color] = {
 	Selection.AREA: Color(0.0, 0.675, 0.69, 0.239),
 	Selection.DASH: Color(0.114, 0.482, 0.827, 0.314),
-	Selection.LINE: Color(0.0, 0.439, 0.851, 1.0),
+	Selection.LINE: Color(0.0, 0.439, 0.85, 0.557),
 	Selection.TEXT: Color(0.0, 0.439, 0.85, 1.0),
 }
 

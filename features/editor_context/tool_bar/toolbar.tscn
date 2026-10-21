@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cdhf0aptl3bu3" path="res://features/editor_context/tool_bar/modes_bar/modes_bar.tscn" id="3_lquya"]
 [ext_resource type="Script" uid="uid://dpncr3inxslo2" path="res://features/editor_context/page_viewport/modal_tools/add_l_line_edit/add_l_line_edit_modal_tool.gd" id="3_mqasr"]
 [ext_resource type="Texture2D" uid="uid://b65ryda45mopc" path="res://addons/at-icons/node2d/pencil.svg" id="4_55cd8"]
+[ext_resource type="Script" uid="uid://bk2xx02v2op51" path="res://features/editor_context/page_viewport/modal_tools/add_poly_line_2d/add_poly_line_2d_modal_tool.gd" id="4_mqasr"]
 [ext_resource type="Texture2D" uid="uid://bky6dhn4j7mk6" path="res://addons/at-icons/node2d/text.svg" id="5_s75jq"]
 [ext_resource type="Script" uid="uid://b4e1mf1yur4jo" path="res://features/editor_context/page_viewport/modal_tools/move/move_modal_tool.gd" id="7_d6ggl"]
 [ext_resource type="Script" uid="uid://bqwdxf4dwqgxu" path="res://features/editor_context/page_viewport/modal_tools/duplicate/duplicate_modal_tool.gd" id="8_6sqa6"]
@@ -55,7 +56,8 @@ layout_mode = 2
 script = ExtResource("2_jxje3")
 button_group = SubResource("ButtonGroup_hgm1m")
 modal_tools = Dictionary[StringName, GDScript]({
-&"AddLLineEdit": ExtResource("3_mqasr")
+&"AddLLineEdit": ExtResource("3_mqasr"),
+&"AddPolyLine2D": ExtResource("4_mqasr")
 })
 
 [node name="AddPolyLine2D" type="Button" parent="DrawToolsPanel/DrawToolsBar" unique_id=576955418]

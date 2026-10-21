@@ -2,17 +2,21 @@
 class_name PolyLine2D
 extends Line2D
 ## An interactive [Line2D] that is used to create simple graphics.
+# TODO Currently when decoration is set to SEGMENTED there is no
+# implementation for the joint_mode BEVEL.
 
 
 signal changed ## Emmited on changing the line [member decoration], [member segment_step], [member decoration_size] or point position is changed.
 signal deleted ## Emmited on deleting the line.
-signal finished_drawing ## Emitted on confirming the drawing of the line after creating.
 signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
-enum DecorationType { ## Tye type line decorations.
+enum DecorationType { ## Type of line decorations.
 	NONE, ## No decorations.
-	LINE, ## A short line decoration at 45 degrees angele.
+	SEGMENTED,
+	DASH, ## A short line decoration at 45 degrees angele.
 	CIRCLE, ## A circle decoration.
 }
+const INV_SQRT2: float = 1 / sqrt(2)  # 1 / sqrt(2)
+const TICK_BASE: Vector2 = Vector2(-INV_SQRT2, INV_SQRT2)  # unit diagonal
 const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [member _new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
@@ -22,100 +26,154 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"decoration_size",
 		&"closed",
 		&"width",
+		&"joint_mode",
+		&"begin_cap_mode",
+		&"end_cap_mode",
 	]
 @export var color: Color = Color.BLACK ## Color of the line.
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(3.0): ## Distance between decorations.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
 	set = set_segment_step
 @export var decoration: DecorationType: ## The type of decoration.
 	set = set_decoration
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = Units.mm_to_px(5.0): ## The size of the decoration.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = Units.mm_to_px(2.0): ## The size of the decoration.
 	set = set_decoration_size
 @export_storage var bounding_box: Rect2 ## The bounding box of the line.
 var is_selected: bool: ## Determines if the line is selected by the [SelectionManager].
 	set = set_is_selected
-var is_active: bool = false ## Determines if the line is currently edited after being placed.
-var selected_points: Array[int] ## Indeces of selected points.
 var gizmos: Array[Gizmo] ## Contains [Gizmo]s of each point of the line. If the line is not selected [member gizmos] is empty.
-var _can_create_new_point: bool = false ## Determines if the new point can be created.
-var _new_point_position: Vector2 ## The position of the new point.
-var _active_point: int ## Currently active point to be placed.
+var _can_create_new_point: bool = false
+var _new_point_position: Vector2
 var _previous_point_position: Vector2
 var _page_viewport: PageViewport
 
 
-func _init(edit: bool = false) -> void:
+func _init() -> void:
 	if width == 10.0:
-		width = Units.mm_to_px(1.0)
+		width = Units.mm_to_px(0.5)
+
+
+func _ready() -> void:
 	default_color = color
-	is_active = edit
-
-
-func _input(event: InputEvent) -> void:
-	if is_active and event is InputEventMouseMotion:
-		_check_for_closest_point_to_cursor()
-		if _active_point >= 0 and points.size() > 0:
-			var place_position: Vector2 = _get_place_position()
-			set_point_position(_active_point, place_position)
-		queue_redraw()
-	
-	if is_active and event is InputEventMouseButton:
-		var mouse_button_event: InputEventMouseButton = event
-		if mouse_button_event.button_index == MOUSE_BUTTON_LEFT and mouse_button_event.is_released():
-			var place_position: Vector2 = _get_place_position()
-			_previous_point_position = place_position
-			if points.size() == 0:
-				add_point(place_position)
-			add_point(place_position)
-			var last_index: int = get_point_count() - 1
-			set_point_position(last_index, place_position)
-			last_index = get_point_count() - 1
-			_active_point = last_index
-			queue_redraw()
-			
-			# Set bounding_box
-			update_bounding_box()
-		
-		if mouse_button_event.button_index == MOUSE_BUTTON_RIGHT \
-			and mouse_button_event.is_released():
-			stop_drawing()
-		if ((event.is_action(&"zoom_in")
-			or event.is_action(&"zoom_out"))
-			and not _active_point == -1):
-			var place_position: Vector2 = _get_place_position()
-			set_point_position(_active_point, place_position)
-	
-	if is_active and event.is_action(&"ui_cancel"):
-		stop_drawing()
-		
+	_update_bounding_box()
 
 
 func _draw() -> void:
 	var is_debug: bool = get_tree().debug_collisions_hint
-	if _can_create_new_point and is_selected and is_debug:
-		draw_circle(get_local_mouse_position(), DISTANCE_TO_CURSOR, Color(0.0, 0.651, 0.208, 0.482))
-		draw_circle(_new_point_position, DEBUG_CURSOR_SIZE/2.0, default_color)
-	for point: int in points.size():
-		if point == points.size() - 1:
-			continue
-		var current_position: Vector2 = get_point_position(point)
-		var next_position: Vector2 = get_point_position(point + 1)
-		var line_length: float = (current_position - next_position).length()
-		var segment_count: int = int(line_length / Units.mm_to_px(segment_length))
-		for step: int in segment_count:
-			var draw_position: Vector2 = (
-				current_position +
-				(next_position - current_position).normalized() *
-				Units.mm_to_px(segment_length) *
-				step
-			)
-			var distance_to_end: float = (draw_position - next_position).length()
-			if distance_to_end < Units.mm_to_px(segment_length): continue
-			_draw_decoration(draw_position, distance_to_end, false, current_position, next_position)
-		if point == points.size() - 2:
-			_draw_decoration(next_position, false, true, next_position, next_position)
-	
 	if is_debug:
 		draw_rect(bounding_box, ProjectColor.debug_values[ProjectColor.Debug.AREA])
+	
+	var half_decoration: float = Units.mm_to_px(decoration_size) * 0.5
+	var base: Vector2 = TICK_BASE * half_decoration
+	
+	for point: int in range(points.size() - 1):
+		var current_position: Vector2 = get_point_position(point)
+		var next_position: Vector2 = get_point_position(point + 1)
+		
+		var delta: Vector2 = next_position - current_position
+		var line_length: float = delta.length()
+		var segment_count: int = int(line_length / segment_length)
+		
+		var step: Vector2 = delta * (segment_length / line_length)
+		
+		var decoration_position: Vector2 = current_position
+		
+		if decoration == DecorationType.SEGMENTED:
+			default_color = Color.TRANSPARENT
+			
+			draw_dashed_line(
+				current_position,
+				next_position,
+				color,
+				width,
+				decoration_size,
+			)
+			
+			if point > 0:
+				if joint_mode == LineJointMode.LINE_JOINT_SHARP:
+					var previous_point_position: Vector2 = get_point_position(point - 1)
+					draw_polyline(
+						PackedVector2Array([
+							current_position + current_position.direction_to(previous_point_position) * width,
+							current_position,
+							current_position + current_position.direction_to(next_position) * width,
+						]),
+						color,
+						width
+					)
+				elif joint_mode == LineJointMode.LINE_JOINT_ROUND:
+					draw_circle(
+						current_position,
+						width / 2.0,
+						color,
+					)
+			continue
+		else:
+			default_color = color
+		
+		for segment: int in segment_count:
+			decoration_position += step
+			match decoration:
+				DecorationType.NONE:
+					pass
+				
+				DecorationType.SEGMENTED:
+					pass
+				
+				DecorationType.DASH:
+					var angle: float = delta.angle()
+					var start: Vector2 = base.rotated(angle)
+					var end: Vector2 = -start
+					draw_line(
+						decoration_position + start,
+						decoration_position + end,
+						color,
+						width
+					)
+				
+				DecorationType.CIRCLE:
+					draw_circle(
+						decoration_position,
+						decoration_size,
+						color,
+						false,
+						width
+					)
+	
+	if decoration == DecorationType.SEGMENTED:
+		if begin_cap_mode == LineCapMode.LINE_CAP_BOX:
+			draw_line(
+				points[0],
+				points[0] + points[0].direction_to(points[1]) * -width / 2.0,
+				color,
+				width
+			)
+		elif begin_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			draw_circle(
+				points[0],
+				width / 2.0,
+				color,
+			)
+		if end_cap_mode == LineCapMode.LINE_CAP_BOX:
+			draw_line(
+				points[-1],
+				points[-1] + points[-1].direction_to(points[-2]) * -width / 2.0,
+				color,
+				width
+			)
+		elif end_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			draw_circle(
+				points[-1],
+				width / 2.0,
+				color,
+			)
+	
+	
+	if is_selected:
+		draw_polyline(
+			points,
+			ProjectColor.selection_values[ProjectColor.Selection.LINE],
+			width
+		)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -132,10 +190,6 @@ func set_segment_step(_segment_length: float) -> void:
 
 
 func set_decoration(_decoration: DecorationType) -> void:
-	if _decoration == DecorationType.LINE:
-		color = Color.WHITE
-	elif _decoration == DecorationType.CIRCLE:
-		color = Color(Color.WHITE, 0.0)
 	decoration = _decoration
 	changed.emit()
 	queue_redraw()
@@ -150,11 +204,9 @@ func set_decoration_size(_decoration_size: float) -> void:
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
 	if is_selected:
-		default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
 	else:
-		default_color = color
 		if not gizmos.is_empty():
 			remove_gizmos()
 	queue_redraw()
@@ -182,15 +234,6 @@ func get_closest_position_to_point(point_position: Vector2) -> Vector2:
 			closest_point = closest_point_on_segment
 			continue
 	return closest_point
-
-
-## Stops the drawing of the [PolyLine2D].
-func stop_drawing() -> void:
-	remove_point(_active_point)
-	is_active = false
-	_active_point = -1
-	finished_drawing.emit()
-	queue_redraw()
 
 
 ## Adds line to the selection.
@@ -240,19 +283,6 @@ func get_editable_properties() -> Array[Dictionary]:
 	return editable_properties
 
 
-## Recalculates the bounding box of a line.
-func update_bounding_box() -> void:
-	if points.size() == 0:
-		bounding_box = Rect2()
-		return
-	if bounding_box.has_area():
-		bounding_box = bounding_box.expand(points[_active_point])
-	elif points.size() >= 2:
-		bounding_box.position = points[0]
-		for point: Vector2 in points:
-			bounding_box = bounding_box.expand(point)
-
-
 ## Selects individual points
 func select_points(_points: PackedInt32Array = []) -> void:
 	remove_gizmos()
@@ -275,6 +305,16 @@ func delete() -> void:
 	queue_free()
 
 
+## Recalculates the bounding box of a line.
+func _update_bounding_box() -> void:
+	if points.size() < 2:
+		bounding_box = Rect2()
+		return
+	bounding_box.position = points[0]
+	for point: Vector2 in points:
+		bounding_box = bounding_box.expand(point)
+
+
 func _on_gizmo_position_changed(new_position: Vector2, point: int) -> void:
 	set_point_position(point, new_position - position)
 
@@ -294,59 +334,13 @@ func _on_gizmo_released() -> void:
 
 
 func _get_place_position() -> Vector2:
-	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position
+	var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position_canvas_space
 	if Grid.is_orthogonal and not get_point_count() <= 1:
 		if abs((place_position - _previous_point_position).normalized().dot(Vector2.RIGHT)) <= 0.5:
 			place_position = Vector2(_previous_point_position.x, place_position.y)
 		else:
 			place_position = Vector2(place_position.x, _previous_point_position.y)
 	return place_position
-
-
-func _draw_decoration(decoration_position: Vector2, distance_to_end: float = 0.0, is_end_point: bool = false, current_position: Vector2 = Vector2.ZERO, next_position: Vector2 = Vector2.ZERO) -> void:
-	match decoration:
-		DecorationType.NONE:
-			return
-		DecorationType.LINE:
-			var angle: float = current_position.angle_to_point(next_position)
-			var factor: float = remap(angle, 0.0, PI/4, 0.0, 1.0)
-			var start: Vector2 = (Vector2(-1, 1) / sqrt(2.0) * Units.mm_to_px(decoration_size)) / 2.0
-			var end: Vector2 = (Vector2(1, -1) / sqrt(2.0) * Units.mm_to_px(decoration_size)) / 2.0
-			start = start.rotated(PI/4 * factor)
-			end = end.rotated(PI/4 * factor)
-			draw_line(
-				decoration_position + start,
-				decoration_position + end,
-				default_color,
-				Units.mm_to_px(width) / 2.0
-			)
-		DecorationType.CIRCLE:
-			if is_end_point:
-				draw_circle(
-					decoration_position,
-					Units.mm_to_px(decoration_size),
-					default_color,
-					false,
-					Units.mm_to_px(width)
-				)
-				return
-			var end_vector: Vector2 = (next_position - current_position).normalized()
-			var end_position: Vector2 = decoration_position + end_vector * (Units.mm_to_px(segment_length) - Units.mm_to_px(decoration_size))
-			if distance_to_end < Units.mm_to_px(segment_length) * 2.0:
-				end_position = decoration_position + end_vector * ((decoration_position - next_position).length() - Units.mm_to_px(decoration_size))
-			draw_line(
-				decoration_position + end_vector * Units.mm_to_px(decoration_size),
-				end_position,
-				default_color,
-				Units.mm_to_px(width),
-			)
-			draw_circle(
-				decoration_position,
-				Units.mm_to_px(decoration_size),
-				default_color,
-				false,
-				Units.mm_to_px(width)
-			)
 
 
 func _check_for_closest_point_to_cursor() -> void:
