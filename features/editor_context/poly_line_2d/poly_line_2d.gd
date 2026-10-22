@@ -9,10 +9,17 @@ extends Line2D
 signal changed ## Emmited on changing the line [member decoration], [member segment_step], [member decoration_size] or point position is changed.
 signal deleted ## Emmited on deleting the line.
 signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
+enum LineType {
+	BY_LAYER,
+	SOLID,
+	DASHED,
+	DASH_DOT,
+	DOUBLE,
+}
 enum DecorationType { ## Type of line decorations.
 	NONE, ## No decorations.
 	SEGMENTED,
-	DASH, ## A short line decoration at 45 degrees angele.
+	DASH_DECORATION, ## A short line decoration at 45 degrees angele.
 	CIRCLE, ## A circle decoration.
 }
 const INV_SQRT2: float = 1 / sqrt(2)  # 1 / sqrt(2)
@@ -119,7 +126,7 @@ func _draw() -> void:
 				DecorationType.SEGMENTED:
 					pass
 				
-				DecorationType.DASH:
+				DecorationType.DASH_DECORATION:
 					var angle: float = delta.angle()
 					var start: Vector2 = base.rotated(angle)
 					var end: Vector2 = -start
