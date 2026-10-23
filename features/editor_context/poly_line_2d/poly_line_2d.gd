@@ -39,7 +39,8 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 	]
 @export var line_style: LineStyle = preload("uid://djogojtvrl0i5"):
 	set = set_line_style
-@export var line_decorations: Array[LineDecoration]
+@export var line_decorations: Array[LineDecoration]:
+	set = set_line_decorations
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
 	set = set_segment_step
@@ -63,7 +64,11 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	default_color = color
+	if line_style._uses_builtin_line:
+		default_color = color
+	else:
+		default_color = Color.TRANSPARENT
+	line_decorations = [preload("uid://47i8nm1hawg1")]
 	_update_bounding_box()
 
 
@@ -100,8 +105,9 @@ func _draw() -> void:
 		var step: Vector2 = line_style.get_step() * current_position.direction_to(next_position)
 		
 		var segment_count: int = int(line_length / step.length())
-		
 		var decoration_position: Vector2 = current_position
+		
+		step = Vector2(Units.mm_to_px(step.x), Units.mm_to_px(step.y))
 		
 		for line_decoration: LineDecoration in line_decorations:
 			for segment: int in segment_count:
@@ -258,6 +264,15 @@ func set_line_style(_line_style: LineStyle) -> void:
 	line_style.changed.connect(queue_redraw)
 	changed.emit()
 	queue_redraw()
+
+
+func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
+	for line_decoration: LineDecoration in line_decorations:
+		if line_decoration.changed.is_connected(queue_redraw):
+			line_decoration.changed.disconnect(queue_redraw)
+	line_decorations = _line_decorations
+	for line_decoration: LineDecoration in line_decorations:
+		line_decoration.changed.connect(queue_redraw)
 
 
 func set_decoration(_decoration: DecorationType) -> void:

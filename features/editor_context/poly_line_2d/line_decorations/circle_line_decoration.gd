@@ -3,9 +3,11 @@ class_name CircleLineDecoration
 extends LineDecoration
 
 
-@export var filled: bool = false
+@export var filled: bool = false:
+	set = set_filled
 
 
+@warning_ignore("unused_parameter")
 func draw_decoration(
 	context: DrawLineContext,
 	position: Vector2,
@@ -13,8 +15,10 @@ func draw_decoration(
 	normal: Vector2,
 	step_index: int,
 ) -> void:
+	if not should_draw(step_index):
+		return
 	context.canvas_item.draw_circle(
-		position,
+		position + tangent * position_offset,
 		base_size * context.size_multiplier,
 		context.color,
 		filled,
@@ -23,14 +27,6 @@ func draw_decoration(
 	)
 
 
-func should_draw(step_index: int) -> bool:
-	return (step_index - phase) % period_step == 0
-
-
-func set_period_step(_period_step: int) -> void:
-	period_step = maxi(1, _period_step)
-	set_phase(phase)
-
-
-func set_phase(_phase: int) -> void:
-	phase = clampi(_phase, 0, period_step - 1)
+func set_filled(_filled: bool) -> void:
+	filled = _filled
+	changed.emit()

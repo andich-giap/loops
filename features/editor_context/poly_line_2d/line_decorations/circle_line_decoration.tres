@@ -4,5 +4,7 @@
 
 [resource]
 script = ExtResource("1_kjvls")
-base_size = 0.5
+base_size = 3.455
+period_step = 2
+position_offset = 13.09
 metadata/_custom_type_script = "uid://dvdeuvxhbcq44"

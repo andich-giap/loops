@@ -11,7 +11,6 @@ extends LineStyle
 	set = set_cap_mode
 
 
-
 func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 	context.canvas_item.draw_dashed_line(
 		from,
