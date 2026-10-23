@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://vobavqpiukw4"]
+
+[ext_resource type="Script" uid="uid://j04cfw7cihvi" path="res://gym/geometry_2d_practice/line_2d.gd" id="1_an7us"]
+
+[node name="Geometry2dPractice" type="Node2D" unique_id=916267136]
+
+[node name="Line2D" type="Line2D" parent="." unique_id=925974001]
+points = PackedVector2Array(99, 44, 98, 146, 230, 149)
+width = 1.885
+default_color = Color(1, 1, 1, 0)
+script = ExtResource("1_an7us")
+delta = 33.225
+joints = 1
