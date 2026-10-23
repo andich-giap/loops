@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CircleLineDecoration" format=3 uid="uid://47i8nm1hawg1"]
+
+[ext_resource type="Script" uid="uid://dvdeuvxhbcq44" path="res://features/editor_context/poly_line_2d/line_decorations/circle_line_decoration.gd" id="1_kjvls"]
+
+[resource]
+script = ExtResource("1_kjvls")
+base_size = 0.5
+metadata/_custom_type_script = "uid://dvdeuvxhbcq44"

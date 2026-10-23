@@ -18,6 +18,10 @@
 [ext_resource type="Script" uid="uid://b5csr8ahuf7vv" path="res://features/editor_context/page_viewport/page_viewport_context_menu.gd" id="15_uc4a7"]
 [ext_resource type="Script" uid="uid://bredekwx8eyim" path="res://features/editor_context/page_viewport/modal_tools/modal_tools_manager.gd" id="16_3mgi4"]
 [ext_resource type="Script" uid="uid://cmxk1c2wno52x" path="res://features/editor_context/page_viewport/snapping/snap_engine.gd" id="17_vv8iq"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="19_j4jnu"]
+[ext_resource type="Resource" uid="uid://7gu47yyq5kpn" path="res://features/editor_context/poly_line_2d/line_styles/dashed_line_style.tres" id="20_iwcd8"]
+[ext_resource type="Script" uid="uid://m3t8ey5gmu0u" path="res://features/editor_context/poly_line_2d/line_decoration.gd" id="21_vqbh0"]
+[ext_resource type="Resource" uid="uid://47i8nm1hawg1" path="res://features/editor_context/poly_line_2d/line_decorations/circle_line_decoration.tres" id="22_27x7h"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kvkci"]
 device = -1
@@ -191,6 +195,18 @@ metadata/_custom_type_script = "uid://bredekwx8eyim"
 unique_name_in_owner = true
 script = ExtResource("17_vv8iq")
 metadata/_custom_type_script = "uid://cmxk1c2wno52x"
+
+[node name="PolyLine2D" type="Line2D" parent="." unique_id=724310617]
+position = Vector2(-96, -8)
+points = PackedVector2Array(32, 8, 32, 210, 84, 48)
+width = 0.229
+default_color = Color(1, 1, 1, 0)
+script = ExtResource("19_j4jnu")
+line_style = ExtResource("20_iwcd8")
+line_decorations = Array[ExtResource("21_vqbh0")]([ExtResource("22_27x7h")])
+segment_length = 25.826771653543307
+decoration_size = 6.456692913385827
+metadata/_custom_type_script = "uid://bur730yq3xwn5"
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]
 [connection signal="mouse_exited" from="." to="ViewportCamera" method="set_process_input" binds= [false]]

@@ -37,6 +37,9 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"begin_cap_mode",
 		&"end_cap_mode",
 	]
+@export var line_style: LineStyle = preload("uid://djogojtvrl0i5"):
+	set = set_line_style
+@export var line_decorations: Array[LineDecoration]
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
 	set = set_segment_step
@@ -69,118 +72,162 @@ func _draw() -> void:
 	if is_debug:
 		draw_rect(bounding_box, ProjectColor.debug_values[ProjectColor.Debug.AREA])
 	
-	var half_decoration: float = Units.mm_to_px(decoration_size) * 0.5
-	var base: Vector2 = TICK_BASE * half_decoration
+	var context: DrawLineContext = DrawLineContext.new()
+	context.canvas_item = self
+	context.color = color
+	context.size_multiplier = 1.0
+	context.width = width
 	
 	for point: int in range(points.size() - 1):
 		var current_position: Vector2 = get_point_position(point)
 		var next_position: Vector2 = get_point_position(point + 1)
 		
+		
+		line_style.draw_segment(context, current_position, next_position)
+		
+		if not point == 0:
+			line_style.draw_joint(
+				context,
+				current_position,
+				current_position.direction_to(points[point-1]),
+				current_position.direction_to(next_position)
+			)
+		
+		
 		var delta: Vector2 = next_position - current_position
 		var line_length: float = delta.length()
-		var segment_count: int = int(line_length / segment_length)
 		
-		var step: Vector2 = delta * (segment_length / line_length)
+		var step: Vector2 = line_style.get_step() * current_position.direction_to(next_position)
+		
+		var segment_count: int = int(line_length / step.length())
 		
 		var decoration_position: Vector2 = current_position
 		
-		if decoration == DecorationType.SEGMENTED:
-			default_color = Color.TRANSPARENT
-			
-			draw_dashed_line(
-				current_position,
-				next_position,
-				color,
-				width,
-				decoration_size,
-			)
-			
-			if point > 0:
-				if joint_mode == LineJointMode.LINE_JOINT_SHARP:
-					var previous_point_position: Vector2 = get_point_position(point - 1)
-					draw_polyline(
-						PackedVector2Array([
-							current_position + current_position.direction_to(previous_point_position) * width,
-							current_position,
-							current_position + current_position.direction_to(next_position) * width,
-						]),
-						color,
-						width
-					)
-				elif joint_mode == LineJointMode.LINE_JOINT_ROUND:
-					draw_circle(
-						current_position,
-						width / 2.0,
-						color,
-					)
-			continue
-		else:
-			default_color = color
+		for line_decoration: LineDecoration in line_decorations:
+			for segment: int in segment_count:
+				decoration_position += step
+				line_decoration.draw_decoration(
+					context,
+					decoration_position,
+					delta.normalized(),
+					delta.normalized().rotated(PI/2.0),
+					segment
+				)
 		
-		for segment: int in segment_count:
-			decoration_position += step
-			match decoration:
-				DecorationType.NONE:
-					pass
-				
-				DecorationType.SEGMENTED:
-					pass
-				
-				DecorationType.DASH_DECORATION:
-					var angle: float = delta.angle()
-					var start: Vector2 = base.rotated(angle)
-					var end: Vector2 = -start
-					draw_line(
-						decoration_position + start,
-						decoration_position + end,
-						color,
-						width
-					)
-				
-				DecorationType.CIRCLE:
-					draw_circle(
-						decoration_position,
-						decoration_size,
-						color,
-						false,
-						width
-					)
+	if points.size() > 1:
+		line_style.draw_cap(context, points[0], points[0].direction_to(points[1]), true)
+		line_style.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), true)
 	
-	if decoration == DecorationType.SEGMENTED:
-		if begin_cap_mode == LineCapMode.LINE_CAP_BOX:
-			draw_line(
-				points[0],
-				points[0] + points[0].direction_to(points[1]) * -width / 2.0,
-				color,
-				width
-			)
-		elif begin_cap_mode == LineCapMode.LINE_CAP_ROUND:
-			draw_circle(
-				points[0],
-				width / 2.0,
-				color,
-			)
-		if end_cap_mode == LineCapMode.LINE_CAP_BOX:
-			draw_line(
-				points[-1],
-				points[-1] + points[-1].direction_to(points[-2]) * -width / 2.0,
-				color,
-				width
-			)
-		elif end_cap_mode == LineCapMode.LINE_CAP_ROUND:
-			draw_circle(
-				points[-1],
-				width / 2.0,
-				color,
-			)
-	
-	
-	if is_selected:
-		draw_polyline(
-			points,
-			ProjectColor.selection_values[ProjectColor.Selection.LINE],
-			width
-		)
+	#var half_decoration: float = Units.mm_to_px(decoration_size) * 0.5
+	#var base: Vector2 = TICK_BASE * half_decoration
+	#
+	#for point: int in range(points.size() - 1):
+		#
+		#var delta: Vector2 = next_position - current_position
+		#var line_length: float = delta.length()
+		#var segment_count: int = int(line_length / segment_length)
+		#
+		#var step: Vector2 = delta * (segment_length / line_length)
+		#
+		#var decoration_position: Vector2 = current_position
+		#
+		#if decoration == DecorationType.SEGMENTED:
+			#default_color = Color.TRANSPARENT
+			#
+			#draw_dashed_line(
+				#current_position,
+				#next_position,
+				#color,
+				#width,
+				#decoration_size,
+			#)
+			#
+			#if point > 0:
+				#if joint_mode == LineJointMode.LINE_JOINT_SHARP:
+					#var previous_point_position: Vector2 = get_point_position(point - 1)
+					#draw_polyline(
+						#PackedVector2Array([
+							#current_position + current_position.direction_to(previous_point_position) * width,
+							#current_position,
+							#current_position + current_position.direction_to(next_position) * width,
+						#]),
+						#color,
+						#width
+					#)
+				#elif joint_mode == LineJointMode.LINE_JOINT_ROUND:
+					#draw_circle(
+						#current_position,
+						#width / 2.0,
+						#color,
+					#)
+			#continue
+		#else:
+			#default_color = color
+		#
+		#for segment: int in segment_count:
+			#decoration_position += step
+			#match decoration:
+				#DecorationType.NONE:
+					#pass
+				#
+				#DecorationType.SEGMENTED:
+					#pass
+				#
+				#DecorationType.DASH_DECORATION:
+					#var angle: float = delta.angle()
+					#var start: Vector2 = base.rotated(angle)
+					#var end: Vector2 = -start
+					#draw_line(
+						#decoration_position + start,
+						#decoration_position + end,
+						#color,
+						#width
+					#)
+				#
+				#DecorationType.CIRCLE:
+					#draw_circle(
+						#decoration_position,
+						#decoration_size,
+						#color,
+						#false,
+						#width
+					#)
+	#
+	#if decoration == DecorationType.SEGMENTED:
+		#if begin_cap_mode == LineCapMode.LINE_CAP_BOX:
+			#draw_line(
+				#points[0],
+				#points[0] + points[0].direction_to(points[1]) * -width / 2.0,
+				#color,
+				#width
+			#)
+		#elif begin_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			#draw_circle(
+				#points[0],
+				#width / 2.0,
+				#color,
+			#)
+		#if end_cap_mode == LineCapMode.LINE_CAP_BOX:
+			#draw_line(
+				#points[-1],
+				#points[-1] + points[-1].direction_to(points[-2]) * -width / 2.0,
+				#color,
+				#width
+			#)
+		#elif end_cap_mode == LineCapMode.LINE_CAP_ROUND:
+			#draw_circle(
+				#points[-1],
+				#width / 2.0,
+				#color,
+			#)
+	#
+	#
+	#if is_selected:
+		#draw_polyline(
+			#points,
+			#ProjectColor.selection_values[ProjectColor.Selection.LINE],
+			#width
+		#)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -192,6 +239,23 @@ func _validate_property(property: Dictionary) -> void:
 #region getters/setters
 func set_segment_step(_segment_length: float) -> void:
 	segment_length = maxf(0.01, _segment_length)
+	changed.emit()
+	queue_redraw()
+
+
+func set_line_style(_line_style: LineStyle) -> void:
+	if line_style.changed.is_connected(changed.emit):
+		line_style.changed.disconnect(changed.emit)
+	if line_style.changed.is_connected(queue_redraw):
+		line_style.changed.disconnect(queue_redraw)
+	
+	line_style = _line_style
+	if line_style._uses_builtin_line:
+		default_color = color
+	else:
+		default_color = Color.TRANSPARENT
+	line_style.changed.connect(changed.emit)
+	line_style.changed.connect(queue_redraw)
 	changed.emit()
 	queue_redraw()
 
