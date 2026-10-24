@@ -27,6 +27,6 @@ func draw_cap(context: DrawLineContext, point: Vector2, direction: Vector2, is_b
 	pass
 
 
-## Spacing for decorations. [code]0.0[/code] = use [PolyLine2D]'s fallback.
+## Spacing for decorations in mm. [code]0.0[/code] = use [PolyLine2D]'s fallback.
 func get_step() -> float:
 	return 0.0

@@ -18,7 +18,15 @@ func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 		context.color,
 		context.width,
 		Units.mm_to_px(dash_size),
-		true,
+		false,
+		context.antialiased
+	)
+	#print(from.distance_to(to) / dash_size)
+	context.canvas_item.draw_line(
+		to,
+		to.move_toward(from, Units.mm_to_px(dash_size)),
+		Color.RED,
+		context.width,
 		context.antialiased
 	)
 
@@ -46,11 +54,9 @@ func draw_joint(context: DrawLineContext, point: Vector2, dir_in: Vector2, dir_o
 
 		var half_width: float = context.width * 0.5
 		
-		# Calculate the normals
 		var normal_in: Vector2 = Vector2(-dir_in.y, dir_in.x)
 		var normal_out: Vector2 = Vector2(-dir_out.y, dir_out.x)
 		
-		# Flip the normals if it's a left turn
 		var side: float = -1.0 if cross > 0.0 else 1.0
 		
 		var point_in: Vector2 = point + normal_in * half_width * side

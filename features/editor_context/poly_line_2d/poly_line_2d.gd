@@ -42,11 +42,11 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 @export var line_decorations: Array[LineDecoration]:
 	set = set_line_decorations
 @export var color: Color = Color.BLACK ## Color of the line.
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = Units.mm_to_px(8.0): ## Distance between decorations.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 4.0: ## Distance between decorations in mm.
 	set = set_segment_step
 @export var decoration: DecorationType: ## The type of decoration.
 	set = set_decoration
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = Units.mm_to_px(2.0): ## The size of the decoration.
+@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 2.0: ## The size of the decoration in mm.
 	set = set_decoration_size
 @export_storage var bounding_box: Rect2 ## The bounding box of the line.
 var is_selected: bool: ## Determines if the line is selected by the [SelectionManager].
@@ -77,10 +77,19 @@ func _draw() -> void:
 	if is_debug:
 		draw_rect(bounding_box, ProjectColor.debug_values[ProjectColor.Debug.AREA])
 	
+	if line_style._uses_builtin_line:
+		if is_selected:
+			default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
+		else:
+			default_color = color
+	
 	var context: DrawLineContext = DrawLineContext.new()
 	context.canvas_item = self
-	context.color = color
-	context.size_multiplier = 1.0
+	if is_selected:
+		context.color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
+	else:
+		context.color = color
+	context.size_multiplier = decoration_size
 	context.width = width
 	
 	for point: int in range(points.size() - 1):
@@ -102,19 +111,25 @@ func _draw() -> void:
 		var delta: Vector2 = next_position - current_position
 		var line_length: float = delta.length()
 		
-		var step: Vector2 = line_style.get_step() * current_position.direction_to(next_position)
+		var step_mm: float = line_style.get_step()
+		if step_mm <= 0.0:
+			step_mm = Units.mm_to_px(segment_length)
 		
-		var segment_count: int = int(line_length / step.length())
+		var step_px: float = Units.mm_to_px(step_mm)
+		var direction: Vector2 = current_position.direction_to(next_position)
+		var step: Vector2 = direction * step_px
+		
+		var segment_count: int = int(line_length / step_px) - 1
 		var decoration_position: Vector2 = current_position
-		
-		step = Vector2(Units.mm_to_px(step.x), Units.mm_to_px(step.y))
 		
 		for line_decoration: LineDecoration in line_decorations:
 			for segment: int in segment_count:
 				decoration_position += step
+				var offset_px: float = Units.mm_to_px(line_decoration.position_offset)
+				var final_position: Vector2 = decoration_position + direction * offset_px
 				line_decoration.draw_decoration(
 					context,
-					decoration_position,
+					final_position,
 					delta.normalized(),
 					delta.normalized().rotated(PI/2.0),
 					segment
@@ -122,7 +137,7 @@ func _draw() -> void:
 		
 	if points.size() > 1:
 		line_style.draw_cap(context, points[0], points[0].direction_to(points[1]), true)
-		line_style.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), true)
+		line_style.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), false)
 	
 	#var half_decoration: float = Units.mm_to_px(decoration_size) * 0.5
 	#var base: Vector2 = TICK_BASE * half_decoration
@@ -273,6 +288,7 @@ func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
 	line_decorations = _line_decorations
 	for line_decoration: LineDecoration in line_decorations:
 		line_decoration.changed.connect(queue_redraw)
+	queue_redraw()
 
 
 func set_decoration(_decoration: DecorationType) -> void:
