@@ -103,7 +103,7 @@ func draw_cap(context: DrawLineContext, point: Vector2, direction: Vector2, _is_
 
 
 func get_step() -> float:
-	return dash_size
+	return dash_size * 2.0
 
 
 func set_dash_size(_dash_size: float) -> void:

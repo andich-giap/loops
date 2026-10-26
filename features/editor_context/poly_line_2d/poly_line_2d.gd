@@ -68,7 +68,6 @@ func _ready() -> void:
 		default_color = color
 	else:
 		default_color = Color.TRANSPARENT
-	line_decorations = [preload("uid://47i8nm1hawg1")]
 	_update_bounding_box()
 
 
@@ -113,10 +112,11 @@ func _draw() -> void:
 		var direction: Vector2 = current_position.direction_to(next_position)
 		var step: Vector2 = direction * step_px
 		
-		var segment_count: int = int(line_length / step_px) - 1
-		var decoration_position: Vector2 = current_position + step / 2.0
+		var segment_count: int = int(line_length / step_px)
+		var starting_decoration_position: Vector2 = current_position - step / 4.0
 		
 		for line_decoration: LineDecoration in line_decorations:
+			var decoration_position: Vector2 = starting_decoration_position
 			for segment: int in segment_count:
 				decoration_position += step
 				var offset_px: float = Units.mm_to_px(line_decoration.position_offset)
