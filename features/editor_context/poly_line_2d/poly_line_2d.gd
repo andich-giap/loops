@@ -77,12 +77,6 @@ func _draw() -> void:
 	if is_debug:
 		draw_rect(bounding_box, ProjectColor.debug_values[ProjectColor.Debug.AREA])
 	
-	if line_style._uses_builtin_line:
-		if is_selected:
-			default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
-		else:
-			default_color = color
-	
 	var context: DrawLineContext = DrawLineContext.new()
 	context.canvas_item = self
 	if is_selected:
@@ -300,9 +294,13 @@ func set_decoration_size(_decoration_size: float) -> void:
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
 	if is_selected:
+		if line_style._uses_builtin_line:
+			default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
 	else:
+		if line_style._uses_builtin_line:
+			default_color = color
 		if not gizmos.is_empty():
 			remove_gizmos()
 	queue_redraw()
