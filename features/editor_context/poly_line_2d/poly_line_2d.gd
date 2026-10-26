@@ -37,6 +37,8 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"begin_cap_mode",
 		&"end_cap_mode",
 	]
+@export_tool_button("Add Line Decoration") var tool_add_line_decoration: Callable = _tool_add_line_decoration
+@export_tool_button("Remove Line Decoration") var tool_remove_line_decoration: Callable = _tool_remove_line_decoration
 @export var line_style: LineStyle = preload("uid://djogojtvrl0i5"):
 	set = set_line_style
 @export var line_decorations: Array[LineDecoration]:
@@ -44,8 +46,6 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 4.0: ## Distance between decorations in mm.
 	set = set_segment_step
-@export var decoration: DecorationType: ## The type of decoration.
-	set = set_decoration
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 2.0: ## The size of the decoration in mm.
 	set = set_decoration_size
 @export_storage var bounding_box: Rect2 ## The bounding box of the line.
@@ -120,7 +120,7 @@ func _draw() -> void:
 		var step: Vector2 = direction * step_px
 		
 		var segment_count: int = int(line_length / step_px) - 1
-		var decoration_position: Vector2 = current_position
+		var decoration_position: Vector2 = current_position + step / 2.0
 		
 		for line_decoration: LineDecoration in line_decorations:
 			for segment: int in segment_count:
@@ -288,12 +288,6 @@ func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
 	line_decorations = _line_decorations
 	for line_decoration: LineDecoration in line_decorations:
 		line_decoration.changed.connect(queue_redraw)
-	queue_redraw()
-
-
-func set_decoration(_decoration: DecorationType) -> void:
-	decoration = _decoration
-	changed.emit()
 	queue_redraw()
 
 
@@ -471,3 +465,94 @@ func _check_for_closest_point_to_cursor() -> void:
 func _sort_distances(pos_a: Vector2, pos_b: Vector2) -> bool:
 	var mouse_position: Vector2 = get_local_mouse_position()
 	return mouse_position.distance_to(pos_a) < mouse_position.distance_to(pos_b)
+
+
+func _tool_add_line_decoration() -> void:
+	EditorInterface.popup_quick_open(
+		(func(path: String) -> void:
+			var line_decoration: LineDecoration = load(path)
+			var new_decorations: Array[LineDecoration] = line_decorations.duplicate()
+			
+			if new_decorations.has(line_decoration):
+				return
+			new_decorations.append(line_decoration)
+			
+			var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
+			undo_redo.create_action("Add PolyLine2D LineDecoration")
+			undo_redo.add_do_property(self, &"line_decorations", new_decorations)
+			undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
+			undo_redo.commit_action()
+			),
+		["LineDecoration"]
+		)
+
+
+func _tool_remove_line_decoration() -> void:
+	var confirmation_dialog: ConfirmationDialog = ConfirmationDialog.new()
+	var decoratioins_container: VBoxContainer = VBoxContainer.new()
+	
+	confirmation_dialog.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_SCREEN_WITH_MOUSE_FOCUS
+	confirmation_dialog.title = "Remove LineDecorations"
+	
+	confirmation_dialog.canceled.connect(_on_remove_line_decoration_cancelled, CONNECT_APPEND_SOURCE_OBJECT)
+	confirmation_dialog.confirmed.connect(_on_remove_line_decoration_confirmed, CONNECT_APPEND_SOURCE_OBJECT)
+	
+	get_tree().root.add_child(confirmation_dialog)
+	confirmation_dialog.add_child(decoratioins_container)
+	
+	for line_decoration: LineDecoration in line_decorations:
+		var check_box: CheckBox = CheckBox.new()
+		check_box.text = line_decoration.resource_path.get_file().get_basename()
+		check_box.set_meta(&"line_decoration", line_decoration)
+		decoratioins_container.add_child(check_box)
+	
+	confirmation_dialog.size = Vector2.ZERO
+	confirmation_dialog.show()
+
+
+func _on_remove_line_decoration_cancelled(confirmation_dialog: ConfirmationDialog) -> void:
+	confirmation_dialog.canceled.disconnect(_on_remove_line_decoration_cancelled)
+	confirmation_dialog.confirmed.disconnect(_on_remove_line_decoration_confirmed)
+	confirmation_dialog.queue_free()
+
+
+func _on_remove_line_decoration_confirmed(confirmation_dialog: ConfirmationDialog) -> void:
+	confirmation_dialog.canceled.disconnect(_on_remove_line_decoration_cancelled)
+	confirmation_dialog.confirmed.disconnect(_on_remove_line_decoration_confirmed)
+	
+	var decoratioins_container: VBoxContainer = confirmation_dialog.get_child(0)
+	var new_decorations: Array[LineDecoration] = line_decorations.duplicate()
+	
+	for child: Node in decoratioins_container.get_children():
+		if child is not CheckBox:
+			continue
+		var check_box: CheckBox = child
+		if not check_box.button_pressed:
+			continue
+		var line_decoration: LineDecoration = check_box.get_meta(&"line_decoration")
+		if new_decorations.has(line_decoration):
+			new_decorations.erase(line_decoration)
+	
+	var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
+	undo_redo.create_action("Remove PolyLine2D LineDecoration")
+	undo_redo.add_do_property(self, &"line_decorations", new_decorations)
+	undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
+	undo_redo.commit_action()
+	
+	confirmation_dialog.queue_free()
+
+
+func add_line_decoration(line_decoration: LineDecoration) -> void:
+	if line_decorations.has(line_decoration):
+		return
+	line_decoration.changed.connect(queue_redraw)
+	line_decorations.append(line_decoration)
+	queue_redraw()
+
+
+func remove_line_decoration(line_decoration: LineDecoration) -> void:
+	if not line_decorations.has(line_decoration):
+		return
+	line_decoration.changed.disconnect(queue_redraw)
+	line_decorations.erase(line_decoration)
+	queue_redraw()
