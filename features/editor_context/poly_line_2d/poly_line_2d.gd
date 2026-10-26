@@ -57,7 +57,6 @@ var _new_point_position: Vector2
 var _previous_point_position: Vector2
 var _page_viewport: PageViewport
 
-
 func _init() -> void:
 	if width == 10.0:
 		width = Units.mm_to_px(0.5)
@@ -108,12 +107,12 @@ func _draw() -> void:
 		if step_mm <= 0.0:
 			step_mm = Units.mm_to_px(segment_length)
 		
-		var step_px: float = Units.mm_to_px(step_mm)
+		var step_px: float = Units.mm_to_px(step_mm) * decoration_size
 		var direction: Vector2 = current_position.direction_to(next_position)
 		var step: Vector2 = direction * step_px
 		
 		var segment_count: int = int(line_length / step_px)
-		var starting_decoration_position: Vector2 = current_position - step / 4.0
+		var starting_decoration_position: Vector2 = current_position - step / 4
 		
 		for line_decoration: LineDecoration in line_decorations:
 			var decoration_position: Vector2 = starting_decoration_position
@@ -141,12 +140,6 @@ func _validate_property(property: Dictionary) -> void:
 
 
 #region getters/setters
-func set_segment_step(_segment_length: float) -> void:
-	segment_length = maxf(0.01, _segment_length)
-	changed.emit()
-	queue_redraw()
-
-
 func set_line_style(_line_style: LineStyle) -> void:
 	if line_style.changed.is_connected(changed.emit):
 		line_style.changed.disconnect(changed.emit)
@@ -174,8 +167,14 @@ func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
 	queue_redraw()
 
 
+func set_segment_step(_segment_length: float) -> void:
+	segment_length = maxf(0.01, _segment_length)
+	changed.emit()
+	queue_redraw()
+
+
 func set_decoration_size(_decoration_size: float) -> void:
-	decoration_size = _decoration_size
+	decoration_size = maxf(0.01, _decoration_size)
 	changed.emit()
 	queue_redraw()
 

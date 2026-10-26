@@ -3,7 +3,8 @@ class_name TickLineDecoration
 extends LineDecoration
 
 
-@export var width_scale: float = 1.0
+@export var width_scale: float = 1.0:
+	set = set_width_scale
 
 
 func draw_decoration(
@@ -25,6 +26,11 @@ func draw_decoration(
 		from,
 		to,
 		context.color,
-		context.width,
+		context.width * width_scale,
 		context.antialiased
 	)
+
+
+func set_width_scale(_width_scale: float) -> void:
+	width_scale = maxf(0.0, _width_scale)
+	changed.emit()

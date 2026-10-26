@@ -12,7 +12,7 @@ extends LineStyle
 
 
 func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
-	var dash_size_px: float = Units.mm_to_px(dash_size)
+	var dash_size_px: float = Units.mm_to_px(dash_size) * context.size_multiplier / 2
 	context.canvas_item.draw_dashed_line(
 		from,
 		to,
@@ -103,7 +103,7 @@ func draw_cap(context: DrawLineContext, point: Vector2, direction: Vector2, _is_
 
 
 func get_step() -> float:
-	return dash_size * 2.0
+	return dash_size
 
 
 func set_dash_size(_dash_size: float) -> void:
