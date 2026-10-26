@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="TickLineDecoration" format=3 uid="uid://d2jvqc4m1dct4"]
+
+[ext_resource type="Script" uid="uid://cf1eio76odh2e" path="res://features/editor_context/poly_line_2d/line_decorations/tick_line_decoration.gd" id="1_bcx6i"]
+
+[resource]
+script = ExtResource("1_bcx6i")
+metadata/_custom_type_script = "uid://cf1eio76odh2e"
