@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://cnfgfwaw7ccev"]
+
+[ext_resource type="Script" uid="uid://bkuurntg36xla" path="res://features/editor_context/dialogs/edit_properties_dialog/properties/numeric_property.gd" id="1_ncb85"]
+[ext_resource type="Texture2D" uid="uid://dakpo2wi68qu5" path="res://addons/at-icons/node/arrow_counterclockwise.svg" id="2_rqe8d"]
+
+[node name="FloatPropertyEdit" type="HBoxContainer" unique_id=1260200570]
+offset_right = 426.0
+offset_bottom = 27.0
+script = ExtResource("1_ncb85")
+value = 1.0
+
+[node name="Label" type="Label" parent="." unique_id=838565620]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "FAKE_VALUE"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=814911762]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=1906114048]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(27, 27)
+layout_mode = 2
+icon = ExtResource("2_rqe8d")
+flat = true
+icon_alignment = 1
+
+[node name="SpinBox" type="SpinBox" parent="HBoxContainer" unique_id=1535734100]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(103.86, 0)
+layout_mode = 2
+min_value = -100000.0
+max_value = 100000.0
+step = 0.1
+value = 1.0
+allow_greater = true
+allow_lesser = true
+alignment = 2
+update_on_text_changed = true
+suffix = "px"
+custom_arrow_step = 1.0

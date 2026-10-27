@@ -18,11 +18,6 @@
 [ext_resource type="Script" uid="uid://b5csr8ahuf7vv" path="res://features/editor_context/page_viewport/page_viewport_context_menu.gd" id="15_uc4a7"]
 [ext_resource type="Script" uid="uid://bredekwx8eyim" path="res://features/editor_context/page_viewport/modal_tools/modal_tools_manager.gd" id="16_3mgi4"]
 [ext_resource type="Script" uid="uid://cmxk1c2wno52x" path="res://features/editor_context/page_viewport/snapping/snap_engine.gd" id="17_vv8iq"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="19_j4jnu"]
-[ext_resource type="Script" uid="uid://50fyr5gioysu" path="res://features/editor_context/poly_line_2d/line_styles/dashed_line_style.gd" id="20_vqbh0"]
-[ext_resource type="Script" uid="uid://m3t8ey5gmu0u" path="res://features/editor_context/poly_line_2d/line_decoration.gd" id="21_vqbh0"]
-[ext_resource type="Resource" uid="uid://d2jvqc4m1dct4" path="res://features/editor_context/poly_line_2d/line_decorations/tick_line_decoration.tres" id="23_6o41r"]
-[ext_resource type="Resource" uid="uid://47i8nm1hawg1" path="res://features/editor_context/poly_line_2d/line_decorations/circle_line_decoration.tres" id="23_27x7h"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_kvkci"]
 device = -1
@@ -31,10 +26,6 @@ keycode = 51
 
 [sub_resource type="Shortcut" id="Shortcut_g0s4p"]
 events = [SubResource("InputEventKey_kvkci")]
-
-[sub_resource type="Resource" id="Resource_jd6mg"]
-script = ExtResource("20_vqbh0")
-metadata/_custom_type_script = "uid://50fyr5gioysu"
 
 [node name="PageViewport" type="SubViewportContainer" unique_id=1907616996 groups=["persists"]]
 anchors_preset = 15
@@ -200,17 +191,6 @@ metadata/_custom_type_script = "uid://bredekwx8eyim"
 unique_name_in_owner = true
 script = ExtResource("17_vv8iq")
 metadata/_custom_type_script = "uid://cmxk1c2wno52x"
-
-[node name="PolyLine2D" type="Line2D" parent="." unique_id=1166166566]
-points = PackedVector2Array(64, 116, 300, 116, 268, 228)
-width = 1.0
-default_color = Color(1, 1, 1, 0)
-script = ExtResource("19_j4jnu")
-line_style = SubResource("Resource_jd6mg")
-line_decorations = Array[ExtResource("21_vqbh0")]([ExtResource("23_27x7h"), ExtResource("23_6o41r")])
-decoration_size = 1.52
-bounding_box = Rect2(64, 116, 236, 112)
-metadata/_custom_type_script = "uid://bur730yq3xwn5"
 
 [connection signal="mouse_entered" from="." to="ViewportCamera" method="set_process_input" binds= [true]]
 [connection signal="mouse_exited" from="." to="ViewportCamera" method="set_process_input" binds= [false]]
