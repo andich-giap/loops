@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DotLineDecoration" format=3 uid="uid://blec726ypogyr"]
+
+[ext_resource type="Script" uid="uid://bywwudktqcpkf" path="res://features/editor_context/poly_line_2d/line_decorations/dot_line_decoration.gd" id="1_nb61g"]
+
+[resource]
+script = ExtResource("1_nb61g")
+metadata/_custom_type_script = "uid://bywwudktqcpkf"

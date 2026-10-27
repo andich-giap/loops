@@ -12,20 +12,21 @@ extends LineStyle
 
 
 func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
+	var dash_size_px: float = Units.mm_to_px(dash_size) * context.size_multiplier / 2
 	context.canvas_item.draw_dashed_line(
 		from,
 		to,
 		context.color,
 		context.width,
-		Units.mm_to_px(dash_size),
+		dash_size_px,
 		false,
 		context.antialiased
 	)
-	#print(from.distance_to(to) / dash_size)
+	var remaining_length: float = fmod(from.distance_to(to), dash_size_px)
 	context.canvas_item.draw_line(
 		to,
-		to.move_toward(from, Units.mm_to_px(dash_size)),
-		Color.RED,
+		to + to.direction_to(from) * remaining_length,
+		context.color,
 		context.width,
 		context.antialiased
 	)
