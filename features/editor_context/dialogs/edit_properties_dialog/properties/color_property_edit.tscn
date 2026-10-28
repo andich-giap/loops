@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://lxt7r1fdl2h8"]
+
+[ext_resource type="Script" uid="uid://cv0cmhwtxpnx6" path="res://features/editor_context/dialogs/edit_properties_dialog/properties/color_property_edit.gd" id="1_6jtwf"]
+[ext_resource type="Texture2D" uid="uid://dakpo2wi68qu5" path="res://addons/at-icons/node/arrow_counterclockwise.svg" id="2_1be8h"]
+
+[node name="ColorPropertyEdit" type="HSplitContainer" unique_id=1349594460]
+offset_right = 562.0
+offset_bottom = 27.0
+split_offsets = PackedInt32Array(187)
+split_offset = 187
+script = ExtResource("1_6jtwf")
+value = Color(1, 1, 1, 1)
+metadata/_custom_type_script = "uid://cv0cmhwtxpnx6"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1059941848]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=838565620]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PROPERTY_NAME"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=1906114048]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(27, 27)
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("2_1be8h")
+flat = true
+icon_alignment = 1
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="." unique_id=294000806]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3

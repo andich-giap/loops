@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cqsrk6m3o1w2a"]
 
 [ext_resource type="Script" uid="uid://c1lh8qy081sh" path="res://features/editor_context/dialogs/edit_properties_dialog/properties_dialog.gd" id="1_4yc2x"]
+[ext_resource type="PackedScene" uid="uid://q4n1gvlcxmb5" path="res://features/editor_context/dialogs/edit_properties_dialog/property_edit_container.tscn" id="2_by8g2"]
 
 [node name="EditPropertiesDialog" type="ConfirmationDialog" unique_id=1341264742]
 handle_input_locally = false
@@ -11,31 +12,8 @@ size = Vector2i(204, 100)
 visible = true
 script = ExtResource("1_4yc2x")
 
-[node name="PropertiesContainer" type="VBoxContainer" parent="." unique_id=2060252479]
+[node name="PropertiesContainer" parent="." unique_id=1367914929 instance=ExtResource("2_by8g2")]
 unique_name_in_owner = true
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 200.0
-offset_bottom = 62.0
-
-[node name="Header" type="HSplitContainer" parent="PropertiesContainer" unique_id=569905753]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 16)
-layout_mode = 2
-theme_type_variation = &"PropertyContainerHeader"
-split_offsets = PackedInt32Array(130)
-drag_area_highlight_in_editor = true
-split_offset = 130
-
-[node name="PropertyNameLabel" type="Label" parent="PropertiesContainer/Header" unique_id=1610927031]
-layout_mode = 2
-text = "PROPERTY_NAME"
-text_overrun_behavior = 5
-
-[node name="ValueLabel" type="Label" parent="PropertiesContainer/Header" unique_id=1715886182]
-layout_mode = 2
-text = "VALUE"
-text_overrun_behavior = 3
 
 [node name="ChooseItemToEditDialog" type="ConfirmationDialog" parent="." unique_id=265060145]
 unique_name_in_owner = true
