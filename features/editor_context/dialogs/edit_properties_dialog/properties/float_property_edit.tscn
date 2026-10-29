@@ -7,6 +7,7 @@
 offset_right = 329.0
 offset_bottom = 27.0
 split_offsets = PackedInt32Array(167)
+dragging_enabled = false
 drag_area_highlight_in_editor = true
 split_offset = 167
 script = ExtResource("1_pady1")
@@ -25,7 +26,7 @@ text_overrun_behavior = 3
 
 [node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=1906114048]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(27, 27)
+visible = false
 layout_mode = 2
 size_flags_horizontal = 8
 icon = ExtResource("2_gpwrs")
@@ -39,8 +40,7 @@ size_flags_horizontal = 3
 min_value = -100000.0
 max_value = 100000.0
 step = 0.1
-value = 1456487945.0
 allow_greater = true
 allow_lesser = true
-alignment = 2
 custom_arrow_step = 1.0
+select_all_on_focus = true

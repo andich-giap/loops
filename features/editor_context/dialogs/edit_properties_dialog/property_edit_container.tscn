@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" uid="uid://ca0pjptvsslab" path="res://features/editor_context/dialogs/edit_properties_dialog/property_edit_container.gd" id="1_4ujyj"]
 
-[node name="PropertiesContainer" type="VBoxContainer" unique_id=1367914929]
+[node name="PropertyEditContainer" type="VBoxContainer" unique_id=1178364183]
 offset_left = 4.0
 offset_top = 4.0
 offset_right = 239.0
 offset_bottom = 27.0
 script = ExtResource("1_4ujyj")
+metadata/_custom_type_script = "uid://ca0pjptvsslab"
 
 [node name="Header" type="HSplitContainer" parent="." unique_id=484187467]
 unique_name_in_owner = true
@@ -21,7 +22,7 @@ split_offset = 130
 [node name="PropertyNameLabel" type="Label" parent="Header" unique_id=652261231]
 layout_mode = 2
 text = "PROPERTY_NAME"
-text_overrun_behavior = 5
+text_overrun_behavior = 3
 
 [node name="ValueLabel" type="Label" parent="Header" unique_id=780232749]
 layout_mode = 2

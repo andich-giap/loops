@@ -5,30 +5,27 @@
 
 [node name="BoolPropertyEdit" type="HSplitContainer" unique_id=63465397]
 offset_right = 433.0
-offset_bottom = 27.0
-split_offsets = PackedInt32Array(-241)
+offset_bottom = 24.0
+split_offsets = PackedInt32Array(151)
+dragging_enabled = false
 drag_area_highlight_in_editor = true
-split_offset = -241
+split_offset = 151
 script = ExtResource("1_qiwcy")
-column_width = 0.0
 metadata/_custom_type_script = "uid://btvy3336mi27c"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=814911762]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=524244210]
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=838565620]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=1689756074]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "CLIP_CONTENTS"
+text = "PROPERTY_NAME"
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=1906114048]
+[node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=426845374]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(27, 27)
 layout_mode = 2
 size_flags_horizontal = 8
 icon = ExtResource("2_oq8xq")
@@ -38,5 +35,5 @@ icon_alignment = 1
 [node name="CheckBox" type="CheckBox" parent="." unique_id=364328406]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 theme_type_variation = &"BoolPropertyEditCheckBox"

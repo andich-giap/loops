@@ -6,6 +6,7 @@
 [node name="StringPropertyEdit" type="HSplitContainer" unique_id=1782783994]
 offset_right = 262.0
 offset_bottom = 27.0
+dragging_enabled = false
 drag_area_highlight_in_editor = true
 script = ExtResource("1_mrmbe")
 metadata/_custom_type_script = "uid://wnfo25odmv7i"
@@ -23,7 +24,7 @@ text_overrun_behavior = 3
 
 [node name="RevertButton" type="Button" parent="HBoxContainer" unique_id=69289085]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(27, 27)
+visible = false
 layout_mode = 2
 size_flags_horizontal = 8
 icon = ExtResource("2_415f2")
@@ -34,3 +35,4 @@ icon_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "TEXT"
+select_all_on_focus = true
