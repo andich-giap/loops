@@ -11,7 +11,7 @@ var _default_value: Color
 
 func _ready() -> void:
 	super()
-	color_picker_button.color_changed.connect(_on_contorller_value_changed)
+	color_picker_button.popup_closed.connect(_on_controller_value_changed)
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -21,17 +21,13 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	value = object.get(property_name)
 	_initial_value = value
 	unmark_changed()
-	if object.get_script():
-		var script: Script = object.get_script()
-		_default_value = script.get_property_default_value(property_name)
-	else:
-		var property_class: StringName = object.get_class()
-		var default_value: Variant = ClassDB.class_get_property_default_value(property_class, property_name)
-		if not typeof(default_value) == TYPE_NIL:
-			_default_value = default_value
 	
-	if value == _default_value:
-		hide_revert_button()
+	var default_value: Variant = _get_property_default_value(object, property_name)
+	if not typeof(default_value) == TYPE_NIL:
+		_default_value = default_value
+	
+	if is_multivalue:
+		_mark_multivalue()
 
 
 func set_theme_property(
@@ -54,28 +50,29 @@ func set_theme_property(
 	var property_theme: Theme = _get_theme(control)
 	if property_theme.has_color(property_name, theme_type):
 		_default_value = property_theme.get_color(property_name, theme_type)
+	
+	if is_multivalue:
+		_mark_multivalue()
 
 
 func set_value(_value: Color) -> void:
-	if is_instance_valid(color_picker_button) and not color_picker_button.color == _value:
-		if not color_picker_button.color_changed.is_connected(set_value):
-			color_picker_button.color = _value
-		else:
-			color_picker_button.color_changed.disconnect(set_value)
-			color_picker_button.color = _value
-			color_picker_button.color_changed.connect(set_value)
+	if is_instance_valid(color_picker_button) and not _is_multivalue \
+		and not color_picker_button.color == _value:
+		color_picker_button.set_block_signals(true)
+		color_picker_button.color = _value
+		color_picker_button.set_block_signals(false)
+	
 	if is_instance_valid(revert_button):
-		if not _value == _default_value:
+		if _is_multivalue or not _value == _default_value:
 			show_revert_button()
 		else:
 			hide_revert_button()
+	
 	if value == _value:
 		return
 	value = _value
-	value_changed.emit(value)
 	if value == _initial_value:
 		unmark_changed()
-		value_reverted_to_initial.emit()
 	else:
 		mark_changed()
 
@@ -90,21 +87,37 @@ func apply_value_to_initial() -> void:
 
 
 func revert_to_default() -> void:
-	value = _default_value
+	_commit_value(_default_value, "Color")
 	super()
 
 
 func revert_to_initial() -> void:
-	value = _initial_value
+	_commit_value(_initial_value, "Color")
 	super()
 
 
-func _on_contorller_value_changed(_value: Color) -> void:
-	if undo_redo:
-		var property_name: StringName = label.text.to_lower()
-		undo_redo.create_action("Set value for Color property " + property_name)
-		undo_redo.add_do_property(self, &"value", _value)
-		undo_redo.add_undo_property(self, &"value", _value)
-		undo_redo.commit_action()
-	else:
-		value = _value
+func _on_controller_value_changed() -> void:
+	var _value: Color = color_picker_button.color
+	if not value == _value:
+		_commit_value(_value, &"Color")
+
+
+func _mark_multivalue() -> void:
+	_unmark_multivalue()
+	set_block_signals(true)
+	color_picker_button.color = Color.WHITE_SMOKE
+	set_block_signals(false)
+	var multivalue_label: Label = Label.new()
+	multivalue_label.name = &"MultivalueLabel"
+	multivalue_label.text = "<...>"
+	multivalue_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	multivalue_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	multivalue_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	multivalue_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	color_picker_button.add_child(multivalue_label)
+
+
+func _unmark_multivalue() -> void:
+	var existing: Node = color_picker_button.get_node_or_null(^"MultivalueLabel")
+	if existing:
+		existing.free()

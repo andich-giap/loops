@@ -12,7 +12,7 @@ var _values: PackedStringArray
 
 func _ready() -> void:
 	super()
-	options_button.item_selected.connect(_on_contorller_value_changed)
+	options_button.item_selected.connect(_on_controller_value_changed)
 	options_button.gui_input.connect(_on_options_button_gui_input)
 
 
@@ -24,46 +24,41 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	value = object.get(property_name)
 	_initial_value = value
 	unmark_changed()
-	if object.get_script():
-		var script: Script = object.get_script()
-		_default_value = script.get_property_default_value(property_name)
-	else:
-		var property_class: StringName = object.get_class()
-		var default_value: Variant = ClassDB.class_get_property_default_value(property_class, property_name)
-		if not typeof(default_value) == TYPE_NIL:
-			_default_value = default_value
+	
+	var default_value: Variant = _get_property_default_value(object, property_name)
+	if not typeof(default_value) == TYPE_NIL:
+		_default_value = default_value
 	
 	_values = hint_string.split(",")
 	
 	for enum_name: StringName in _values:
 		options_button.add_item(enum_name)
 	
-	if value == _default_value:
-		hide_revert_button()
+	if is_multivalue:
+		_mark_multivalue()
 
 
 func set_value(_value: int) -> void:
-	if is_instance_valid(options_button) and not options_button.selected == _value:
-		if not options_button.item_selected.is_connected(set_value):
-			if options_button.has_selectable_items() \
-				and options_button.item_count - 1 >= _value:
-				options_button.select(_value)
-		else:
-			options_button.item_selected.disconnect(set_value)
-			options_button.select(_value)
-			options_button.item_selected.connect(set_value)
+	if is_instance_valid(options_button) \
+		and not _is_multivalue \
+		and options_button.has_selectable_items() \
+		and not options_button.selected == _value \
+		and options_button.item_count - 1 >= _value:
+		options_button.set_block_signals(true)
+		options_button.select(_value)
+		options_button.set_block_signals(false)
+	
 	if is_instance_valid(revert_button):
-		if not _value == _default_value:
+		if _is_multivalue or not _value == _default_value:
 			show_revert_button()
 		else:
 			hide_revert_button()
+	
 	if value == _value:
 		return
 	value = _value
-	value_changed.emit(value)
 	if value == _initial_value:
 		unmark_changed()
-		value_reverted_to_initial.emit()
 	else:
 		mark_changed()
 
@@ -78,12 +73,12 @@ func apply_value_to_initial() -> void:
 
 
 func revert_to_default() -> void:
-	value = _default_value
+	_commit_value(_default_value, "enum")
 	super()
 
 
 func revert_to_initial() -> void:
-	value = _initial_value
+	_commit_value(_initial_value, "enum")
 	super()
 
 
@@ -93,17 +88,24 @@ func _on_options_button_gui_input(event: InputEvent) -> void:
 		if not mouse_button_event.is_command_or_control_pressed():
 			return
 		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			options_button.select(mini((value + 1), _values.size() - 1))
+			options_button.select(mini(value + 1, _values.size() - 1))
 		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			options_button.select(maxi((value - 1), _values.size() - 1))
+			options_button.select(maxi(value - 1, 0))
 
 
-func _on_contorller_value_changed(_value: int) -> void:
-	if undo_redo:
-		var property_name: StringName = label.text.to_lower()
-		undo_redo.create_action("Set value for enum property " + property_name)
-		undo_redo.add_do_property(self, &"value", _value)
-		undo_redo.add_undo_property(self, &"value", value)
-		undo_redo.commit_action()
-	else:
-		value = _value
+func _on_controller_value_changed(_value: int) -> void:
+	_commit_value(_value, &"enum")
+
+
+func _mark_multivalue() -> void:
+	_unmark_multivalue()
+	options_button.add_item("<...>", options_button.item_count)
+	options_button.set_block_signals(true)
+	options_button.select(options_button.item_count - 1)
+	options_button.set_block_signals(false)
+
+
+func _unmark_multivalue() -> void:
+	for i: int in range(options_button.item_count - 1, -1, -1):
+		if options_button.get_item_text(i) == "<...>":
+			options_button.remove_item(i)

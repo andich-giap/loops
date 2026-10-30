@@ -11,51 +11,42 @@ var _default_value: bool
 
 func _ready() -> void:
 	super()
-	check_box.toggled.connect(_on_check_box_toggled)
+	check_box.toggled.connect(_on_controller_value_changed)
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
 	super(object, property, is_multivalue)
+	
 	var property_name: StringName = property[&"name"]
 	
 	value = object.get(property_name)
 	_initial_value = value
 	unmark_changed()
-	if object.get_script():
-		var script: Script = object.get_script()
-		_default_value = script.get_property_default_value(property_name)
-	else:
-		var property_class: StringName = object.get_class()
-		var default_value: Variant = ClassDB.class_get_property_default_value(property_class, property_name)
-		if not typeof(default_value) == TYPE_NIL:
-			_default_value = default_value
 	
-	if value == _default_value:
-		hide_revert_button()
+	var default_value: Variant = _get_property_default_value(object, property_name)
+	if not typeof(default_value) == TYPE_NIL:
+		_default_value = default_value
+	
 	
 	if is_multivalue:
-		check_box.add_theme_icon_override(
-			&"unchecked",
-			check_box.get_theme_icon(&"multivalue", &"BoolPropertyEditCheckBox")
-		)
-		check_box.pressed.connect(_on_check_box_pressed, CONNECT_ONE_SHOT)
+		_mark_multivalue()
 
 
 func set_value(_value: bool) -> void:
-	if is_instance_valid(check_box) and not check_box.button_pressed == _value:
+	if is_instance_valid(check_box) and not _is_multivalue and not check_box.button_pressed == _value:
 		check_box.set_pressed_no_signal(_value)
+		
 	if is_instance_valid(revert_button):
-		if not _value == _default_value:
+		if _is_multivalue or not _value == _default_value:
 			show_revert_button()
 		else:
 			hide_revert_button()
+	
 	if value == _value:
 		return
 	value = _value
-	value_changed.emit(value)
 	if value == _initial_value:
 		unmark_changed()
-		value_reverted_to_initial.emit()
 	else:
 		mark_changed()
 
@@ -70,25 +61,30 @@ func apply_value_to_initial() -> void:
 
 
 func revert_to_default() -> void:
-	value = _default_value
+	_commit_value(_default_value, "bool")
 	super()
 
 
 func revert_to_initial() -> void:
-	value = _initial_value
+	_commit_value(_initial_value, "bool")
 	super()
 
 
-func _on_check_box_pressed() -> void:
-	check_box.remove_theme_icon_override(&"unchecked")
+func _on_controller_value_changed(toggled_on: bool) -> void:
+	_commit_value(toggled_on, &"bool")
 
 
-func _on_check_box_toggled(toggled_on: bool) -> void:
-	if undo_redo:
-		var property_name: StringName = label.text.to_lower()
-		undo_redo.create_action("Set value for bool property " + property_name)
-		undo_redo.add_do_property(self, &"value", toggled_on)
-		undo_redo.add_undo_property(self, &"value", value)
-		undo_redo.commit_action()
-	else:
-		value = toggled_on
+func _mark_multivalue() -> void:
+	_unmark_multivalue()
+	set_block_signals(true)
+	check_box.button_pressed = false
+	set_block_signals(false)
+	check_box.add_theme_icon_override(
+		&"unchecked",
+		check_box.get_theme_icon(&"multivalue", &"BoolPropertyEditCheckBox")
+	)
+
+
+func _unmark_multivalue() -> void:
+	if check_box.has_theme_icon_override(&"unchecked"):
+		check_box.remove_theme_icon_override(&"unchecked")

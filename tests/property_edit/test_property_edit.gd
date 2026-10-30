@@ -11,7 +11,7 @@ func _ready() -> void:
 	
 	var properties: Array[Dictionary] = get_test_properties()
 	for property: Dictionary in properties:
-		var property_edit: PropertyEdit = property_edit_container.add_property(test_control, property)
+		var property_edit: PropertyEdit = property_edit_container.add_property(test_control, property, true)
 		if not property_edit:
 			continue
 		property_edit.split_offsets = property_edit_container.header.split_offsets
@@ -23,6 +23,7 @@ func _ready() -> void:
 				test_control,
 				property,
 				property_name,
+				true
 			)
 			if not property_edit:
 				continue

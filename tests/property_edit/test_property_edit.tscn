@@ -3,6 +3,14 @@
 [ext_resource type="Script" uid="uid://c2b1kytk0qvct" path="res://tests/property_edit/test_property_edit.gd" id="1_wefs3"]
 [ext_resource type="PackedScene" uid="uid://q4n1gvlcxmb5" path="res://features/editor_context/dialogs/edit_properties_dialog/property_edit_container.tscn" id="2_m4dmx"]
 
+[sub_resource type="InputEventKey" id="InputEventKey_wefs3"]
+device = -1
+command_or_control_autoremap = true
+keycode = 90
+
+[sub_resource type="Shortcut" id="Shortcut_wefs3"]
+events = [SubResource("InputEventKey_wefs3")]
+
 [node name="TestPropertyEdit" type="Control" unique_id=2114828943 node_paths=PackedStringArray("test_control")]
 layout_mode = 3
 anchors_preset = 15
@@ -50,5 +58,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+undo_shortcut = SubResource("Shortcut_wefs3")
 
 [connection signal="pressed" from="VBoxContainer/ApplyButton" to="." method="_apply"]

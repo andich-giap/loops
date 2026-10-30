@@ -32,6 +32,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 8
+tooltip_text = "REVERT_PROPERTY_TO_DEFAULT"
 icon = ExtResource("2_415f2")
 flat = true
 icon_alignment = 1
@@ -39,5 +40,6 @@ icon_alignment = 1
 [node name="LineEdit" type="LineEdit" parent="." unique_id=2142469236]
 unique_name_in_owner = true
 layout_mode = 2
+placeholder_text = "123"
 draw_control_chars = true
 select_all_on_focus = true

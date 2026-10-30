@@ -32,6 +32,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 8
+tooltip_text = "REVERT_PROPERTY_TO_DEFAULT"
 icon = ExtResource("2_plf75")
 flat = true
 icon_alignment = 1

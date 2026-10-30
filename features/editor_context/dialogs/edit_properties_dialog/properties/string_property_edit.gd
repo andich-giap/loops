@@ -11,8 +11,8 @@ var _default_value: String
 
 func _ready() -> void:
 	super()
-	line_edit.text_submitted.connect(_on_contorller_value_changed)
-	line_edit.focus_exited.connect(_on_contorller_value_changed)
+	line_edit.text_submitted.connect(_on_controller_value_changed)
+	line_edit.focus_exited.connect(_on_controller_value_changed)
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -22,39 +22,32 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	value = object.get(property_name)
 	_initial_value = value
 	unmark_changed()
-	if object.get_script():
-		var script: Script = object.get_script()
-		_default_value = script.get_property_default_value(property_name)
-	else:
-		var property_class: StringName = object.get_class()
-		var default_value: Variant = ClassDB.class_get_property_default_value(property_class, property_name)
-		if not typeof(default_value) == TYPE_NIL:
-			_default_value = default_value
 	
-	if value == _default_value:
-		hide_revert_button()
+	var default_value: Variant = _get_property_default_value(object, property_name)
+	if not typeof(default_value) == TYPE_NIL:
+		_default_value = default_value
+	
+	if is_multivalue:
+		_mark_multivalue()
 
 
 func set_value(_value: String) -> void:
-	if is_instance_valid(line_edit) and not line_edit.text == _value:
-		if not line_edit.text_changed.is_connected(set_value):
-			line_edit.text = _value
-		else:
-			line_edit.text_changed.disconnect(set_value)
-			line_edit.text = _value
-			line_edit.text_changed.connect(set_value)
+	if is_instance_valid(line_edit) and not _is_multivalue and not line_edit.text == _value:
+		line_edit.set_block_signals(true)
+		line_edit.text = _value
+		line_edit.set_block_signals(false)
+	
 	if is_instance_valid(revert_button):
-		if not _value == _default_value:
+		if _is_multivalue or not _value == _default_value:
 			show_revert_button()
 		else:
 			hide_revert_button()
+	
 	if value == _value:
 		return
 	value = _value
-	value_changed.emit(value)
 	if value == _initial_value:
 		unmark_changed()
-		value_reverted_to_initial.emit()
 	else:
 		mark_changed()
 
@@ -69,21 +62,27 @@ func apply_value_to_initial() -> void:
 
 
 func revert_to_default() -> void:
-	value = _default_value
+	_commit_value(_default_value, "String")
 	super()
 
 
 func revert_to_initial() -> void:
-	value = _initial_value
+	_commit_value(_initial_value, "String")
 	super()
 
 
-func _on_contorller_value_changed(_value: String = line_edit.text) -> void:
-	if undo_redo:
-		var property_name: StringName = label.text.to_lower()
-		undo_redo.create_action("Set value for String property " + property_name)
-		undo_redo.add_do_property(self, &"value", _value)
-		undo_redo.add_undo_property(self, &"value", value)
-		undo_redo.commit_action()
-	else:
-		value = _value
+func _on_controller_value_changed(_value: String = line_edit.text) -> void:
+	if not value == _value:
+		_commit_value(_value, &"String")
+
+
+func _mark_multivalue() -> void:
+	_unmark_multivalue()
+	line_edit.set_block_signals(true)
+	line_edit.text = ""
+	line_edit.set_block_signals(false)
+	line_edit.placeholder_text = "<...>"
+
+
+func _unmark_multivalue() -> void:
+	line_edit.placeholder_text = ""
