@@ -21,6 +21,7 @@ var changed_theme_properties: Dictionary[Theme.DataType, Array]
 
 
 func _ready() -> void:
+	theme_type_variation = &"PropertyEditContainer"
 	header.dragged.connect(_on_header_dragged)
 
 
@@ -114,8 +115,8 @@ func add_theme_property(
 		property_name,
 		is_multivalue
 	)
-	property_edit.value_changed.connect(_on_theme_property_edit_changed, CONNECT_APPEND_SOURCE_OBJECT)
-	property_edit.value_reverted_to_initial.connect(_on_theme_property_edit_reverted_to_initial, CONNECT_APPEND_SOURCE_OBJECT)
+	property_edit.value_changed.connect(_on_theme_property_edit_changed.bind(property_data_type, property_edit).unbind(1))
+	property_edit.value_reverted_to_initial.connect(_on_theme_property_edit_reverted_to_initial.bind(property_data_type, property_edit).unbind(1))
 	
 	property_edit.value_changed.connect(property_changed.emit.unbind(1), CONNECT_APPEND_SOURCE_OBJECT)
 	property_edit.value_reverted_to_initial.connect(property_reverted_to_initial_value.emit, CONNECT_APPEND_SOURCE_OBJECT)
@@ -150,30 +151,50 @@ func clear() -> void:
 	theme_property_edits.clear()
 
 
+func clear_changed() -> void:
+	for property_edit: PropertyEdit in changed_properties:
+		property_edit.unmark_changed()
+	changed_properties.clear()
+	for property_list: Array in changed_theme_properties.values():
+		for property_edit: PropertyEdit in property_list:
+			property_edit.unmark_changed()
+	changed_theme_properties.clear()
+
+
+func apply_values_to_initial() -> void:
+	for property_edit: PropertyEdit in changed_properties:
+		property_edit.apply_value_to_initial()
+	changed_properties.clear()
+	for property_list: Array in changed_theme_properties.values():
+		for property_edit: PropertyEdit in property_list:
+			property_edit.apply_value_to_initial()
+	changed_theme_properties.clear()
+
+
 func _on_header_dragged(_offset: int) -> void:
 	for property_edit: PropertyEdit in property_edits:
 		property_edit.split_offsets = header.split_offsets
+	for property_list: Array in theme_property_edits.values():
+		for property_edit: PropertyEdit in property_list:
+			property_edit.split_offsets = header.split_offsets
 
 
 func _on_property_edit_changed(_value: Variant, property_edit: PropertyEdit) -> void:
 	if changed_properties.has(property_edit):
 		return
 	changed_properties.append(property_edit)
-	property_edit.modulate = Color(Color.WHEAT)
 
 
 func _on_property_edit_reverted_to_initial(property_edit: PropertyEdit) -> void:
 	changed_properties.erase(property_edit)
-	property_edit.modulate = Color.WHITE
 
 
-func _on_theme_property_edit_changed(_value: Variant, property_data_type: Theme.DataType, property_edit: PropertyEdit) -> void:
-	if changed_theme_properties.has(property_edit):
+func _on_theme_property_edit_changed(property_data_type: Theme.DataType, property_edit: PropertyEdit) -> void:
+	if changed_theme_properties.has(property_data_type):
 		return
 	if not changed_theme_properties.has(property_data_type):
 		changed_theme_properties[property_data_type] = []
 	changed_theme_properties[property_data_type].append(property_edit)
-	property_edit.modulate = Color(Color.WHEAT)
 
 
 func _on_theme_property_edit_reverted_to_initial(property_data_type: Theme.DataType, property_edit: PropertyEdit) -> void:
@@ -182,4 +203,3 @@ func _on_theme_property_edit_reverted_to_initial(property_data_type: Theme.DataT
 	changed_theme_properties[property_data_type].erase(property_edit)
 	if changed_theme_properties[property_data_type].is_empty():
 		changed_theme_properties.erase(property_data_type)
-	property_edit.modulate = Color.WHITE

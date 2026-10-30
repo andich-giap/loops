@@ -4,21 +4,26 @@
 [ext_resource type="Texture2D" uid="uid://dakpo2wi68qu5" path="res://addons/at-icons/node/arrow_counterclockwise.svg" id="2_415f2"]
 
 [node name="StringPropertyEdit" type="HSplitContainer" unique_id=1782783994]
-offset_right = 262.0
+offset_right = 371.0
 offset_bottom = 27.0
+split_offsets = PackedInt32Array(155)
 dragging_enabled = false
 drag_area_highlight_in_editor = true
+split_offset = 155
 script = ExtResource("1_mrmbe")
 metadata/_custom_type_script = "uid://wnfo25odmv7i"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=119098625]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=1126481872]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=1547258737]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
 text = "PROPERTY_NAME"
+vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
@@ -34,5 +39,5 @@ icon_alignment = 1
 [node name="LineEdit" type="LineEdit" parent="." unique_id=2142469236]
 unique_name_in_owner = true
 layout_mode = 2
-placeholder_text = "TEXT"
+draw_control_chars = true
 select_all_on_focus = true

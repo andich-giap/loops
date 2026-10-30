@@ -11,9 +11,6 @@ var _default_value: bool
 
 func _ready() -> void:
 	super()
-	
-	hide_revert_button()
-	revert_button.pressed.connect(_on_revert_button_pressed)
 	check_box.toggled.connect(_on_check_box_toggled)
 
 
@@ -23,6 +20,7 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	
 	value = object.get(property_name)
 	_initial_value = value
+	unmark_changed()
 	if object.get_script():
 		var script: Script = object.get_script()
 		_default_value = script.get_property_default_value(property_name)
@@ -56,17 +54,29 @@ func set_value(_value: bool) -> void:
 	value = _value
 	value_changed.emit(value)
 	if value == _initial_value:
+		unmark_changed()
 		value_reverted_to_initial.emit()
+	else:
+		mark_changed()
 
 
 func get_edited_property_value() -> Variant:
 	return value
 
 
-func _on_revert_button_pressed() -> void:
+func apply_value_to_initial() -> void:
+	super()
+	_initial_value = value
+
+
+func revert_to_default() -> void:
 	value = _default_value
-	hide_revert_button()
-	value_reverted_to_default.emit()
+	super()
+
+
+func revert_to_initial() -> void:
+	value = _initial_value
+	super()
 
 
 func _on_check_box_pressed() -> void:

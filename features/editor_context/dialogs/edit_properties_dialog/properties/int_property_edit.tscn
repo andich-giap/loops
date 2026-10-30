@@ -16,11 +16,14 @@ metadata/_custom_type_script = "uid://byy1p2jjkm4x"
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=814911762]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=838565620]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=1697271066]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
 text = "PROPERTY_NAME"
+vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 

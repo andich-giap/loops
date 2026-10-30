@@ -34,7 +34,7 @@ func get_test_properties() -> Array[Dictionary]:
 		&"propagate_maximum_size", # bool
 		&"z_index", # int
 		&"rotation", # rotation + property hint range
-		&"accessibility_name", # String
+		&"text", # String
 		&"self_modulate", # Color
 		&"clip_children", # enum
 	]
@@ -79,24 +79,24 @@ func _apply() -> void:
 	for property: PropertyEdit in property_edit_container.changed_properties:
 		test_control.set(property.get_property_name(), property.get_edited_property_value())
 	for property_data_type: Theme.DataType in property_edit_container.changed_theme_properties.keys():
-		for properties: Array in property_edit_container.changed_theme_properties[property_data_type]:
-			for property: PropertyEdit in properties:
-				match property_data_type:
-					Theme.DataType.DATA_TYPE_COLOR:
-						var value: Color = property.get_edited_property_value()
-						test_control.add_theme_color_override(property.get_property_name(), value)
-					Theme.DATA_TYPE_CONSTANT:
-						var value: int = property.get_edited_property_value()
-						test_control.add_theme_constant_override(property.get_property_name(), value)
-					Theme.DATA_TYPE_FONT:
-						var value: Font = property.get_edited_property_value()
-						test_control.add_theme_font_override(property.get_property_name(), value)
-					Theme.DATA_TYPE_FONT_SIZE:
-						var value: int = property.get_edited_property_value()
-						test_control.add_theme_font_size_override(property.get_property_name(), value)
-					Theme.DATA_TYPE_ICON:
-						var value: Texture2D = property.get_edited_property_value()
-						test_control.add_theme_icon_override(property.get_property_name(), value)
-					Theme.DATA_TYPE_STYLEBOX:
-						var value: StyleBox = property.get_edited_property_value()
-						test_control.add_theme_stylebox_override(property.get_property_name(), value)
+		for property: PropertyEdit in property_edit_container.changed_theme_properties[property_data_type]:
+			match property_data_type:
+				Theme.DataType.DATA_TYPE_COLOR:
+					var value: Color = property.get_edited_property_value()
+					test_control.add_theme_color_override(property.get_property_name(), value)
+				Theme.DATA_TYPE_CONSTANT:
+					var value: int = property.get_edited_property_value()
+					test_control.add_theme_constant_override(property.get_property_name(), value)
+				Theme.DATA_TYPE_FONT:
+					var value: Font = property.get_edited_property_value()
+					test_control.add_theme_font_override(property.get_property_name(), value)
+				Theme.DATA_TYPE_FONT_SIZE:
+					var value: int = property.get_edited_property_value()
+					test_control.add_theme_font_size_override(property.get_property_name(), value)
+				Theme.DATA_TYPE_ICON:
+					var value: Texture2D = property.get_edited_property_value()
+					test_control.add_theme_icon_override(property.get_property_name(), value)
+				Theme.DATA_TYPE_STYLEBOX:
+					var value: StyleBox = property.get_edited_property_value()
+					test_control.add_theme_stylebox_override(property.get_property_name(), value)
+	property_edit_container.apply_values_to_initial()

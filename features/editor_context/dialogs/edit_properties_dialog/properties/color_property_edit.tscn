@@ -16,11 +16,14 @@ metadata/_custom_type_script = "uid://cv0cmhwtxpnx6"
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1059941848]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer" unique_id=838565620]
+[node name="Label" type="Label" parent="HBoxContainer" unique_id=600158152]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
 text = "PROPERTY_NAME"
+vertical_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
@@ -35,6 +38,7 @@ icon_alignment = 1
 
 [node name="ColorPickerButton" type="ColorPickerButton" parent="." unique_id=294000806]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 edit_intensity = false

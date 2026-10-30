@@ -15,8 +15,11 @@ var undo_redo: UndoRedo
 
 
 func _ready() -> void:
+	unmark_changed()
 	if not undo_redo:
 		undo_redo = UndoRedo.new()
+	hide_revert_button()
+	revert_button.pressed.connect(revert_to_default)
 
 
 @warning_ignore("unused_parameter")
@@ -47,6 +50,33 @@ func show_revert_button() -> void:
 func get_edited_property_value() -> Variant
 
 
+func mark_changed() -> void:
+	if is_instance_valid(label):
+		label.theme_type_variation = &"PropertyEditLabelChanged"
+
+
+func unmark_changed() -> void:
+	if is_instance_valid(label):
+		label.theme_type_variation = &"PropertyEditLabel"
+
+
+func get_property_name() -> StringName:
+	return label.text.to_lower()
+
+
+func apply_value_to_initial() -> void:
+	unmark_changed()
+
+
+func revert_to_default() -> void:
+	hide_revert_button()
+	value_reverted_to_default.emit()
+
+
+func revert_to_initial() -> void:
+	unmark_changed()
+
+
 func _get_theme(control: Control) -> Theme:
 	var property_theme: Theme = control.theme
 	if not property_theme:
@@ -54,7 +84,3 @@ func _get_theme(control: Control) -> Theme:
 	if not property_theme:
 		property_theme = ThemeDB.get_default_theme()
 	return property_theme
-
-
-func get_property_name() -> StringName:
-	return label.text.to_lower()
