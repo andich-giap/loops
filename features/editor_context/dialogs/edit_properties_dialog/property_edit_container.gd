@@ -65,10 +65,9 @@ func add_property(object: Object,
 			push_warning("Property of type " + str(property_type) + " is not supported")
 			return
 	
-	property_edit.undo_redo = undo_redo
 	property_edits.append(property_edit)
-	property_labels_v_box_container.add_child(property_edit.label)
-	property_labels_v_box_container.add_child(property_edit.revert_button)
+	property_edit.undo_redo = undo_redo
+	property_labels_v_box_container.add_child(property_edit.label_container)
 	property_values_v_box_container.add_child(property_edit.control)
 	property_edit.set_property(object, property, is_multivalue)
 	
