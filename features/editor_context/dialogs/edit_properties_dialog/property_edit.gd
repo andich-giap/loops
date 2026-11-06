@@ -1,7 +1,7 @@
-@icon("res://addons/at-icons/control/text_input.svg")
+@icon("res://addons/at-icons/node/text_input.svg")
 @abstract
 class_name PropertyEdit
-extends HSplitContainer
+extends RefCounted
 
 
 @warning_ignore_start("unused_signal")
@@ -9,15 +9,39 @@ signal value_changed(new_value: Variant) ## Emittet when the value is changed.
 signal value_reverted_to_default() ## Emitted when value is restored to class default value.
 signal value_reverted_to_initial() ## Emitted when value is restored to initial value.
 @warning_ignore_restore("unused_signal")
+var label_container: HBoxContainer
+var label: Label
+var control: Control
 var undo_redo: UndoRedo
 var _is_multivalue: bool
-@onready var label: Label = %Label
-@onready var revert_button: Button = %RevertButton
+var revert_button: Button
+
+
+func _init() -> void:
+	label_container = HBoxContainer.new()
+	
+	label = Label.new()
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.clip_text = true
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.size_flags_vertical = Control.SIZE_EXPAND
+	label.theme_type_variation = &"PropertyEditLabel"
+	label_container.add_child(label)
+	
+	revert_button = Button.new()
+	revert_button.icon = preload("uid://dakpo2wi68qu5")
+	revert_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	revert_button.flat = true
+	revert_button.tooltip_text = "REVERT_PROPERTY_TO_DEFAULT"
+	revert_button.size_flags_horizontal = Control.SIZE_SHRINK_END
+	revert_button.visible = false
+	label_container.add_child(revert_button)
+	
+	control = _create_control()
 
 
 func _ready() -> void:
-	custom_minimum_size.y = 24.0
-	
 	unmark_changed()
 	
 	if not undo_redo:
@@ -36,7 +60,7 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 
 @warning_ignore("unused_parameter")
 func set_theme_property(
-	control: Control,
+	theme_control: Control,
 	property_data_type: Theme.DataType,
 	property_name: StringName,
 	is_multivalue: bool = false
@@ -84,8 +108,8 @@ func revert_to_initial() -> void:
 	unmark_changed()
 
 
-func _get_theme(control: Control) -> Theme:
-	var property_theme: Theme = control.theme
+func _get_theme(theme_control: Control) -> Theme:
+	var property_theme: Theme = theme_control.theme
 	if not property_theme:
 		property_theme = ThemeDB.get_project_theme()
 	if not property_theme:
@@ -146,3 +170,7 @@ func _mark_multivalue() -> void
 
 @abstract
 func _unmark_multivalue() -> void
+
+
+@abstract
+func _create_control() -> Control

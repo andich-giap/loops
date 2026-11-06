@@ -1,0 +1,280 @@
+[gd_scene format=3 uid="uid://dfgiu46ip0wmu"]
+
+[node name="Control" type="Control" unique_id=1776927639]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridContainer" type="HSplitContainer" parent="." unique_id=955401245]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"PropertyContainerHeader"
+split_offsets = PackedInt32Array(179)
+split_offset = 179
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer" unique_id=1361134393]
+layout_mode = 2
+theme_type_variation = &"PropertyEditContainer"
+
+[node name="Label" type="Label" parent="GridContainer/VBoxContainer" unique_id=893618832]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label2" type="Label" parent="GridContainer/VBoxContainer" unique_id=87936968]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label3" type="Label" parent="GridContainer/VBoxContainer" unique_id=517686476]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label4" type="Label" parent="GridContainer/VBoxContainer" unique_id=713475596]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label5" type="Label" parent="GridContainer/VBoxContainer" unique_id=481006529]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label6" type="Label" parent="GridContainer/VBoxContainer" unique_id=349855130]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label7" type="Label" parent="GridContainer/VBoxContainer" unique_id=490286961]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label8" type="Label" parent="GridContainer/VBoxContainer" unique_id=1417198060]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label9" type="Label" parent="GridContainer/VBoxContainer" unique_id=907115236]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label10" type="Label" parent="GridContainer/VBoxContainer" unique_id=1347655224]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label11" type="Label" parent="GridContainer/VBoxContainer" unique_id=163174416]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="Label12" type="Label" parent="GridContainer/VBoxContainer" unique_id=1993457496]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_type_variation = &"PropertyEditLabel"
+text = "PROPERTY_NAME"
+vertical_alignment = 1
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="GridContainer" unique_id=2041185528]
+layout_mode = 2
+theme_type_variation = &"PropertyEditContainer"
+
+[node name="LineEdit" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=1843755918]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit2" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=1258926170]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit3" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=1224984530]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit4" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=1218637620]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit5" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=728847340]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit6" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=272595279]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit7" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=354670627]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit8" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=575467121]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit9" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=1020964338]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit10" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=33561569]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit11" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=33554824]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true
+
+[node name="LineEdit12" type="LineEdit" parent="GridContainer/VBoxContainer2" unique_id=90262337]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 27)
+layout_mode = 2
+theme_type_variation = &"PropertyLineEdit"
+placeholder_text = "123"
+draw_control_chars = true
+select_all_on_focus = true

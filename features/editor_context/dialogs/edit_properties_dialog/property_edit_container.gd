@@ -1,6 +1,6 @@
 @icon("res://addons/at-icons/control/sliders.svg")
 class_name PropertyEditContainer
-extends VBoxContainer
+extends HSplitContainer
 
 
 signal property_changed(property_edit: PropertyEdit)
@@ -17,16 +17,12 @@ var theme_property_edits: Dictionary[Theme.DataType, Array]
 var changed_properties: Array[PropertyEdit]
 var changed_theme_properties: Dictionary[Theme.DataType, Array]
 var _undo_redo: UndoRedo = UndoRedo.new()
-var _has_undo_focus: bool = false
-@onready var header: HSplitContainer = %Header
-@export var undo_shortcut: Shortcut
+@onready var property_labels_v_box_container: VBoxContainer = %PropertyLabelsVBoxContainer
+@onready var property_values_v_box_container: VBoxContainer = %PropertyValuesVBoxContainer
 
 
 func _ready() -> void:
 	theme_type_variation = &"PropertyEditContainer"
-	header.dragged.connect(_on_header_dragged)
-	mouse_entered.connect(func() -> void: _has_undo_focus = true)
-	mouse_exited.connect(func() -> void: _has_undo_focus = false)
 
 
 func _shortcut_input(event: InputEvent) -> void:
@@ -52,28 +48,30 @@ func add_property(object: Object,
 	var property_edit: PropertyEdit
 	match property_type:
 		Variant.Type.TYPE_BOOL:
-			property_edit = BOOL_PROPERTY_EDIT.instantiate()
-		Variant.Type.TYPE_INT:
-			var hint: PropertyHint = property[&"hint"]
-			if hint == PROPERTY_HINT_ENUM:
-				property_edit = ENUM_PROPERTY_EDIT.instantiate()
-			else:
-				property_edit = INT_PROPERTY_EDIT.instantiate()
-		Variant.Type.TYPE_FLOAT:
-			property_edit = FLOAT_PROPERTY_EDIT.instantiate()
-		Variant.Type.TYPE_STRING:
-			property_edit = STRING_PROPERTY_EDIT.instantiate()
-		Variant.Type.TYPE_COLOR:
-			property_edit = COLOR_PROPERTY_EDIT.instantiate()
+			property_edit = BoolPropertyEdit.new()
+		#Variant.Type.TYPE_INT:
+			#var hint: PropertyHint = property[&"hint"]
+			#if hint == PROPERTY_HINT_ENUM:
+				#property_edit = ENUM_PROPERTY_EDIT.instantiate()
+			#else:
+				#property_edit = INT_PROPERTY_EDIT.instantiate()
+		#Variant.Type.TYPE_FLOAT:
+			#property_edit = FLOAT_PROPERTY_EDIT.instantiate()
+		#Variant.Type.TYPE_STRING:
+			#property_edit = STRING_PROPERTY_EDIT.instantiate()
+		#Variant.Type.TYPE_COLOR:
+			#property_edit = COLOR_PROPERTY_EDIT.instantiate()
 		_:
 			push_warning("Property of type " + str(property_type) + " is not supported")
 			return
 	
 	property_edit.undo_redo = undo_redo
 	property_edits.append(property_edit)
-	add_child(property_edit)
-	property_edit.split_offsets = header.split_offsets
+	property_labels_v_box_container.add_child(property_edit.label)
+	property_labels_v_box_container.add_child(property_edit.revert_button)
+	property_values_v_box_container.add_child(property_edit.control)
 	property_edit.set_property(object, property, is_multivalue)
+	
 	property_edit.value_changed.connect(_on_property_edit_changed, CONNECT_APPEND_SOURCE_OBJECT)
 	property_edit.value_reverted_to_initial.connect(_on_property_edit_reverted_to_initial, CONNECT_APPEND_SOURCE_OBJECT)
 	
@@ -112,7 +110,6 @@ func add_theme_property(
 			#property_edit = STYLEBOX_PROPERTY_EDIT.instantiate()
 	
 	property_edit.undo_redo = undo_redo
-	property_edit.split_offsets = header.split_offsets
 	if not theme_property_edits.has(property_data_type):
 		theme_property_edits[property_data_type] = []
 	theme_property_edits[property_data_type].append(property_edit)
@@ -179,14 +176,6 @@ func apply_values_to_initial() -> void:
 		for property_edit: PropertyEdit in property_list:
 			property_edit.apply_value_to_initial()
 	changed_theme_properties.clear()
-
-
-func _on_header_dragged(_offset: int) -> void:
-	for property_edit: PropertyEdit in property_edits:
-		property_edit.split_offsets = header.split_offsets
-	for property_list: Array in theme_property_edits.values():
-		for property_edit: PropertyEdit in property_list:
-			property_edit.split_offsets = header.split_offsets
 
 
 func _on_property_edit_changed(_value: Variant, property_edit: PropertyEdit) -> void:
