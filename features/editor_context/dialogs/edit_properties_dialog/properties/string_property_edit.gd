@@ -6,13 +6,7 @@ extends PropertyEdit
 	set = set_value
 var _initial_value: String
 var _default_value: String
-@onready var line_edit: LineEdit = %LineEdit
-
-
-func _ready() -> void:
-	super()
-	line_edit.text_submitted.connect(_on_controller_value_changed)
-	line_edit.focus_exited.connect(_on_controller_value_changed)
+var line_edit: LineEdit
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -86,3 +80,14 @@ func _mark_multivalue() -> void:
 
 func _unmark_multivalue() -> void:
 	line_edit.placeholder_text = ""
+
+
+func _create_control() -> Control:
+	line_edit = LineEdit.new()
+	line_edit.draw_control_chars = true
+	line_edit.select_all_on_focus = true
+	line_edit.theme_type_variation = &"PropertyLineEdit"
+	line_edit.text_submitted.connect(_on_controller_value_changed)
+	line_edit.focus_exited.connect(_on_controller_value_changed)
+	
+	return line_edit

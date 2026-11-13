@@ -6,12 +6,7 @@ extends PropertyEdit
 	set = set_value
 var _initial_value: Color
 var _default_value: Color
-@onready var color_picker_button: ColorPickerButton = %ColorPickerButton
-
-
-func _ready() -> void:
-	super()
-	color_picker_button.popup_closed.connect(_on_controller_value_changed)
+var color_picker_button: ColorPickerButton
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -31,23 +26,23 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 
 
 func set_theme_property(
-	control: Control,
+	themed_control: Control,
 	property_data_type: Theme.DataType,
 	property_name: StringName,
 	is_multivalue: bool = false
 ) -> void:
-	super(control, property_data_type, property_name, is_multivalue)
+	super(themed_control, property_data_type, property_name, is_multivalue)
 	
-	var theme_type: StringName = control.theme_type_variation
+	var theme_type: StringName = themed_control.theme_type_variation
 	
 	if not theme_type:
-		theme_type = control.get_class()
+		theme_type = themed_control.get_class()
 	
-	value = control.get_theme_color(property_name, theme_type)
+	value = themed_control.get_theme_color(property_name, theme_type)
 	_initial_value = value
 	unmark_changed()
 	
-	var property_theme: Theme = _get_theme(control)
+	var property_theme: Theme = _get_theme(themed_control)
 	if property_theme.has_color(property_name, theme_type):
 		_default_value = property_theme.get_color(property_name, theme_type)
 	
@@ -121,3 +116,12 @@ func _unmark_multivalue() -> void:
 	var existing: Node = color_picker_button.get_node_or_null(^"MultivalueLabel")
 	if existing:
 		existing.free()
+
+
+func _create_control() -> Control:
+	color_picker_button = ColorPickerButton.new()
+	color_picker_button.edit_intensity = false
+	color_picker_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	color_picker_button.popup_closed.connect(_on_controller_value_changed)
+	
+	return color_picker_button

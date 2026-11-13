@@ -6,12 +6,7 @@ extends PropertyEdit
 	set = set_value
 var _initial_value: bool
 var _default_value: bool
-@onready var check_box: CheckBox = %CheckBox
-
-
-func _ready() -> void:
-	super()
-	check_box.toggled.connect(_on_controller_value_changed)
+var check_box: CheckBox
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -88,3 +83,11 @@ func _mark_multivalue() -> void:
 func _unmark_multivalue() -> void:
 	if check_box.has_theme_icon_override(&"unchecked"):
 		check_box.remove_theme_icon_override(&"unchecked")
+
+
+func _create_control() -> Control:
+	check_box = CheckBox.new()
+	check_box.theme_type_variation = &"BoolPropertyEditCheckBox"
+	check_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	check_box.toggled.connect(_on_controller_value_changed)
+	return check_box

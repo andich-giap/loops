@@ -4,6 +4,7 @@ class_name PropertyEdit
 extends RefCounted
 
 
+const MINIMUM_SIZE_Y: float = 32.0
 @warning_ignore_start("unused_signal")
 signal value_changed(new_value: Variant) ## Emittet when the value is changed.
 signal value_reverted_to_default() ## Emitted when value is restored to class default value.
@@ -36,19 +37,13 @@ func _init() -> void:
 	revert_button.tooltip_text = "REVERT_PROPERTY_TO_DEFAULT"
 	revert_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	revert_button.visible = false
+	revert_button.pressed.connect(revert_to_default)
+	
 	label_container.add_child(revert_button)
+	label_container.custom_minimum_size.y = MINIMUM_SIZE_Y
 	
 	control = _create_control()
-
-
-func _ready() -> void:
-	unmark_changed()
-	
-	if not undo_redo:
-		undo_redo = UndoRedo.new()
-	
-	hide_revert_button()
-	revert_button.pressed.connect(revert_to_default)
+	control.custom_minimum_size.y = MINIMUM_SIZE_Y
 
 
 @warning_ignore("unused_parameter")
@@ -56,6 +51,7 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	var property_name: StringName = property[&"name"]
 	label.text = property_name.to_upper()
 	_is_multivalue = is_multivalue
+	_set_minimum_size.call_deferred()
 
 
 @warning_ignore("unused_parameter")
@@ -67,6 +63,7 @@ func set_theme_property(
 ) -> void:
 	label.text = property_name.to_upper()
 	_is_multivalue = is_multivalue
+	_set_minimum_size.call_deferred()
 
 
 func hide_revert_button() -> void:
@@ -174,3 +171,9 @@ func _unmark_multivalue() -> void
 
 @abstract
 func _create_control() -> Control
+
+
+func _set_minimum_size() -> void:
+	var minimum_size_y: float = maxf(label.custom_minimum_size.y, control.custom_minimum_size.y)
+	label.custom_minimum_size.y = minimum_size_y
+	control.custom_minimum_size.y = minimum_size_y

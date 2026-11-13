@@ -11,23 +11,21 @@ func _ready() -> void:
 	
 	var properties: Array[Dictionary] = get_test_properties()
 	for property: Dictionary in properties:
-		var property_edit: PropertyEdit = property_edit_container.add_property(test_control, property, true)
-		if not property_edit:
-			continue
-		property_edit.split_offsets = property_edit_container.header.split_offsets
+		property_edit_container.add_property(
+			test_control,
+			property,
+			false
+		)
 	
 	var theme_properties: Dictionary[Theme.DataType, Array] = get_test_theme_properties()
 	for property: Theme.DataType in theme_properties.keys():
 		for property_name: StringName in theme_properties[property]:
-			var property_edit: PropertyEdit = property_edit_container.add_theme_property(
+			property_edit_container.add_theme_property(
 				test_control,
 				property,
 				property_name,
-				true
+				false
 			)
-			if not property_edit:
-				continue
-			property_edit.split_offsets = property_edit_container.header.split_offsets
 
 
 func get_test_properties() -> Array[Dictionary]:

@@ -7,13 +7,7 @@ extends PropertyEdit
 var _initial_value: int
 var _default_value: int
 var _values: PackedStringArray
-@onready var options_button: OptionButton = %OptionsButton
-
-
-func _ready() -> void:
-	super()
-	options_button.item_selected.connect(_on_controller_value_changed)
-	options_button.gui_input.connect(_on_options_button_gui_input)
+var options_button: OptionButton
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -109,3 +103,13 @@ func _unmark_multivalue() -> void:
 	for i: int in range(options_button.item_count - 1, -1, -1):
 		if options_button.get_item_text(i) == "<...>":
 			options_button.remove_item(i)
+
+
+func _create_control() -> Control:
+	options_button = OptionButton.new()
+	options_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	
+	options_button.item_selected.connect(_on_controller_value_changed)
+	options_button.gui_input.connect(_on_options_button_gui_input)
+	
+	return options_button

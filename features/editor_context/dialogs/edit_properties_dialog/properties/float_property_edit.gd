@@ -8,16 +8,7 @@ const RADIANS_TO_DEGREES: float = 180.0 / PI
 var _initial_value: float
 var _default_value: float
 var _display_scale: float = 1.0
-@onready var spin_box: SpinBox = %SpinBox
-
-
-func _ready() -> void:
-	super()
-	var line_edit: LineEdit = spin_box.get_line_edit()
-	line_edit.theme_type_variation = &"PropertyLineEdit"
-	
-	spin_box.value_changed.connect(_on_controller_value_changed)
-	spin_box.gui_input.connect(_on_spin_box_gui_input)
+var spin_box: SpinBox
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -133,3 +124,21 @@ func _mark_multivalue() -> void:
 
 func _unmark_multivalue() -> void:
 	spin_box.get_line_edit().placeholder_text = ""
+
+
+func _create_control() -> Control:
+	spin_box = SpinBox.new()
+	spin_box.custom_arrow_step = 1
+	spin_box.select_all_on_focus = true
+	spin_box.min_value = -1_000_000
+	spin_box.max_value =  1_000_000
+	spin_box.step = 0.1
+	spin_box.allow_greater = true
+	spin_box.allow_lesser = false
+	spin_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spin_box.get_line_edit().theme_type_variation = &"PropertyLineEdit"
+	
+	spin_box.value_changed.connect(_on_controller_value_changed)
+	spin_box.gui_input.connect(_on_spin_box_gui_input)
+	
+	return spin_box

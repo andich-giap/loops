@@ -6,16 +6,7 @@ extends PropertyEdit
 	set = set_value
 var _initial_value: int
 var _default_value: int
-@onready var spin_box: SpinBox = %SpinBox
-
-
-func _ready() -> void:
-	super()
-	var line_edit: LineEdit = spin_box.get_line_edit()
-	line_edit.theme_type_variation = &"PropertyLineEdit"
-	
-	spin_box.value_changed.connect(_on_controller_value_changed)
-	spin_box.gui_input.connect(_on_spin_box_gui_input)
+var spin_box: SpinBox
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -40,22 +31,22 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 
 
 func set_theme_property(
-	control: Control,
+	themed_control: Control,
 	property_data_type: Theme.DataType,
 	property_name: StringName,
 	is_multivalue: bool = false
 ) -> void:
-	super(control, property_data_type, property_name, is_multivalue)
+	super(themed_control, property_data_type, property_name, is_multivalue)
 	
-	var theme_type: StringName = control.theme_type_variation
+	var theme_type: StringName = themed_control.theme_type_variation
 	
 	if not theme_type:
-		theme_type = control.get_class()
+		theme_type = themed_control.get_class()
 	
 	if property_data_type == Theme.DataType.DATA_TYPE_CONSTANT:
-		value = control.get_theme_constant(property_name, theme_type)
+		value = themed_control.get_theme_constant(property_name, theme_type)
 	elif property_data_type == Theme.DataType.DATA_TYPE_FONT_SIZE:
-		value = control.get_theme_font_size(property_name, theme_type)
+		value = themed_control.get_theme_font_size(property_name, theme_type)
 	else:
 		push_warning(" ".join([
 			"Trying to assign property",
@@ -68,7 +59,7 @@ func set_theme_property(
 	_initial_value = value
 	unmark_changed()
 	
-	var property_theme: Theme = _get_theme(control)
+	var property_theme: Theme = _get_theme(themed_control)
 	if property_data_type == Theme.DataType.DATA_TYPE_CONSTANT \
 		and property_theme.has_constant(property_name, theme_type):
 			_default_value = property_theme.get_constant(property_name, theme_type)
@@ -145,3 +136,20 @@ func _mark_multivalue() -> void:
 
 func _unmark_multivalue() -> void:
 	spin_box.get_line_edit().placeholder_text = ""
+
+
+func _create_control() -> Control:
+	spin_box = SpinBox.new()
+	spin_box.custom_arrow_step = 1
+	spin_box.select_all_on_focus = true
+	spin_box.min_value = -1_000_000
+	spin_box.max_value =  1_000_000
+	spin_box.allow_greater = true
+	spin_box.allow_lesser = false
+	spin_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spin_box.get_line_edit().theme_type_variation = &"PropertyLineEdit"
+	
+	spin_box.value_changed.connect(_on_controller_value_changed)
+	spin_box.gui_input.connect(_on_spin_box_gui_input)
+	
+	return spin_box

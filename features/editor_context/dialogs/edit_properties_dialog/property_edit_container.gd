@@ -6,12 +6,6 @@ extends HSplitContainer
 signal property_changed(property_edit: PropertyEdit)
 signal property_reverted_to_initial_value(property_edit: PropertyEdit)
 signal property_reverted_to_default_value(property_edit: PropertyEdit)
-const BOOL_PROPERTY_EDIT: PackedScene = preload("uid://xbmy05ggemo5")
-const INT_PROPERTY_EDIT: PackedScene = preload("uid://b6yqnxwkvbm7w")
-const FLOAT_PROPERTY_EDIT: PackedScene = preload("uid://cnfgfwaw7ccev")
-const STRING_PROPERTY_EDIT: PackedScene = preload("uid://cwu8tmnkvwrsr")
-const COLOR_PROPERTY_EDIT: PackedScene = preload("uid://lxt7r1fdl2h8")
-const ENUM_PROPERTY_EDIT: PackedScene = preload("uid://cqhvswx4xnxih")
 var property_edits: Array[PropertyEdit]
 var theme_property_edits: Dictionary[Theme.DataType, Array]
 var changed_properties: Array[PropertyEdit]
@@ -49,18 +43,18 @@ func add_property(object: Object,
 	match property_type:
 		Variant.Type.TYPE_BOOL:
 			property_edit = BoolPropertyEdit.new()
-		#Variant.Type.TYPE_INT:
-			#var hint: PropertyHint = property[&"hint"]
-			#if hint == PROPERTY_HINT_ENUM:
-				#property_edit = ENUM_PROPERTY_EDIT.instantiate()
-			#else:
-				#property_edit = INT_PROPERTY_EDIT.instantiate()
-		#Variant.Type.TYPE_FLOAT:
-			#property_edit = FLOAT_PROPERTY_EDIT.instantiate()
-		#Variant.Type.TYPE_STRING:
-			#property_edit = STRING_PROPERTY_EDIT.instantiate()
-		#Variant.Type.TYPE_COLOR:
-			#property_edit = COLOR_PROPERTY_EDIT.instantiate()
+		Variant.Type.TYPE_INT:
+			var hint: PropertyHint = property[&"hint"]
+			if hint == PROPERTY_HINT_ENUM:
+				property_edit = EnumPropertyEdit.new()
+			else:
+				property_edit = IntPropertyEdit.new()
+		Variant.Type.TYPE_FLOAT:
+			property_edit = FloatPropertyEdit.new()
+		Variant.Type.TYPE_STRING:
+			property_edit = StringPropertyEdit.new()
+		Variant.Type.TYPE_COLOR:
+			property_edit = ColorPropertyEdit.new()
 		_:
 			push_warning("Property of type " + str(property_type) + " is not supported")
 			return
@@ -92,15 +86,14 @@ func add_theme_property(
 	
 	match property_data_type:
 		Theme.DATA_TYPE_COLOR:
-			property_edit = COLOR_PROPERTY_EDIT.instantiate()
+			property_edit = ColorPropertyEdit.new()
 		Theme.DATA_TYPE_CONSTANT:
-			return
-			#property_edit = CONSTANT_PROPERTY_EDIT.instantiate()
+			property_edit = IntPropertyEdit.new()
 		Theme.DATA_TYPE_FONT:
 			return
-			#property_edit = FONT_PROPERTY_EDIT.instantiate()
+			#property_edit = IntPropertyEdit.new()
 		Theme.DATA_TYPE_FONT_SIZE:
-			property_edit = INT_PROPERTY_EDIT.instantiate()
+			property_edit = IntPropertyEdit.new()
 		Theme.DATA_TYPE_ICON:
 			return
 			#property_edit = ICON_PROPERTY_EDIT.instantiate()
@@ -108,17 +101,22 @@ func add_theme_property(
 			return
 			#property_edit = STYLEBOX_PROPERTY_EDIT.instantiate()
 	
-	property_edit.undo_redo = undo_redo
 	if not theme_property_edits.has(property_data_type):
 		theme_property_edits[property_data_type] = []
 	theme_property_edits[property_data_type].append(property_edit)
-	add_child(property_edit)
+	
+	property_edit.undo_redo = undo_redo
+	
+	property_labels_v_box_container.add_child(property_edit.label_container)
+	property_values_v_box_container.add_child(property_edit.control)
+	
 	property_edit.set_theme_property(
 		control,
 		property_data_type,
 		property_name,
 		is_multivalue
 	)
+	
 	property_edit.value_changed.connect(_on_theme_property_edit_changed.bind(property_data_type, property_edit).unbind(1))
 	property_edit.value_reverted_to_initial.connect(_on_theme_property_edit_reverted_to_initial.bind(property_data_type, property_edit))
 	
@@ -147,12 +145,14 @@ func get_property_of_class(property_class: StringName, property_name: StringName
 
 func clear() -> void:
 	for property_edit: PropertyEdit in property_edits:
-		property_edit.queue_free()
+		property_edit.label_container.queue_free()
+		property_edit.control.queue_free()
 	property_edits.clear()
 	changed_properties.clear()
 	for property_edit_list: Array in theme_property_edits.values():
 		for property_edit: PropertyEdit in property_edit_list:
-			property_edit.queue_free()
+			property_edit.label_container.queue_free()
+			property_edit.control.queue_free()
 	theme_property_edits.clear()
 	changed_theme_properties.clear()
 
