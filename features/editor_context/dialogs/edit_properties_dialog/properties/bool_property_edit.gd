@@ -14,13 +14,13 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	
 	var property_name: StringName = property[&"name"]
 	
-	value = object.get(property_name)
-	_initial_value = value
-	unmark_changed()
-	
 	var default_value: Variant = _get_property_default_value(object, property_name)
 	if not typeof(default_value) == TYPE_NIL:
 		_default_value = default_value
+	
+	value = object.get(property_name)
+	_initial_value = value
+	unmark_changed()
 	
 	
 	if is_multivalue:

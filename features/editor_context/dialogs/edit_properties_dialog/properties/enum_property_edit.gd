@@ -15,21 +15,27 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	var hint_string: String = property[&"hint_string"]
 	var property_name: StringName = property[&"name"]
 	
-	value = object.get(property_name)
-	_initial_value = value
-	unmark_changed()
-	
 	var default_value: Variant = _get_property_default_value(object, property_name)
 	if not typeof(default_value) == TYPE_NIL:
 		_default_value = default_value
 	
+	value = object.get(property_name)
+	_initial_value = value
+	unmark_changed()
+	
 	_values = hint_string.split(",")
 	
 	for enum_name: StringName in _values:
-		options_button.add_item(enum_name)
+		var value_name: StringName = enum_name
+		if value_name.contains(":"):
+			value_name = enum_name.split(":")[0]
+		value_name = value_name.to_snake_case().to_upper()
+		options_button.add_item(value_name)
 	
 	if is_multivalue:
 		_mark_multivalue()
+	else:
+		options_button.select(value)
 
 
 func set_value(_value: int) -> void:
@@ -82,9 +88,9 @@ func _on_options_button_gui_input(event: InputEvent) -> void:
 		if not mouse_button_event.is_command_or_control_pressed():
 			return
 		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			options_button.select(mini(value + 1, _values.size() - 1))
+			_on_controller_value_changed(mini(value + 1, _values.size() - 1))
 		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			options_button.select(maxi(value - 1, 0))
+			_on_controller_value_changed(maxi(value - 1, 0))
 
 
 func _on_controller_value_changed(_value: int) -> void:

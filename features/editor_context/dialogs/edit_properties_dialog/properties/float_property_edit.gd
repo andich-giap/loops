@@ -46,13 +46,13 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 		var suffix: String = hint_string.split("suffix:")[1]
 		spin_box.suffix = suffix.strip_edges()
 	
-	value = object.get(property_name)
-	_initial_value = value
-	unmark_changed()
-	
 	var default_value: Variant = _get_property_default_value(object, property_name)
 	if not typeof(default_value) == TYPE_NIL:
 		_default_value = default_value
+	
+	value = object.get(property_name)
+	_initial_value = value
+	unmark_changed()
 	
 	if is_multivalue:
 		_mark_multivalue()
@@ -64,7 +64,7 @@ func set_value(_value: float) -> void:
 		spin_box.set_value_no_signal(_value * _display_scale)
 	
 	if is_instance_valid(revert_button):
-		if _is_multivalue or not _value == _default_value:
+		if _is_multivalue or not is_equal_approx(_value, _default_value):
 			show_revert_button()
 		else:
 			hide_revert_button()

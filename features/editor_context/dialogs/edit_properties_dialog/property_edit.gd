@@ -20,6 +20,7 @@ var revert_button: Button
 
 func _init() -> void:
 	label_container = HBoxContainer.new()
+	label_container.theme_type_variation = &"PropertyEditLabelContainer"
 	
 	label = Label.new()
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -33,7 +34,7 @@ func _init() -> void:
 	revert_button = Button.new()
 	revert_button.icon = preload("uid://dakpo2wi68qu5")
 	revert_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	revert_button.flat = true
+	revert_button.theme_type_variation = &"PropertyEditRevertButton"
 	revert_button.tooltip_text = "REVERT_PROPERTY_TO_DEFAULT"
 	revert_button.size_flags_horizontal = Control.SIZE_SHRINK_END
 	revert_button.visible = false

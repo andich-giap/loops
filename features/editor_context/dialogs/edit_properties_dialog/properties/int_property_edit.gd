@@ -14,13 +14,13 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	var hint_string: String = property[&"hint_string"]
 	var property_name: StringName = property[&"name"]
 	
-	value = object.get(property_name)
-	_initial_value = value
-	unmark_changed()
-	
 	var default_value: Variant = _get_property_default_value(object, property_name)
 	if not typeof(default_value) == TYPE_NIL:
 		_default_value = default_value
+	
+	value = object.get(property_name)
+	_initial_value = value
+	unmark_changed()
 	
 	if hint_string.contains("suffix:"):
 		var suffix: String = hint_string.split("suffix:")[1]
@@ -43,6 +43,14 @@ func set_theme_property(
 	if not theme_type:
 		theme_type = themed_control.get_class()
 	
+	var property_theme: Theme = _get_theme(themed_control)
+	if property_data_type == Theme.DataType.DATA_TYPE_CONSTANT \
+		and property_theme.has_constant(property_name, theme_type):
+			_default_value = property_theme.get_constant(property_name, theme_type)
+	elif property_data_type == Theme.DataType.DATA_TYPE_FONT_SIZE \
+		and property_theme.has_font_size(property_name, theme_type):
+			_default_value = property_theme.get_font_size(property_name, theme_type)
+	
 	if property_data_type == Theme.DataType.DATA_TYPE_CONSTANT:
 		value = themed_control.get_theme_constant(property_name, theme_type)
 	elif property_data_type == Theme.DataType.DATA_TYPE_FONT_SIZE:
@@ -58,14 +66,6 @@ func set_theme_property(
 		return
 	_initial_value = value
 	unmark_changed()
-	
-	var property_theme: Theme = _get_theme(themed_control)
-	if property_data_type == Theme.DataType.DATA_TYPE_CONSTANT \
-		and property_theme.has_constant(property_name, theme_type):
-			_default_value = property_theme.get_constant(property_name, theme_type)
-	elif property_data_type == Theme.DataType.DATA_TYPE_FONT_SIZE \
-		and property_theme.has_font_size(property_name, theme_type):
-			_default_value = property_theme.get_font_size(property_name, theme_type)
 	
 	if is_multivalue:
 		_mark_multivalue()

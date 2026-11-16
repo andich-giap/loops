@@ -13,13 +13,13 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	super(object, property, is_multivalue)
 	var property_name: StringName = property[&"name"]
 	
-	value = object.get(property_name)
-	_initial_value = value
-	unmark_changed()
-	
 	var default_value: Variant = _get_property_default_value(object, property_name)
 	if not typeof(default_value) == TYPE_NIL:
 		_default_value = default_value
+	
+	value = object.get(property_name)
+	_initial_value = value
+	unmark_changed()
 	
 	if is_multivalue:
 		_mark_multivalue()
@@ -38,13 +38,13 @@ func set_theme_property(
 	if not theme_type:
 		theme_type = themed_control.get_class()
 	
-	value = themed_control.get_theme_color(property_name, theme_type)
-	_initial_value = value
-	unmark_changed()
-	
 	var property_theme: Theme = _get_theme(themed_control)
 	if property_theme.has_color(property_name, theme_type):
 		_default_value = property_theme.get_color(property_name, theme_type)
+	
+	value = themed_control.get_theme_color(property_name, theme_type)
+	_initial_value = value
+	unmark_changed()
 	
 	if is_multivalue:
 		_mark_multivalue()
