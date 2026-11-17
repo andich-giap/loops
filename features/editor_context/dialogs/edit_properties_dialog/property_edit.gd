@@ -27,7 +27,6 @@ func _init() -> void:
 	label.clip_text = true
 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.size_flags_vertical = Control.SIZE_EXPAND
 	label.theme_type_variation = &"PropertyEditLabel"
 	label_container.add_child(label)
 	

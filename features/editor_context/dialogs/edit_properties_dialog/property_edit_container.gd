@@ -17,6 +17,9 @@ var _undo_redo: UndoRedo = UndoRedo.new()
 
 func _ready() -> void:
 	theme_type_variation = &"PropertyEditContainer"
+	var drag_area_controls: Array[Control] = get_drag_area_controls()
+	for column: int in range(drag_area_controls.size()):
+		drag_area_controls[column].gui_input.connect(_on_drag_area_control_gui_input.bind(column))
 
 
 func _shortcut_input(event: InputEvent) -> void:
@@ -203,3 +206,64 @@ func _on_theme_property_edit_reverted_to_initial(property_data_type: Theme.DataT
 	changed_theme_properties[property_data_type].erase(property_edit)
 	if changed_theme_properties[property_data_type].is_empty():
 		changed_theme_properties.erase(property_data_type)
+
+
+func fit_column(column: int) -> void:
+	var minimum_width: int = 0
+	var initial_text_overrun_behavior: TextServer.OverrunBehavior
+	var initial_shrink_flags_horizontal: int
+	var initial_clip_text: bool
+	
+	for property_edit: PropertyEdit in property_edits:
+		if column == 0:
+			initial_text_overrun_behavior = property_edit.label.text_overrun_behavior
+			initial_shrink_flags_horizontal = property_edit.label.size_flags_horizontal
+			initial_clip_text = property_edit.label.clip_text
+			var initial_text: String = property_edit.label.text
+			
+			property_edit.label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+			property_edit.label.text = TranslationServer.translate(property_edit.label.text)
+			property_edit.label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+			property_edit.label.clip_text = false
+			property_edit.label.update_minimum_size()
+			var current_minimum_width: int = int(property_edit.label_container.get_combined_minimum_size().x)
+			
+			property_edit.label.text = initial_text
+			property_edit.label.size_flags_horizontal = initial_shrink_flags_horizontal
+			property_edit.label.clip_text = initial_clip_text
+			property_edit.label.update_minimum_size()
+			
+			if is_instance_valid(property_edit.revert_button):
+				current_minimum_width += int(property_edit.revert_button.get_combined_minimum_size().x)
+			print(current_minimum_width)
+			minimum_width = maxi(minimum_width, current_minimum_width)
+	
+	var header_label: Label = get_child(column).get_child(0)
+	
+	initial_text_overrun_behavior = header_label.text_overrun_behavior
+	initial_shrink_flags_horizontal = header_label.size_flags_horizontal
+	initial_clip_text = header_label.clip_text
+	
+	header_label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+	header_label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	header_label.clip_text = false
+	
+	header_label.update_minimum_size()
+	minimum_width = maxi(minimum_width, int(header_label.get_combined_minimum_size().x))
+	
+	header_label.text_overrun_behavior = initial_text_overrun_behavior
+	header_label.size_flags_horizontal = initial_shrink_flags_horizontal
+	header_label.clip_text = initial_clip_text
+	header_label.update_minimum_size()
+	
+	if minimum_width > 0:
+		var new_split_offsets: PackedInt32Array = split_offsets
+		new_split_offsets[column] = minimum_width
+		split_offsets = new_split_offsets
+
+
+func _on_drag_area_control_gui_input(event: InputEvent, column: int) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if mouse_button_event.double_click and mouse_button_event.pressed:
+			fit_column(column)

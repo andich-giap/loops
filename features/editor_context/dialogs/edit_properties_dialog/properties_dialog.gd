@@ -3,9 +3,6 @@ extends ConfirmationDialog
 ## Dialog that is used to edit the properties of the selected contents.
 
 
-#const DOUBLE_CLICK_INTERVAL: float = 0.4
-#var _max_size: Vector2i
-#var _double_click_timer: Timer
 var _edit_properties_callable: Callable
 var _apply_changes_callable: Callable
 @onready var property_edit_container: PropertyEditContainer = %PropertyEditContainer
@@ -16,11 +13,6 @@ var _apply_changes_callable: Callable
 func _ready() -> void:
 	move_to_center()
 	canceled.connect(_on_canceled)
-	
-	#_double_click_timer = Timer.new()
-	#_double_click_timer.one_shot = true
-	#_double_click_timer.wait_time = DOUBLE_CLICK_INTERVAL
-	#add_child(_double_click_timer)
 
 
 ## Shows the dialog and edits selected nodes. 
@@ -170,40 +162,6 @@ func apply_changes(edited_nodes: Array[Node]) -> void:
 	clear_properties()
 
 
-## Fits a column to the width of the longest value.
-func fit_column(column_index: int) -> void:
-	pass
-	#var controls: Array[Control]
-	#controls.append(header.get_child(column_index))
-	#for node: Node in properties_container.get_children():
-		#if node.get_child(column_index) is not Control:
-			#continue
-		#controls.append(node.get_child(column_index))
-	#
-	#for control: Control in controls:
-		#if control is Label:
-			#var label: Label = control
-			#label.custom_minimum_size.x = 0.0
-			#label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
-			#label.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-			#label.update_minimum_size()
-	#
-	#controls.sort_custom(func(a: Control, b: Control) -> bool:
-		#if a.get_combined_minimum_size().x > b.get_combined_minimum_size().x:
-			#return true
-		#return false
-	#)
-	#var split_offsets: PackedInt32Array = header.split_offsets
-	#split_offsets[column_index] = int(controls[0].get_combined_minimum_size().x)
-	#header.split_offsets = split_offsets
-	#header.dragged.emit(split_offsets[0])
-	#for control: Control in controls:
-		#if control is Label:
-			#var label: Label = control
-			#label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS_FORCE
-			#label.size_flags_horizontal = Control.SIZE_FILL
-
-
 func _select_and_edit_properties(
 		edited_nodes: Array[Node],
 		properties_per_class: Dictionary[Script, Array],
@@ -250,7 +208,6 @@ func _instanciate_properties_of_script(
 					theme_property,
 					_is_multivalue_theme_property(edited_nodes, theme_property, theme_data_type)
 				)
-	fit_column(0)
 	_apply_changes_callable = apply_changes.bind(edited_nodes)
 	confirmed.connect(_apply_changes_callable)
 
@@ -309,16 +266,6 @@ func _is_multivalue_theme_property(
 		if not current_value == value:
 			return true
 	return false
-
-
-#func _on_header_drag_started() -> void:
-	#if _double_click_timer.is_stopped():
-		#_max_size = max_size
-		#max_size = size
-		#_double_click_timer.start()
-	#else:
-		#fit_column(0)
-		#_double_click_timer.stop()
 
 
 func _on_canceled() -> void:
