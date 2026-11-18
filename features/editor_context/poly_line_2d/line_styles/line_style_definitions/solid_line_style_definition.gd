@@ -1,6 +1,6 @@
 @tool
 class_name SolidLineStyle
-extends LineStyle
+extends LineStyleDefinition
 
 
 func _init() -> void:

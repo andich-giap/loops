@@ -2,34 +2,16 @@
 class_name PolyLine2D
 extends Line2D
 ## An interactive [Line2D] that is used to create simple graphics.
-# TODO Currently when decoration is set to SEGMENTED there is no
-# implementation for the joint_mode BEVEL.
 
 
-signal changed ## Emmited on changing the line [member decoration], [member segment_step], [member decoration_size] or point position is changed.
+signal changed ## Emmited on changing point position.
 signal deleted ## Emmited on deleting the line.
 signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
-enum LineType {
-	BY_LAYER,
-	SOLID,
-	DASHED,
-	DASH_DOT,
-	DOUBLE,
-}
-enum DecorationType { ## Type of line decorations.
-	NONE, ## No decorations.
-	SEGMENTED,
-	DASH_DECORATION, ## A short line decoration at 45 degrees angele.
-	CIRCLE, ## A circle decoration.
-}
-const INV_SQRT2: float = 1 / sqrt(2)  # 1 / sqrt(2)
-const TICK_BASE: Vector2 = Vector2(-INV_SQRT2, INV_SQRT2)  # unit diagonal
 const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [member _new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"color",
 		&"segment_length",
-		&"decoration",
 		&"decoration_size",
 		&"closed",
 		&"width",
@@ -37,12 +19,8 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"begin_cap_mode",
 		&"end_cap_mode",
 	]
-@export_tool_button("Add Line Decoration") var tool_add_line_decoration: Callable = _tool_add_line_decoration
-@export_tool_button("Remove Line Decoration") var tool_remove_line_decoration: Callable = _tool_remove_line_decoration
-@export var line_style: LineStyle = preload("uid://djogojtvrl0i5"):
+@export var line_style: LineStyle = preload("uid://x7up8gjmus1e"):
 	set = set_line_style
-@export var line_decorations: Array[LineDecoration]:
-	set = set_line_decorations
 @export var color: Color = Color.BLACK ## Color of the line.
 @export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 4.0: ## Distance between decorations in mm.
 	set = set_segment_step
@@ -63,7 +41,7 @@ func _init() -> void:
 
 
 func _ready() -> void:
-	if line_style._uses_builtin_line:
+	if line_style.line_style_definition._uses_builtin_line:
 		default_color = color
 	else:
 		default_color = Color.TRANSPARENT
@@ -89,10 +67,10 @@ func _draw() -> void:
 		var next_position: Vector2 = get_point_position(point + 1)
 		
 		
-		line_style.draw_segment(context, current_position, next_position)
+		line_style.line_style_definition.draw_segment(context, current_position, next_position)
 		
 		if not point == 0:
-			line_style.draw_joint(
+			line_style.line_style_definition.draw_joint(
 				context,
 				current_position,
 				current_position.direction_to(points[point-1]),
@@ -103,7 +81,7 @@ func _draw() -> void:
 		var delta: Vector2 = next_position - current_position
 		var line_length: float = delta.length()
 		
-		var step_mm: float = line_style.get_step()
+		var step_mm: float = line_style.line_style_definition.get_step()
 		if step_mm <= 0.0:
 			step_mm = Units.mm_to_px(segment_length)
 		
@@ -114,7 +92,7 @@ func _draw() -> void:
 		var segment_count: int = int(line_length / step_px)
 		var starting_decoration_position: Vector2 = current_position - step / 4
 		
-		for line_decoration: LineDecoration in line_decorations:
+		for line_decoration: LineDecoration in line_style.line_decorations:
 			var decoration_position: Vector2 = starting_decoration_position
 			for segment: int in segment_count:
 				decoration_position += step
@@ -129,8 +107,8 @@ func _draw() -> void:
 				)
 		
 	if points.size() > 1:
-		line_style.draw_cap(context, points[0], points[0].direction_to(points[1]), true)
-		line_style.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), false)
+		line_style.line_style_definition.draw_cap(context, points[0], points[0].direction_to(points[1]), true)
+		line_style.line_style_definition.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), false)
 
 
 func _validate_property(property: Dictionary) -> void:
@@ -141,29 +119,24 @@ func _validate_property(property: Dictionary) -> void:
 
 #region getters/setters
 func set_line_style(_line_style: LineStyle) -> void:
-	if line_style.changed.is_connected(changed.emit):
+	if line_style and line_style.changed.is_connected(changed.emit):
 		line_style.changed.disconnect(changed.emit)
-	if line_style.changed.is_connected(queue_redraw):
+	if line_style and line_style.changed.is_connected(queue_redraw):
 		line_style.changed.disconnect(queue_redraw)
 	
 	line_style = _line_style
-	if line_style._uses_builtin_line:
-		default_color = color
+	if line_style:
+		line_style.changed.connect(changed.emit)
+		line_style.changed.connect(queue_redraw)
+		if line_style.line_style_definition._uses_builtin_line:
+			default_color = color
+		else:
+			default_color = Color.TRANSPARENT
 	else:
-		default_color = Color.TRANSPARENT
-	line_style.changed.connect(changed.emit)
-	line_style.changed.connect(queue_redraw)
+		var script: Script = get_script()
+		var default_line_style: LineStyle = script.get_property_default_value(&"line_style")
+		line_style = default_line_style
 	changed.emit()
-	queue_redraw()
-
-
-func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
-	for line_decoration: LineDecoration in line_decorations:
-		if line_decoration.changed.is_connected(queue_redraw):
-			line_decoration.changed.disconnect(queue_redraw)
-	line_decorations = _line_decorations
-	for line_decoration: LineDecoration in line_decorations:
-		line_decoration.changed.connect(queue_redraw)
 	queue_redraw()
 
 
@@ -182,12 +155,12 @@ func set_decoration_size(_decoration_size: float) -> void:
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
 	if is_selected:
-		if line_style._uses_builtin_line:
+		if line_style.line_style_definition._uses_builtin_line:
 			default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
 	else:
-		if line_style._uses_builtin_line:
+		if line_style.line_style_definition._uses_builtin_line:
 			default_color = color
 		if not gizmos.is_empty():
 			remove_gizmos()
@@ -351,94 +324,3 @@ func _check_for_closest_point_to_cursor() -> void:
 func _sort_distances(pos_a: Vector2, pos_b: Vector2) -> bool:
 	var mouse_position: Vector2 = get_local_mouse_position()
 	return mouse_position.distance_to(pos_a) < mouse_position.distance_to(pos_b)
-
-
-func _tool_add_line_decoration() -> void:
-	EditorInterface.popup_quick_open(
-		(func(path: String) -> void:
-			var line_decoration: LineDecoration = load(path)
-			var new_decorations: Array[LineDecoration] = line_decorations.duplicate()
-			
-			if new_decorations.has(line_decoration):
-				return
-			new_decorations.append(line_decoration)
-			
-			var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
-			undo_redo.create_action("Add PolyLine2D LineDecoration")
-			undo_redo.add_do_property(self, &"line_decorations", new_decorations)
-			undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
-			undo_redo.commit_action()
-			),
-		["LineDecoration"]
-		)
-
-
-func _tool_remove_line_decoration() -> void:
-	var confirmation_dialog: ConfirmationDialog = ConfirmationDialog.new()
-	var decoratioins_container: VBoxContainer = VBoxContainer.new()
-	
-	confirmation_dialog.initial_position = Window.WINDOW_INITIAL_POSITION_CENTER_SCREEN_WITH_MOUSE_FOCUS
-	confirmation_dialog.title = "Remove LineDecorations"
-	
-	confirmation_dialog.canceled.connect(_on_remove_line_decoration_cancelled, CONNECT_APPEND_SOURCE_OBJECT)
-	confirmation_dialog.confirmed.connect(_on_remove_line_decoration_confirmed, CONNECT_APPEND_SOURCE_OBJECT)
-	
-	get_tree().root.add_child(confirmation_dialog)
-	confirmation_dialog.add_child(decoratioins_container)
-	
-	for line_decoration: LineDecoration in line_decorations:
-		var check_box: CheckBox = CheckBox.new()
-		check_box.text = line_decoration.resource_path.get_file().get_basename()
-		check_box.set_meta(&"line_decoration", line_decoration)
-		decoratioins_container.add_child(check_box)
-	
-	confirmation_dialog.size = Vector2.ZERO
-	confirmation_dialog.show()
-
-
-func _on_remove_line_decoration_cancelled(confirmation_dialog: ConfirmationDialog) -> void:
-	confirmation_dialog.canceled.disconnect(_on_remove_line_decoration_cancelled)
-	confirmation_dialog.confirmed.disconnect(_on_remove_line_decoration_confirmed)
-	confirmation_dialog.queue_free()
-
-
-func _on_remove_line_decoration_confirmed(confirmation_dialog: ConfirmationDialog) -> void:
-	confirmation_dialog.canceled.disconnect(_on_remove_line_decoration_cancelled)
-	confirmation_dialog.confirmed.disconnect(_on_remove_line_decoration_confirmed)
-	
-	var decoratioins_container: VBoxContainer = confirmation_dialog.get_child(0)
-	var new_decorations: Array[LineDecoration] = line_decorations.duplicate()
-	
-	for child: Node in decoratioins_container.get_children():
-		if child is not CheckBox:
-			continue
-		var check_box: CheckBox = child
-		if not check_box.button_pressed:
-			continue
-		var line_decoration: LineDecoration = check_box.get_meta(&"line_decoration")
-		if new_decorations.has(line_decoration):
-			new_decorations.erase(line_decoration)
-	
-	var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Remove PolyLine2D LineDecoration")
-	undo_redo.add_do_property(self, &"line_decorations", new_decorations)
-	undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
-	undo_redo.commit_action()
-	
-	confirmation_dialog.queue_free()
-
-
-func add_line_decoration(line_decoration: LineDecoration) -> void:
-	if line_decorations.has(line_decoration):
-		return
-	line_decoration.changed.connect(queue_redraw)
-	line_decorations.append(line_decoration)
-	queue_redraw()
-
-
-func remove_line_decoration(line_decoration: LineDecoration) -> void:
-	if not line_decorations.has(line_decoration):
-		return
-	line_decoration.changed.disconnect(queue_redraw)
-	line_decorations.erase(line_decoration)
-	queue_redraw()
