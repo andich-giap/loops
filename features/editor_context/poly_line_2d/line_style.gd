@@ -25,7 +25,6 @@ func set_line_decorations(_line_decorations: Array[LineDecoration]) -> void:
 		if line_decoration and line_decoration.changed.is_connected(changed.emit):
 			line_decoration.changed.disconnect(changed.emit)
 	line_decorations = _line_decorations
-	print(line_decorations)
 	for line_decoration: LineDecoration in line_decorations:
 		line_decoration.changed.connect(changed.emit)
 	changed.emit()

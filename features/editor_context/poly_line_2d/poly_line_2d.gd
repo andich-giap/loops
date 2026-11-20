@@ -11,6 +11,7 @@ const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing c
 const DEBUG_CURSOR_SIZE: float = 5.0
 const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"color",
+		&"line_style",
 		&"segment_length",
 		&"decoration_size",
 		&"closed",
@@ -35,13 +36,14 @@ var _new_point_position: Vector2
 var _previous_point_position: Vector2
 var _page_viewport: PageViewport
 
+
 func _init() -> void:
 	if width == 10.0:
 		width = Units.mm_to_px(0.5)
 
 
 func _ready() -> void:
-	if line_style.line_style_definition._uses_builtin_line:
+	if line_style and line_style.line_style_definition._uses_builtin_line:
 		default_color = color
 	else:
 		default_color = Color.TRANSPARENT
@@ -133,9 +135,7 @@ func set_line_style(_line_style: LineStyle) -> void:
 		else:
 			default_color = Color.TRANSPARENT
 	else:
-		var script: Script = get_script()
-		var default_line_style: LineStyle = script.get_property_default_value(&"line_style")
-		line_style = default_line_style
+		line_style = preload("uid://x7up8gjmus1e")
 	changed.emit()
 	queue_redraw()
 

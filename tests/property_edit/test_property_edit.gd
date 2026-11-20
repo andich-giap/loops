@@ -1,49 +1,55 @@
 extends Control
 
 
+@export var test_node: Node
 @export var test_control: Control
 @onready var property_edit_container: PropertyEditContainer = %PropertyEditContainer
 
 
 func _ready() -> void:
-	if not test_control:
-		test_control = Button.new()
+	if not test_control and not test_node:
+		return
 	
 	var properties: Array[Dictionary] = get_test_properties()
 	for property: Dictionary in properties:
 		property_edit_container.add_property(
-			test_control,
+			test_node,
 			property,
 			false
 		)
 	
-	var theme_properties: Dictionary[Theme.DataType, Array] = get_test_theme_properties()
-	for property: Theme.DataType in theme_properties.keys():
-		for property_name: StringName in theme_properties[property]:
-			property_edit_container.add_theme_property(
-				test_control,
-				property,
-				property_name,
-				false
-			)
+	#var theme_properties: Dictionary[Theme.DataType, Array] = get_test_theme_properties()
+	#for property: Theme.DataType in theme_properties.keys():
+		#for property_name: StringName in theme_properties[property]:
+			#property_edit_container.add_theme_property(
+				#test_control,
+				#property,
+				#property_name,
+				#false
+			#)
+	property_edit_container.fit_column(0)
 
 
 func get_test_properties() -> Array[Dictionary]:
-	var property_names: Array[StringName] = [
-		&"propagate_maximum_size", # bool
-		&"z_index", # int
-		&"rotation", # rotation + property hint range
-		&"text", # String
-		&"self_modulate", # Color
-		&"clip_children", # enum
-	]
-	var properties: Array[Dictionary]
+	#var property_names: Array[StringName] = [
+		#&"propagate_maximum_size", # bool
+		#&"z_index", # int
+		#&"rotation", # rotation + property hint range
+		#&"text", # String
+		#&"self_modulate", # Color
+		#&"clip_children", # enum
+	#]
 	
-	for property: Dictionary in test_control.get_property_list():
-		if property_names.has(property[&"name"]):
-			properties.append(property)
-			if property_names.size() == properties.size():
-				break
+	#var properties: Array[Dictionary]
+	
+	#for property: Dictionary in test_control.get_property_list():
+		#if property_names.has(property[&"name"]):
+			#properties.append(property)
+			#if property_names.size() == properties.size():
+				#break
+	
+	var properties: Array[Dictionary] = (test_node as PolyLine2D).get_editable_properties()
+	
 	
 	return properties
 
@@ -76,7 +82,8 @@ func get_test_theme_properties() -> Dictionary[Theme.DataType, Array]:
 
 func _apply() -> void:
 	for property: PropertyEdit in property_edit_container.changed_properties:
-		test_control.set(property.get_property_name(), property.get_edited_property_value())
+		#test_control.set(property.get_property_name(), property.get_edited_property_value())
+		test_node.set(property.get_property_name(), property.get_edited_property_value())
 	for property_data_type: Theme.DataType in property_edit_container.changed_theme_properties.keys():
 		for property: PropertyEdit in property_edit_container.changed_theme_properties[property_data_type]:
 			match property_data_type:

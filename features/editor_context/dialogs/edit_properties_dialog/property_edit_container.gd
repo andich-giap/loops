@@ -58,8 +58,31 @@ func add_property(object: Object,
 			property_edit = StringPropertyEdit.new()
 		Variant.Type.TYPE_COLOR:
 			property_edit = ColorPropertyEdit.new()
+		Variant.Type.TYPE_OBJECT:
+			var _class_name: StringName = property[&"class_name"]
+			var class_list: Array[Dictionary] = ProjectSettings.get_global_class_list()
+			var class_info: Dictionary
+			for _class: Dictionary in class_list:
+				if _class[&"class"] == _class_name:
+					class_info = _class
+					break
+			if not class_info or not class_info[&"base"] == "Resource":
+				push_warning(
+					"Property of type " + 
+					str(property_type) + 
+					" on an Object of type " + 
+					_class_name + 
+					" is not supported"
+				)
+				return
+			
+			property_edit = ResourcePropertyEdit.new()
 		_:
-			push_warning("Property of type " + str(property_type) + " is not supported")
+			push_warning(
+				"Property of type " + 
+				str(property_type) + 
+				" is not supported"
+			)
 			return
 	
 	property_edits.append(property_edit)
@@ -93,16 +116,13 @@ func add_theme_property(
 		Theme.DATA_TYPE_CONSTANT:
 			property_edit = IntPropertyEdit.new()
 		Theme.DATA_TYPE_FONT:
-			return
-			#property_edit = IntPropertyEdit.new()
+			property_edit = ResourcePropertyEdit.new()
 		Theme.DATA_TYPE_FONT_SIZE:
 			property_edit = IntPropertyEdit.new()
 		Theme.DATA_TYPE_ICON:
-			return
-			#property_edit = ICON_PROPERTY_EDIT.instantiate()
+			property_edit = ResourcePropertyEdit.new()
 		Theme.DATA_TYPE_STYLEBOX:
-			return
-			#property_edit = STYLEBOX_PROPERTY_EDIT.instantiate()
+			property_edit = ResourcePropertyEdit.new()
 	
 	if not theme_property_edits.has(property_data_type):
 		theme_property_edits[property_data_type] = []
@@ -235,7 +255,6 @@ func fit_column(column: int) -> void:
 			
 			if is_instance_valid(property_edit.revert_button):
 				current_minimum_width += int(property_edit.revert_button.get_combined_minimum_size().x)
-			print(current_minimum_width)
 			minimum_width = maxi(minimum_width, current_minimum_width)
 	
 	var header_label: Label = get_child(column).get_child(0)

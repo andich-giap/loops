@@ -117,7 +117,7 @@ func _on_spin_box_gui_input(event: InputEvent) -> void:
 		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_on_controller_value_changed(int(spin_box.value + spin_box.step))
 		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_on_controller_value_changed(int(spin_box.value + spin_box.step))
+			_on_controller_value_changed(int(spin_box.value - spin_box.step))
 
 
 

@@ -32,5 +32,4 @@ static func setup() -> void:
 		if not PROJECT_PALLETE.color_maps[color]:
 			continue
 		for pallete_map: PalleteMap in PROJECT_PALLETE.color_maps[color].pallete_maps:
-			print(color)
 			THEME.set_color(pallete_map.name, pallete_map.theme_type, color)

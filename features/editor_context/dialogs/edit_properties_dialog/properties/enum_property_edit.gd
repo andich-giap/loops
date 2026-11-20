@@ -7,7 +7,7 @@ extends PropertyEdit
 var _initial_value: int
 var _default_value: int
 var _values: PackedStringArray
-var options_button: OptionButton
+var option_button: OptionButton
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -30,23 +30,23 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 		if value_name.contains(":"):
 			value_name = enum_name.split(":")[0]
 		value_name = value_name.to_snake_case().to_upper()
-		options_button.add_item(value_name)
+		option_button.add_item(value_name)
 	
 	if is_multivalue:
 		_mark_multivalue()
 	else:
-		options_button.select(value)
+		option_button.select(value)
 
 
 func set_value(_value: int) -> void:
-	if is_instance_valid(options_button) \
+	if is_instance_valid(option_button) \
 		and not _is_multivalue \
-		and options_button.has_selectable_items() \
-		and not options_button.selected == _value \
-		and options_button.item_count - 1 >= _value:
-		options_button.set_block_signals(true)
-		options_button.select(_value)
-		options_button.set_block_signals(false)
+		and option_button.has_selectable_items() \
+		and not option_button.selected == _value \
+		and option_button.item_count - 1 >= _value:
+		option_button.set_block_signals(true)
+		option_button.select(_value)
+		option_button.set_block_signals(false)
 	
 	if is_instance_valid(revert_button):
 		if _is_multivalue or not _value == _default_value:
@@ -82,7 +82,7 @@ func revert_to_initial() -> void:
 	super()
 
 
-func _on_options_button_gui_input(event: InputEvent) -> void:
+func _on_option_button_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
 		if not mouse_button_event.is_command_or_control_pressed():
@@ -99,23 +99,23 @@ func _on_controller_value_changed(_value: int) -> void:
 
 func _mark_multivalue() -> void:
 	_unmark_multivalue()
-	options_button.add_item("<...>", options_button.item_count)
-	options_button.set_block_signals(true)
-	options_button.select(options_button.item_count - 1)
-	options_button.set_block_signals(false)
+	option_button.add_item("<...>", option_button.item_count)
+	option_button.set_block_signals(true)
+	option_button.select(option_button.item_count - 1)
+	option_button.set_block_signals(false)
 
 
 func _unmark_multivalue() -> void:
-	for i: int in range(options_button.item_count - 1, -1, -1):
-		if options_button.get_item_text(i) == "<...>":
-			options_button.remove_item(i)
+	for i: int in range(option_button.item_count - 1, -1, -1):
+		if option_button.get_item_text(i) == "<...>":
+			option_button.remove_item(i)
 
 
 func _create_control() -> Control:
-	options_button = OptionButton.new()
-	options_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	option_button = OptionButton.new()
+	option_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	
-	options_button.item_selected.connect(_on_controller_value_changed)
-	options_button.gui_input.connect(_on_options_button_gui_input)
+	option_button.item_selected.connect(_on_controller_value_changed)
+	option_button.gui_input.connect(_on_option_button_gui_input)
 	
-	return options_button
+	return option_button

@@ -16,6 +16,9 @@ const THEME_OVERRIDABLE_PROPERTIES: Dictionary[Theme.DataType, Array] = {
 	Theme.DataType.DATA_TYPE_COLOR: [
 		&"text_color",
 	],
+	Theme.DataType.DATA_TYPE_FONT: [
+		&"font",
+	],
 	Theme.DataType.DATA_TYPE_FONT_SIZE: [
 		&"font_size",
 	],
