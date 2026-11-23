@@ -85,12 +85,22 @@ func revert_to_initial() -> void:
 func _on_option_button_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
-		if not mouse_button_event.is_command_or_control_pressed():
+		if not mouse_button_event.pressed or not mouse_button_event.is_command_or_control_pressed():
 			return
-		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_on_controller_value_changed(mini(value + 1, _values.size() - 1))
-		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_on_controller_value_changed(maxi(value - 1, 0))
+		
+		var max_valid_index: int = option_button.item_count - 1
+		if max_valid_index >= 0 and option_button.get_item_text(max_valid_index) == "<...>":
+			max_valid_index -= 1
+		if max_valid_index < 0:
+			return
+		
+		var current: int = option_button.selected
+		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			var next_idx: int = 0 if current < 0 or current >= max_valid_index else current + 1
+			_on_controller_value_changed(next_idx)
+		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			var prev_idx: int = max_valid_index if current <= 0 or current > max_valid_index else current - 1
+			_on_controller_value_changed(prev_idx)
 
 
 func _on_controller_value_changed(_value: int) -> void:

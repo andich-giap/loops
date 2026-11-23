@@ -100,7 +100,8 @@ func revert_to_initial() -> void:
 func _on_spin_box_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_button_event: InputEventMouseButton = event
-		if not mouse_button_event.is_command_or_control_pressed():
+		if not mouse_button_event.pressed or \
+			not mouse_button_event.is_command_or_control_pressed():
 			return
 		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_on_controller_value_changed(spin_box.value + spin_box.step)

@@ -7,7 +7,7 @@
 handle_input_locally = false
 oversampling_override = 1.0
 title = "PROPERTIES"
-position = Vector2i(309, 212)
+position = Vector2i(0, 24)
 size = Vector2i(534, 223)
 visible = true
 script = ExtResource("1_4yc2x")

@@ -8,7 +8,8 @@ const PREVIEW_SIZE: Vector2i = Vector2i(100, 18)
 var _initial_value: Resource
 var _default_value: Resource
 var option_button: OptionButton
-var viewports: Dictionary[int, Viewport]
+var _preview_viewport: SubViewport
+var _populate_generation: int = 0
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -24,15 +25,22 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	_initial_value = value
 	unmark_changed()
 	
+	_setup_preview_vieport()
+	
+	
 	var valid_resources: Array[Resource] = SettingsManager.get_resources(_class_name)
 	_populate_options(valid_resources)
-	option_button.select(get_resource_id(value))
 	
 	if is_multivalue:
 		_mark_multivalue()
-	
+	else:
+		option_button.select(get_resource_id(value))
+		
 	if not _default_value:
 		hide_revert_button()
+		
+	_populate_generation += 1
+	await _bake_all_previews(_populate_generation)
 
 
 func set_theme_property(
@@ -81,19 +89,33 @@ func set_theme_property(
 	_initial_value = value
 	unmark_changed()
 	
+	_setup_preview_vieport()
+	
+	
 	var valid_resources: Array[Resource] = SettingsManager.get_resources(resource_class)
 	_populate_options(valid_resources)
-	option_button.select(get_resource_id(value))
 	
 	if is_multivalue:
 		_mark_multivalue()
+	else:
+		option_button.select(get_resource_id(value))
+		
+	if not _default_value:
+		hide_revert_button()
+		
+	_populate_generation += 1
+	await _bake_all_previews(_populate_generation)
 
 
 func set_value(_value: Resource) -> void:
+	if _value is SystemFont:
+		var system_font: SystemFont = _value
+		_value = SettingsManager.get_system_font(system_font.font_names[0])
+	
 	if is_instance_valid(option_button) \
 		and not _is_multivalue \
 		and option_button.has_selectable_items() \
-		and not option_button.get_item_metadata(option_button.selected) == _value:
+		and not option_button.get_selected_metadata() == _value:
 		option_button.set_block_signals(true)
 		option_button.select(get_resource_id(_value))
 		option_button.set_block_signals(false)
@@ -111,6 +133,15 @@ func set_value(_value: Resource) -> void:
 		unmark_changed()
 	else:
 		mark_changed()
+
+
+func _setup_preview_vieport() -> void:
+	if not _preview_viewport:
+		_preview_viewport = SubViewport.new()
+		_preview_viewport.transparent_bg = true
+		_preview_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		option_button.add_child(_preview_viewport)
+	_preview_viewport.size = PREVIEW_SIZE
 
 
 func get_edited_property_value() -> Variant:
@@ -132,51 +163,79 @@ func revert_to_initial() -> void:
 	super()
 
 
-func _on_spin_box_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var mouse_button_event: InputEventMouseButton = event
-		if not mouse_button_event.is_command_or_control_pressed():
-			return
-		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			_on_controller_value_changed(int(option_button.selected + 1))
-		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_on_controller_value_changed(int(option_button.selected - 1))
-
-
-func _on_controller_value_changed(_value: int) -> void:
-	_commit_value(option_button.get_item_metadata(_value), &"Resource")
-
-
 func _mark_multivalue() -> void:
 	_unmark_multivalue()
-	#var line: LineEdit = spin_box.get_line_edit()
-	#line.set_block_signals(true)
-	#line.text = ""
-	#line.set_block_signals(false)
-	#line.placeholder_text = "<...>"
+	option_button.add_item("<...>", option_button.item_count)
+	option_button.set_block_signals(true)
+	option_button.select(option_button.item_count - 1)
+	option_button.set_block_signals(false)
 
 
 func _unmark_multivalue() -> void:
-	pass
-	#spin_box.get_line_edit().placeholder_text = ""
+	for i: int in range(option_button.item_count - 1, -1, -1):
+		if option_button.get_item_text(i) == "<...>":
+			option_button.remove_item(i)
+
+
+func get_resource_id(resource: Resource) -> int:
+	for i: int in range(option_button.item_count):
+		var meta: Resource = option_button.get_item_metadata(i)
+		if meta == resource:
+			return i
+	return -1
+
+
+func _on_controller_value_changed(index: int) -> void:
+	if not is_instance_valid(option_button) or index < 0 or index >= option_button.item_count:
+		return
+	
+	if option_button.get_item_text(index) == "<...>":
+		return
+	
+	var selected_resource: Resource = option_button.get_item_metadata(index)
+	
+	_unmark_multivalue()
+	var valid_id: int = get_resource_id(selected_resource)
+	if valid_id >= 0:
+		option_button.set_block_signals(true)
+		option_button.select(valid_id)
+		option_button.set_block_signals(false)
+	
+	_commit_value(selected_resource, &"Resource")
+
+
+func _on_option_button_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_button_event: InputEventMouseButton = event
+		if not mouse_button_event.pressed or not mouse_button_event.is_command_or_control_pressed():
+			return
+		
+		var max_valid_index: int = option_button.item_count - 1
+		if max_valid_index >= 0 and option_button.get_item_text(max_valid_index) == "<...>":
+			max_valid_index -= 1
+		if max_valid_index < 0:
+			return
+		
+		var current: int = option_button.selected
+		if mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			var next_idx: int = 0 if current < 0 or current >= max_valid_index else current + 1
+			_on_controller_value_changed(next_idx)
+		elif mouse_button_event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			var prev_idx: int = max_valid_index if current <= 0 or current > max_valid_index else current - 1
+			_on_controller_value_changed(prev_idx)
 
 
 func _create_control() -> Control:
 	option_button = OptionButton.new()
 	option_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	option_button.clip_text = true
+	option_button.search_bar_enabled = true
+	option_button.search_bar_fuzzy_search_enabled = true
 	
 	option_button.get_popup().index_pressed.connect(_on_controller_value_changed)
-	option_button.gui_input.connect(_on_spin_box_gui_input)
+	option_button.gui_input.connect(_on_option_button_gui_input)
 	
 	return option_button
-
-
-func get_resource_id(resource: Resource) -> int:
-	for i: int in range(option_button.item_count):
-		if option_button.get_item_metadata(i) == resource:
-			return i
-	return -1
 
 
 func _populate_options(resources: Array[Resource]) -> void:
@@ -194,30 +253,39 @@ func _populate_options(resources: Array[Resource]) -> void:
 		
 		option_button.add_item(resource_name, id)
 		option_button.set_item_metadata(id, resources[id])
-		_create_preview(id, PREVIEW_SIZE)
+
+
+func _bake_node_texture(preview_node: Node) -> ImageTexture:
+	_preview_viewport.add_child(preview_node)
+	_preview_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	
+	await RenderingServer.frame_post_draw
+	
+	if not is_instance_valid(_preview_viewport):
+		return
+	var img: Image = _preview_viewport.get_texture().get_image()
+	_preview_viewport.remove_child(preview_node)
+	preview_node.queue_free()
+	
+	return ImageTexture.create_from_image(img)
 
 
 func _create_preview(id: int, size: Vector2i) -> void:
+	if id < 0 or not is_instance_valid(option_button):
+		return
+	
 	var resource: Resource = option_button.get_item_metadata(id)
 	if not resource:
 		return
+	
 	var preview_node: Node = _get_preview(size, resource)
 	if not preview_node:
 		return
 	
-	var viewport: SubViewport = SubViewport.new()
+	var preview: ImageTexture = await _bake_node_texture(preview_node)
 	
-	if viewports.has(id):
-		viewports[id].queue_free()
-	
-	viewports[id] = viewport
-	viewport.add_child(preview_node)
-	viewport.size = size
-	viewport.transparent_bg = true
-	option_button.add_child(viewport)
-	
-	if is_instance_valid(viewport):
-		option_button.set_item_icon(id, viewport.get_texture())
+	if preview:
+		option_button.set_item_icon(id, preview)
 
 
 func _get_preview(size: Vector2, resource: Resource) -> Node:
@@ -234,5 +302,35 @@ func _get_preview(size: Vector2, resource: Resource) -> Node:
 			poly_line_2d.add_point(Vector2(size.x, size.y / 2.0))
 			return poly_line_2d
 		
+		&"SystemFont":
+			var font: SystemFont = resource as SystemFont
+			var font_name: String = font.font_names[0]
+			var node_2d: Node2D = Node2D.new()
+			node_2d.draw.connect(
+				node_2d.draw_string.bind(
+					font,
+					Vector2(0.0, size.y * 0.75),
+					font_name,
+					HORIZONTAL_ALIGNMENT_LEFT,
+					-1,
+					16,
+					Color.BLACK
+				)
+			)
+			return node_2d
+		
 		_:
 			return
+
+
+func _bake_all_previews(gen: int) -> void:
+	var priority_id: int = option_button.selected
+	if priority_id >= 0:
+		await _create_preview(priority_id, PREVIEW_SIZE)
+		
+	for id: int in range(option_button.item_count):
+		if not gen == _populate_generation or not is_instance_valid(option_button):
+			return
+		if id == priority_id:
+			continue
+		await _create_preview(id, PREVIEW_SIZE)
