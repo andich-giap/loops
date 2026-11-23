@@ -1,0 +1,22 @@
+[remap]
+
+importer="svg"
+type="DPITexture"
+uid="uid://c5kb1cq4bgbxb"
+path="res://.godot/imported/multivalue_bool_check_box.svg-3411f8c9456154abf7239ab8789ab77e.dpitex"
+
+[deps]
+
+source_file="res://features/editor_context/dialogs/edit_properties_dialog/properties/assets/multivalue_bool_check_box.svg"
+dest_files=["res://.godot/imported/multivalue_bool_check_box.svg-3411f8c9456154abf7239ab8789ab77e.dpitex"]
+
+[params]
+
+base_scale=1.0
+saturation=1.0
+color_map={
+Color(0.5529412, 0.64705884, 0.9529412, 1): Color(0.18039216, 0.5019608, 1, 1)
+}
+fix_alpha_border=false
+premult_alpha=false
+compress=true

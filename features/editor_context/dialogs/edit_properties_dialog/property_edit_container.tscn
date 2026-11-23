@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://q4n1gvlcxmb5"]
+
+[ext_resource type="Script" uid="uid://ca0pjptvsslab" path="res://features/editor_context/dialogs/edit_properties_dialog/property_edit_container.gd" id="1_4ujyj"]
+
+[node name="PropertyEditContainer" type="HSplitContainer" unique_id=490939662]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 239.0
+offset_bottom = 55.0
+split_offsets = PackedInt32Array(153)
+split_offset = 153
+script = ExtResource("1_4ujyj")
+metadata/_custom_type_script = "uid://ca0pjptvsslab"
+
+[node name="PropertyLabelsVBoxContainer" type="VBoxContainer" parent="." unique_id=693540841]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PropertyEditContainer"
+
+[node name="PropertyNameHeader" type="Label" parent="PropertyLabelsVBoxContainer" unique_id=652261231]
+layout_mode = 2
+text = "PROPERTY_NAME"
+text_overrun_behavior = 3
+
+[node name="PropertyValuesVBoxContainer" type="VBoxContainer" parent="." unique_id=436123338]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PropertyEditContainer"
+
+[node name="ValueHeader" type="Label" parent="PropertyValuesVBoxContainer" unique_id=780232749]
+layout_mode = 2
+text = "VALUE"
+text_overrun_behavior = 3

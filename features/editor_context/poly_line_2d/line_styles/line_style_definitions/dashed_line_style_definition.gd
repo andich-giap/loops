@@ -1,6 +1,6 @@
 @tool
 class_name DashedLineStyle
-extends LineStyle
+extends LineStyleDefinition
 
 
 @export var dash_size: float = 4.0: ## Dash size in mm.

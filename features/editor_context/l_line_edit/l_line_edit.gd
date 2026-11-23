@@ -12,11 +12,14 @@ const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
 		&"horizontal_alignment",
 		&"vertical_alignment",
 ]
-const THEME_OVERRIDABLE_PROPERTIES: Dictionary[StringName, Array] = {
-	&"_theme_color_override": [
+const THEME_OVERRIDABLE_PROPERTIES: Dictionary[Theme.DataType, Array] = {
+	Theme.DataType.DATA_TYPE_COLOR: [
 		&"text_color",
 	],
-	&"_theme_font_size_override": [
+	Theme.DataType.DATA_TYPE_FONT: [
+		&"font",
+	],
+	Theme.DataType.DATA_TYPE_FONT_SIZE: [
 		&"font_size",
 	],
 }
@@ -173,7 +176,7 @@ func get_editable_properties() -> Array[Dictionary]:
 ## Returns a dictionary of possible editable theme properties, the keys
 ## are the callable names that are stripped of the beginning (i.e. 
 ## the key for [code]add_theme_color_override[/code] is [code]_theme_color_override[/code])
-func get_theme_overridable_properties() -> Dictionary[StringName, Array]:
+func get_theme_overridable_properties() -> Dictionary[Theme.DataType, Array]:
 	return THEME_OVERRIDABLE_PROPERTIES
 
 
