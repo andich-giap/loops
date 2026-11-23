@@ -10,6 +10,7 @@ var _default_value: Resource
 var option_button: OptionButton
 var _preview_viewport: SubViewport
 var _populate_generation: int = 0
+static var _preview_cache: Dictionary[Resource, ImageTexture]
 
 
 func set_property(object: Object, property: Dictionary, is_multivalue: bool = false) -> void:
@@ -278,6 +279,10 @@ func _create_preview(id: int, size: Vector2i) -> void:
 	if not resource:
 		return
 	
+	if _preview_cache.has(resource):
+		option_button.set_item_icon(id, _preview_cache[resource])
+		return
+	
 	var preview_node: Node = _get_preview(size, resource)
 	if not preview_node:
 		return
@@ -285,6 +290,7 @@ func _create_preview(id: int, size: Vector2i) -> void:
 	var preview: ImageTexture = await _bake_node_texture(preview_node)
 	
 	if preview:
+		_preview_cache[resource] = preview
 		option_button.set_item_icon(id, preview)
 
 
