@@ -1,40 +1,19 @@
 @tool
+@icon("res://addons/at-icons/node2d/mesh_ngon.svg")
 class_name PolyLine2D
-extends Line2D
+extends PrimitiveGraphics2D
 ## An interactive [Line2D] that is used to create simple graphics.
 
 
-signal changed ## Emmited on changing point position.
-signal deleted ## Emmited on deleting the line.
 signal points_editing_toggled(toggled_on: bool) ## Emitted when grabbing or releazing a [Gizmo].
 const DISTANCE_TO_CURSOR: float = 5.0 ## Minimum distance required for drawing circle at [member _new_point_position].
 const DEBUG_CURSOR_SIZE: float = 5.0
-const EDITABLE_PROPERTIES_NAMES: Array[StringName] = [
-		&"color",
-		&"line_style",
-		&"segment_length",
-		&"decoration_size",
-		&"closed",
-		&"width",
-		&"joint_mode",
-		&"begin_cap_mode",
-		&"end_cap_mode",
-	]
-@export var line_style: LineStyle = preload("uid://x7up8gjmus1e"):
-	set = set_line_style
-@export var color: Color = Color.BLACK ## Color of the line.
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var segment_length: float = 4.0: ## Distance between decorations in mm.
-	set = set_segment_step
-@export_custom(PROPERTY_HINT_NONE, "suffix: mm") var decoration_size: float = 2.0: ## The size of the decoration in mm.
-	set = set_decoration_size
-@export_storage var bounding_box: Rect2 ## The bounding box of the line.
-var is_selected: bool: ## Determines if the line is selected by the [SelectionManager].
-	set = set_is_selected
-var gizmos: Array[Gizmo] ## Contains [Gizmo]s of each point of the line. If the line is not selected [member gizmos] is empty.
+@export_storage var points: PackedVector2Array = PackedVector2Array()
+@export var closed: bool = false:
+	set = set_closed
 var _can_create_new_point: bool = false
 var _new_point_position: Vector2
 var _previous_point_position: Vector2
-var _page_viewport: PageViewport
 
 
 func _init() -> void:
@@ -42,18 +21,8 @@ func _init() -> void:
 		width = Units.mm_to_px(0.5)
 
 
-func _ready() -> void:
-	if line_style and line_style.line_style_definition._uses_builtin_line:
-		default_color = color
-	else:
-		default_color = Color.TRANSPARENT
-	_update_bounding_box()
-
-
 func _draw() -> void:
-	var is_debug: bool = get_tree().debug_collisions_hint
-	if is_debug:
-		draw_rect(bounding_box, ProjectColor.debug_values[ProjectColor.Debug.AREA])
+	_draw_debug_bounding_box()
 	
 	var context: DrawLineContext = DrawLineContext.new()
 	context.canvas_item = self
@@ -64,30 +33,35 @@ func _draw() -> void:
 	context.size_multiplier = decoration_size
 	context.width = width
 	
-	for point: int in range(points.size() - 1):
+	var point_count: int = points.size() - 1
+	if closed:
+		point_count += 1
+	
+	for point: int in range(point_count):
 		var current_position: Vector2 = get_point_position(point)
-		var next_position: Vector2 = get_point_position(point + 1)
-		
-		
+		var next_index: int = wrapi(point + 1, 0, points.size())
+		var next_position: Vector2 = get_point_position(next_index)
 		line_style.line_style_definition.draw_segment(context, current_position, next_position)
 		
-		if not point == 0:
+		if closed or not point == 0:
+			var prev_index: int = wrapi(point - 1, 0, points.size())
 			line_style.line_style_definition.draw_joint(
 				context,
 				current_position,
-				current_position.direction_to(points[point-1]),
+				current_position.direction_to(points[prev_index]),
 				current_position.direction_to(next_position)
 			)
-		
 		
 		var delta: Vector2 = next_position - current_position
 		var line_length: float = delta.length()
 		
+		var step_px: float
 		var step_mm: float = line_style.line_style_definition.get_step()
-		if step_mm <= 0.0:
-			step_mm = Units.mm_to_px(segment_length)
-		
-		var step_px: float = Units.mm_to_px(step_mm) * decoration_size
+		if step_mm > 0.0:
+			step_px = Units.mm_to_px(step_mm)
+		else:
+			step_px = Units.mm_to_px(segment_length)
+		step_px *= decoration_size
 		var direction: Vector2 = current_position.direction_to(next_position)
 		var step: Vector2 = direction * step_px
 		
@@ -108,15 +82,9 @@ func _draw() -> void:
 					segment
 				)
 		
-	if points.size() > 1:
-		line_style.line_style_definition.draw_cap(context, points[0], points[0].direction_to(points[1]), true)
-		line_style.line_style_definition.draw_cap(context, points[-1], points[-1].direction_to(points[-2]), false)
-
-
-func _validate_property(property: Dictionary) -> void:
-	if property["name"] == &"width":
-		property["hint_string"] = "suffix: mm"
-		property["usage"] = PROPERTY_USAGE_STORAGE | PROPERTY_USAGE_EDITOR
+	if points.size() > 1 and not closed:
+		line_style.line_style_definition.draw_cap(context, points[0], points[1].direction_to(points[0]), true)
+		line_style.line_style_definition.draw_cap(context, points[-1], points[-2].direction_to(points[-1]), false)
 
 
 #region getters/setters
@@ -130,10 +98,6 @@ func set_line_style(_line_style: LineStyle) -> void:
 	if line_style:
 		line_style.changed.connect(changed.emit)
 		line_style.changed.connect(queue_redraw)
-		if line_style.line_style_definition._uses_builtin_line:
-			default_color = color
-		else:
-			default_color = Color.TRANSPARENT
 	else:
 		line_style = preload("uid://x7up8gjmus1e")
 	changed.emit()
@@ -155,15 +119,16 @@ func set_decoration_size(_decoration_size: float) -> void:
 func set_is_selected(_is_selected: bool) -> void:
 	is_selected = _is_selected
 	if is_selected:
-		if line_style.line_style_definition._uses_builtin_line:
-			default_color = ProjectColor.selection_values[ProjectColor.Selection.LINE]
 		if gizmos.is_empty():
 			add_gizmos()
 	else:
-		if line_style.line_style_definition._uses_builtin_line:
-			default_color = color
 		if not gizmos.is_empty():
 			remove_gizmos()
+	queue_redraw()
+
+
+func set_closed(_closed: bool) -> void:
+	closed = _closed
 	queue_redraw()
 #endregion
 
@@ -191,20 +156,6 @@ func get_closest_position_to_point(point_position: Vector2) -> Vector2:
 	return closest_point
 
 
-## Adds line to the selection.
-func add_to_selection() -> void:
-	is_selected = true
-	add_to_group(&"selection")
-	queue_redraw()
-
-
-## Removes line to the selection.
-func remove_from_selection() -> void:
-	is_selected = false
-	remove_from_group(&"selection")
-	queue_redraw()
-
-
 ## Creates gizmos at the points of the line.
 func add_gizmos() -> void:
 	for _point: int in range(points.size()):
@@ -226,16 +177,6 @@ func remove_gizmos() -> void:
 		gizmo.released.disconnect(_on_gizmo_released)
 		gizmo.queue_free()
 	gizmos.clear()
-
-
-## Returns a list of possible editable properties.
-func get_editable_properties() -> Array[Dictionary]:
-	var editable_properties: Array[Dictionary]
-	for property: Dictionary in get_property_list():
-		if not EDITABLE_PROPERTIES_NAMES.has(property["name"]):
-			continue
-		editable_properties.append(property)
-	return editable_properties
 
 
 ## Selects individual points
@@ -260,12 +201,40 @@ func delete() -> void:
 	queue_free()
 
 
+func handle_selection_query(
+	query: SelectionQuery,
+	receipt: SelectionReceipt,
+	selection_rect: Rect2
+) -> void:
+	var poly_line_points: PackedVector2Array = PackedVector2Array()
+	for point: Vector2 in points:
+		poly_line_points.append(point + position)
+	if query.type == SelectionQuery.Type.POINT:
+		for point: int in range(poly_line_points.size()):
+			var point_inside_selection: bool = Geometry2D.is_point_in_polygon(
+				poly_line_points[point],
+				SelectionManager.rect2_to_packed_vector2_array(selection_rect)
+			)
+			if not receipt.selected_points.has(self):
+				receipt.selected_points[self] = PackedInt32Array()
+			if point_inside_selection:
+				receipt.selected_points[self].append(point)
+	else:
+		var intersection: Array[PackedVector2Array] = Geometry2D.intersect_polyline_with_polygon(
+			poly_line_points,
+			SelectionManager.rect2_to_packed_vector2_array(selection_rect)
+			)
+		if not intersection.is_empty():
+			receipt.selected_nodes.append(self)
+
+
+
 ## Recalculates the bounding box of a line.
 func _update_bounding_box() -> void:
 	if points.size() < 2:
 		bounding_box = Rect2()
 		return
-	bounding_box.position = points[0]
+	bounding_box = Rect2(points[0], Vector2.ZERO)
 	for point: Vector2 in points:
 		bounding_box = bounding_box.expand(point)
 
@@ -324,3 +293,41 @@ func _check_for_closest_point_to_cursor() -> void:
 func _sort_distances(pos_a: Vector2, pos_b: Vector2) -> bool:
 	var mouse_position: Vector2 = get_local_mouse_position()
 	return mouse_position.distance_to(pos_a) < mouse_position.distance_to(pos_b)
+
+
+func get_point_position(index: int) -> Vector2:
+	if points.size() == 0:
+		push_error("Invalid index when calling get_point_position relative to " + to_string() + ". Point count is " + str(get_point_count()))
+		return Vector2.ZERO
+	return points[index]
+
+
+func set_point_position(index: int, point_position: Vector2) -> void:
+	points[index] = point_position
+	_update_bounding_box()
+	queue_redraw()
+
+
+func get_point_count() -> int:
+	return points.size()
+
+
+func add_point(point_position: Vector2, index: int = -1) -> void:
+	if index < 0:
+		points.append(point_position)
+	else:
+		points.insert(index, point_position)
+	_update_bounding_box()
+	queue_redraw()
+
+
+func remove_point(index: int) -> void:
+	points.remove_at(index)
+	_update_bounding_box()
+	queue_redraw()
+
+
+func clear_points() -> void:
+	_update_bounding_box()
+	points.clear()
+	queue_redraw()

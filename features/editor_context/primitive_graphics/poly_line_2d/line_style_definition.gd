@@ -3,13 +3,10 @@ class_name LineStyleDefinition
 extends Resource
 
 
-## If true, [PolyLine2D] lets the built-in [Line2D] renderer draw the line
-## (and keeps [member Line2D.default_color] as-is). Set in [method _init].
-var _uses_builtin_line: bool
-
-
-func _init() -> void:
-	_uses_builtin_line = false
+@export var joint_mode: Line2D.LineJointMode:
+	set = set_joint_mode
+@export var cap_mode: Line2D.LineCapMode:
+	set = set_cap_mode
 
 
 @abstract func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void
@@ -30,3 +27,13 @@ func draw_cap(context: DrawLineContext, point: Vector2, direction: Vector2, is_b
 ## Spacing for decorations in mm. [code]0.0[/code] = use [PolyLine2D]'s fallback.
 func get_step() -> float:
 	return 0.0
+
+
+func set_joint_mode(_joint_mode: Line2D.LineJointMode) -> void:
+	joint_mode = _joint_mode
+	changed.emit()
+
+
+func set_cap_mode(_cap_mode: Line2D.LineCapMode) -> void:
+	cap_mode = _cap_mode
+	changed.emit()

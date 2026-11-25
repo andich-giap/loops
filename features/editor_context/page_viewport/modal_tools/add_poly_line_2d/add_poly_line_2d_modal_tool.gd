@@ -45,57 +45,6 @@ func handle_input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseMotion:
 		poly_line_2d.set_point_position(last_point, place_position)
-	
-	#if event is InputEventMouseMotion:
-		#poly_line_2d._check_for_closest_point_to_cursor()
-		#if _active_point >= 0 and points.size() > 0:
-			#var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position_canvas_space
-			#set_point_position(_active_point, place_position)
-		#queue_redraw()
-	#
-	#if event is InputEventMouseButton:
-		#var mouse_button_event: InputEventMouseButton = event
-		#if mouse_button_event.button_index == MOUSE_BUTTON_LEFT and mouse_button_event.is_released():
-			#var place_position: Vector2 = _page_viewport.get_snapped_position().snapped_position_canvas_space
-			#_previous_point_position = place_position
-			#if points.size() == 0:
-				#add_point(place_position)
-			#add_point(place_position)
-			#var last_index: int = get_point_count() - 1
-			#set_point_position(last_index, place_position)
-			#last_index = get_point_count() - 1
-			#_active_point = last_index
-			#queue_redraw()
-			#
-			## Set bounding_box
-			#update_bounding_box()
-		#
-		#if mouse_button_event.button_index == MOUSE_BUTTON_RIGHT \
-			#and mouse_button_event.is_released():
-			#stop_drawing()
-		#if ((event.is_action(&"zoom_in")
-			#or event.is_action(&"zoom_out"))
-			#and not _active_point == -1):
-			#var place_position: Vector2 = _get_place_position()
-			#set_point_position(_active_point, place_position)
-	#
-	#if is_active and event.is_action(&"ui_cancel"):
-		#stop_drawing()
-	
-	
-	
-	
-	
-	
-	#if event is InputEventMouseMotion:
-		#poly_line_2d.position = _page_viewport.get_snapped_position().snapped_position
-	#if event is InputEventMouseButton:
-		#var mouse_button_event: InputEventMouseButton = event
-		#if mouse_button_event.is_released() \
-			#and mouse_button_event.button_index == MOUSE_BUTTON_LEFT:
-			#poly_line_2d.position = _page_viewport.get_snapped_position().snapped_position
-			#current_state = State.EXECUTING
-			#execute()
 
 
 func execute() -> void:

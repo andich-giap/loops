@@ -47,14 +47,17 @@ func open_project(project_data: ProjectData) -> void:
 	project_item.set_editable(0, false)
 	var pages: Array[PageData]
 	for page_data: PageData in project_data.pages.values():
+		if not page_data:
+			continue
 		page_data.project_data = weakref(project_data)
 		page_data.name_changed.connect(project_data._on_page_data_name_changed.bind(page_data.name, page_data), CONNECT_ONE_SHOT)
 		pages.append(page_data)
-	pages.sort_custom(func(a: PageData, b: PageData) -> bool:
-		return int(a.name) < int(b.name)
-		)
-	for page_data: PageData in pages:
-		add_page(project_item, page_data)
+	if not pages.is_empty():
+		pages.sort_custom(func(a: PageData, b: PageData) -> bool:
+			return int(a.name) < int(b.name)
+			)
+		for page_data: PageData in pages:
+			add_page(project_item, page_data)
 	
 	project_data.closed.connect(_on_project_data_closed, CONNECT_APPEND_SOURCE_OBJECT)
 

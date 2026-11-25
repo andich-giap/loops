@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="SolidLineStyle" format=3 uid="uid://djogojtvrl0i5"]
-
-[ext_resource type="Script" uid="uid://dube330qgbwke" path="res://features/editor_context/poly_line_2d/line_styles/line_style_definitions/solid_line_style_definition.gd" id="1_nblri"]
-
-[resource]
-script = ExtResource("1_nblri")
-metadata/_custom_type_script = "uid://dube330qgbwke"

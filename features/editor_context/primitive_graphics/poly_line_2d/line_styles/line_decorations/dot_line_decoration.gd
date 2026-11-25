@@ -18,7 +18,7 @@ func draw_decoration(
 		context.width / 2.0,
 		context.color,
 		true,
-		context.width,
+		-1.0,
 		context.antialiased
 	)
 

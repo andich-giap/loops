@@ -28,7 +28,6 @@ func set_property(object: Object, property: Dictionary, is_multivalue: bool = fa
 	
 	_setup_preview_vieport()
 	
-	
 	var valid_resources: Array[Resource] = SettingsManager.get_resources(_class_name)
 	_populate_options(valid_resources)
 	

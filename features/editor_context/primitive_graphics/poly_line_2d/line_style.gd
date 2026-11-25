@@ -59,7 +59,7 @@ func _tool_add_line_decoration() -> void:
 			new_decorations.append(line_decoration)
 			
 			var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
-			undo_redo.create_action("Add PolyLine2D LineDecoration")
+			undo_redo.create_action("Add PrimitiveGraphics2D LineDecoration")
 			undo_redo.add_do_property(self, &"line_decorations", new_decorations)
 			undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
 			undo_redo.commit_action()
@@ -115,7 +115,7 @@ func _on_remove_line_decoration_confirmed(confirmation_dialog: ConfirmationDialo
 			new_decorations.erase(line_decoration)
 	
 	var undo_redo: EditorUndoRedoManager = EditorInterface.get_editor_undo_redo()
-	undo_redo.create_action("Remove PolyLine2D LineDecoration")
+	undo_redo.create_action("Remove PrimitiveGraphics2D LineDecoration")
 	undo_redo.add_do_property(self, &"line_decorations", new_decorations)
 	undo_redo.add_undo_property(self, &"line_decorations", line_decorations)
 	undo_redo.commit_action()

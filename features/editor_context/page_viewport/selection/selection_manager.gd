@@ -41,8 +41,9 @@ func get_selection(query: SelectionQuery, _selection_rect: Rect2) -> SelectionRe
 			continue
 		var node_rect: Rect2 = get_node_rect(node)
 		if node_rect.intersects(_selection_rect.abs()):
-			if node is PolyLine2D:
-				_handle_poly_line_2d_selection(query, selection_receipt, node as PolyLine2D, _selection_rect)
+			if node is PrimitiveGraphics2D:
+				var primitive_graphics_2d: PrimitiveGraphics2D = node
+				primitive_graphics_2d.handle_selection_query(query, selection_receipt, _selection_rect)
 				continue
 			match query.type:
 				SelectionQuery.Type.POINT:
@@ -124,10 +125,10 @@ func remove_from_selection(receipt: SelectionReceipt) -> void:
 ## Returns bounding box of a node if it has such.
 func get_node_rect(node: Node) -> Rect2:
 	var rect: Rect2
-	if node is PolyLine2D:
-		var poly_line_2d: PolyLine2D = node
-		rect = poly_line_2d.bounding_box
-		rect.position += poly_line_2d.position
+	if node is PrimitiveGraphics2D:
+		var primitive_graphics_2d: PrimitiveGraphics2D = node
+		rect = primitive_graphics_2d.bounding_box
+		rect.position += primitive_graphics_2d.position
 	elif node is LLineEdit:
 		var l_line_edit: LLineEdit = node
 		rect = l_line_edit.get_global_rect()
@@ -172,35 +173,6 @@ func get_current_selection() -> SelectionReceipt:
 
 func request_user_selection_check() -> void:
 	_get_interactive_selection()
-
-
-## Determines if a [PolyLine2D] should be selected.
-func _handle_poly_line_2d_selection(
-	query: SelectionQuery,
-	receipt: SelectionReceipt,
-	poly_line_2d: PolyLine2D,
-	_selection_rect: Rect2
-) -> void:
-	var poly_line_points: PackedVector2Array = PackedVector2Array()
-	for point: Vector2 in poly_line_2d.points:
-		poly_line_points.append(point + poly_line_2d.position)
-	if query.type == SelectionQuery.Type.POINT:
-		for point: int in range(poly_line_points.size()):
-			var point_inside_selection: bool = Geometry2D.is_point_in_polygon(
-				poly_line_points[point],
-				rect2_to_packed_vector2_array(_selection_rect)
-			)
-			if not receipt.selected_points.has(poly_line_2d):
-				receipt.selected_points[poly_line_2d] = PackedInt32Array()
-			if point_inside_selection:
-				receipt.selected_points[poly_line_2d].append(point)
-	else:
-		var intersection: Array[PackedVector2Array] = Geometry2D.intersect_polyline_with_polygon(
-			poly_line_points,
-			rect2_to_packed_vector2_array(_selection_rect)
-			)
-		if not intersection.is_empty():
-			receipt.selected_nodes.append(poly_line_2d)
 
 
 func _get_interactive_selection(query: SelectionQuery = _query) -> void:
