@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b3x6ak10xv3m0"]
 
 [ext_resource type="Script" uid="uid://b5cydthd5sk13" path="res://features/editor_context/page_viewport/viewport_camera.gd" id="2_kuiv3"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_pdfi8"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/primitive_graphics/poly_line_2d/poly_line_2d.gd" id="2_pdfi8"]
 
 [node name="SubViewportContainer" type="SubViewportContainer" unique_id=1707838730]
 offset_right = 40.0

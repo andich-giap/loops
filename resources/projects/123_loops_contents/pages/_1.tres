@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://dymm05dpsi8fe" path="res://features/project/designation/designations_data.gd" id="1_k75xc"]
 [ext_resource type="Script" uid="uid://dh35q6vb1bcym" path="res://features/project/page/page_data.gd" id="2_hgwp6"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="2_orq18"]
-[ext_resource type="Script" uid="uid://cemf6cgro6mag" path="res://features/editor_context/l_line_edit/l_line_edit.gd" id="3_orq18"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/primitive_graphics/poly_line_2d/poly_line_2d.gd" id="2_orq18"]
+[ext_resource type="Script" uid="uid://cemf6cgro6mag" path="res://features/editor_context/primitive_graphics/l_line_edit/l_line_edit.gd" id="3_orq18"]
 
 [sub_resource type="Curve" id="Curve_a7r50"]
 _limits = [0.0, 5.0, 0.0, 1.0]

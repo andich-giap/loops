@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c2b1kytk0qvct" path="res://tests/property_edit/test_property_edit.gd" id="1_wefs3"]
 [ext_resource type="PackedScene" uid="uid://q4n1gvlcxmb5" path="res://features/editor_context/dialogs/edit_properties_dialog/property_edit_container.tscn" id="2_m4dmx"]
-[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/poly_line_2d/poly_line_2d.gd" id="3_m4dmx"]
+[ext_resource type="Script" uid="uid://bur730yq3xwn5" path="res://features/editor_context/primitive_graphics/poly_line_2d/poly_line_2d.gd" id="3_m4dmx"]
 
 [node name="TestPropertyEdit" type="Control" unique_id=2114828943 node_paths=PackedStringArray("test_node", "test_control")]
 layout_mode = 3
