@@ -12,15 +12,8 @@ func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 	if context is DrawEllipseContext:
 		var ellipse_context: DrawEllipseContext = context
 		_draw_dashed_ellipse(
-			ellipse_context.canvas_item,
-			ellipse_context.major,
-			ellipse_context.minor,
+			ellipse_context,
 			dash_size_px,
-			ellipse_context.width,
-			ellipse_context.color,
-			ellipse_context.antialiased,
-			ellipse_context.start_angle,
-			ellipse_context.end_angle
 		)
 		return
 	
@@ -103,23 +96,15 @@ func set_dash_size(_dash_size: float) -> void:
 
 
 func _draw_dashed_ellipse(
-	canvas_item: CanvasItem,
-	major: float,
-	minor: float,
-	dash_length: float,
-	line_width: float,
-	line_color: Color,
-	antialiased: bool,
-	start_angle: float = 0.0,
-	end_angle: float = TAU
+	context: DrawEllipseContext,
+	dash_size_px: float,
 ) -> void:
-	if dash_length <= 0.0 or major <= 0.0 or minor <= 0.0:
+	if dash_size_px <= 0.0 or context.major <= 0.0 or context.minor <= 0.0:
 		return
 	
-	var sweep: float = end_angle - start_angle
+	var sweep: float = context.end_angle - context.start_angle
 	if absf(sweep) < 0.0001:
 		return
-	var full: bool = absf(sweep) >= TAU - 0.0001
 	
 	# 1. Build cumulative arc-length table over [start_angle, end_angle].
 	var samples: int = 512
@@ -127,12 +112,12 @@ func _draw_dashed_ellipse(
 	var lengths: PackedFloat32Array = PackedFloat32Array()
 	angles.resize(samples + 1)
 	lengths.resize(samples + 1)
-	angles[0] = start_angle
+	angles[0] = context.start_angle
 	
-	var prev_pt: Vector2 = Ellipse.point_at(major, minor, start_angle)
+	var prev_pt: Vector2 = Ellipse.point_at(context.major, context.minor, context.start_angle)
 	for i: int in range(1, samples + 1):
-		var t: float = start_angle + sweep * float(i) / float(samples)
-		var pt: Vector2 = Ellipse.point_at(major, minor, t)
+		var t: float = context.start_angle + sweep * float(i) / float(samples)
+		var pt: Vector2 = Ellipse.point_at(context.major, context.minor, t)
 		angles[i] = t
 		lengths[i] = lengths[i - 1] + prev_pt.distance_to(pt)
 		prev_pt = pt
@@ -146,12 +131,12 @@ func _draw_dashed_ellipse(
 	#    dash/gap spacing stays uniform end-to-end.
 	var step: float
 	var dash_count: int
-	if full:
-		dash_count = maxi(1, roundi(total_length / (dash_length * 2.0)))
+	if context.closed:
+		dash_count = maxi(1, roundi(total_length / (dash_size_px * 2.0)))
 		step = total_length / float(dash_count * 2)
 	else:
-		step = dash_length
-		dash_count = int(floori(total_length / (dash_length * 2.0)))
+		step = dash_size_px
+		dash_count = int(floori(total_length / (dash_size_px * 2.0)))
 	
 	var arc_points: int = maxi(4, ceili(step / 4.0))
 	
@@ -160,20 +145,50 @@ func _draw_dashed_ellipse(
 		var start_dist: float = float(d * 2) * step
 		var end_dist: float = start_dist + step
 		_draw_dash_arc(
-			canvas_item, major, minor, line_color, line_width, antialiased,
-			start_dist, end_dist, angles, lengths, samples, arc_points
+			context.canvas_item,
+			context.major,
+			context.minor,
+			context.color,
+			context.width,
+			context.antialiased,
+			start_dist,
+			end_dist,
+			angles,
+			lengths,
+			samples,
+			arc_points
 		)
 	
 	# 4. For open arcs, optionally draw a trailing partial dash (mirrors the
 	#    straight-line behaviour which also draws the leftover at the end).
-	if not full:
+	if not context.closed:
 		var consumed: float = float(dash_count) * 2.0 * step
 		if consumed < total_length:
 			var end_dist: float = minf(consumed + step, total_length)
 			_draw_dash_arc(
-				canvas_item, major, minor, line_color, line_width, antialiased,
-				consumed, end_dist, angles, lengths, samples, arc_points
+				context.canvas_item,
+				context.major,
+				context.minor,
+				context.color,
+				context.width,
+				context.antialiased,
+				consumed,
+				end_dist,
+				angles,
+				lengths,
+				samples,
+				arc_points
 			)
+	elif context.filled:
+		context.canvas_item.draw_ellipse(
+			Vector2.ZERO,
+			context.major,
+			context.minor,
+			context.color,
+			true,
+			-1.0,
+			context.antialiased
+		)
 
 
 func _draw_dash_arc(

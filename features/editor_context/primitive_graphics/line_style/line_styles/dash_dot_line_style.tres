@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LineStyle" format=3 uid="uid://c2nr3xccfof7p"]
+
+[ext_resource type="Script" uid="uid://m3t8ey5gmu0u" path="res://features/editor_context/primitive_graphics/line_style/line_decoration.gd" id="1_lo3bk"]
+[ext_resource type="Resource" uid="uid://blec726ypogyr" path="res://features/editor_context/primitive_graphics/line_style/line_styles/line_decorations/dot_line_decoration.tres" id="2_ubwpr"]
+[ext_resource type="Resource" uid="uid://7gu47yyq5kpn" path="res://features/editor_context/primitive_graphics/line_style/line_styles/line_style_definitions/dashed_line_style_definition.tres" id="2_xew5f"]
+[ext_resource type="Script" uid="uid://r4m2vd7k2x4b" path="res://features/editor_context/primitive_graphics/line_style/line_style.gd" id="3_ubwpr"]
+
+[resource]
+script = ExtResource("3_ubwpr")
+line_style_definition = ExtResource("2_xew5f")
+line_decorations = Array[ExtResource("1_lo3bk")]([ExtResource("2_ubwpr")])
+metadata/_custom_type_script = "uid://r4m2vd7k2x4b"

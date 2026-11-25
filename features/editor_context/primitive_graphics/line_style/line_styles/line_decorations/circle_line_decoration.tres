@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CircleLineDecoration" format=3 uid="uid://47i8nm1hawg1"]
 
-[ext_resource type="Script" uid="uid://dvdeuvxhbcq44" path="res://features/editor_context/primitive_graphics/poly_line_2d/line_styles/line_decorations/circle_line_decoration.gd" id="1_kjvls"]
+[ext_resource type="Script" uid="uid://dvdeuvxhbcq44" path="res://features/editor_context/primitive_graphics/line_style/line_styles/line_decorations/circle_line_decoration.gd" id="1_kjvls"]
 
 [resource]
 script = ExtResource("1_kjvls")

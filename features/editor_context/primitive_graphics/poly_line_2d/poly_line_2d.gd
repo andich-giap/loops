@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/at-icons/node2d/mesh_ngon.svg")
+@icon("res://resources/icons/line_2d.res")
 class_name PolyLine2D
 extends PrimitiveGraphics2D
 ## An interactive [Line2D] that is used to create simple graphics.

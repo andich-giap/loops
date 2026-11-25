@@ -18,7 +18,16 @@ func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 			ellipse_context.antialiased
 		)
 		if ellipse_context.filled:
-			pass # TODO: add filler
+			if ellipse_context.closed:
+				ellipse_context.canvas_item.draw_ellipse(
+					Vector2.ZERO,
+					ellipse_context.major,
+					ellipse_context.minor,
+					ellipse_context.color,
+					true,
+					-1.0,
+					ellipse_context.antialiased
+				)
 		
 		return
 	

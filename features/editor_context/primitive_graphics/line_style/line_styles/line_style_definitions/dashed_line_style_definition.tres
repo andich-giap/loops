@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="DashedLineStyle" format=3 uid="uid://7gu47yyq5kpn"]
+
+[ext_resource type="Script" uid="uid://50fyr5gioysu" path="res://features/editor_context/primitive_graphics/line_style/line_styles/line_style_definitions/dashed_line_style_definition.gd" id="1_3p13d"]
+
+[resource]
+script = ExtResource("1_3p13d")
+metadata/_custom_type_script = "uid://50fyr5gioysu"

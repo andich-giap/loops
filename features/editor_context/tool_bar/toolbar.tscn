@@ -8,12 +8,12 @@
 [ext_resource type="Script" uid="uid://d2sjehwmwsdj5" path="res://features/editor_context/page_viewport/modal_tools/add_ellipse/add_ellipse_modal_tool.gd" id="5_55cd8"]
 [ext_resource type="Texture2D" uid="uid://bky6dhn4j7mk6" path="res://addons/at-icons/node2d/text.svg" id="5_s75jq"]
 [ext_resource type="Script" uid="uid://dyt0asn30ux1x" path="res://features/editor_context/page_viewport/modal_tools/add_circle/add_circle_modal_tool.gd" id="6_6sqa6"]
-[ext_resource type="Texture2D" uid="uid://0qmg2gq4oh7" path="res://addons/at-icons/node2d/mesh_ngon.svg" id="6_s75jq"]
+[ext_resource type="Texture2D" uid="uid://buqbfftrp16pj" path="res://resources/icons/line_2d.res" id="7_6sqa6"]
 [ext_resource type="Script" uid="uid://b4e1mf1yur4jo" path="res://features/editor_context/page_viewport/modal_tools/move/move_modal_tool.gd" id="7_d6ggl"]
 [ext_resource type="Script" uid="uid://bqwdxf4dwqgxu" path="res://features/editor_context/page_viewport/modal_tools/duplicate/duplicate_modal_tool.gd" id="8_6sqa6"]
 [ext_resource type="Texture2D" uid="uid://cgie335fpisux" path="res://addons/at-icons/node2d/mesh_circle.svg" id="8_s75jq"]
 [ext_resource type="Script" uid="uid://dx310obvqo300" path="res://features/editor_context/page_viewport/modal_tools/delete/delete_modal_tool.gd" id="9_83eyu"]
-[ext_resource type="Texture2D" uid="uid://ccaegjdv0n5ox" path="res://addons/at-icons/node2d/circle.svg" id="9_h3n0e"]
+[ext_resource type="Texture2D" uid="uid://ct0yt5sqome2f" path="res://resources/icons/node_2d.res" id="9_h3n0e"]
 [ext_resource type="Texture2D" uid="uid://capbagnwe8jn3" path="res://addons/at-icons/node2d/move.svg" id="10_h3n0e"]
 [ext_resource type="Texture2D" uid="uid://td175caftmhw" path="res://addons/at-icons/node2d/duplicate.svg" id="11_apeg0"]
 [ext_resource type="Texture2D" uid="uid://b4nmjywfb4vwg" path="res://addons/at-icons/node2d/motion_vector.svg" id="12_68f48"]
@@ -72,7 +72,7 @@ layout_mode = 2
 tooltip_text = "POLY_LINE_2D"
 toggle_mode = true
 button_group = SubResource("ButtonGroup_hgm1m")
-icon = ExtResource("6_s75jq")
+icon = ExtResource("7_6sqa6")
 
 [node name="AddLLineEdit" type="Button" parent="DrawToolsPanel/DrawToolsBar" unique_id=1182738604]
 custom_minimum_size = Vector2(24, 24)

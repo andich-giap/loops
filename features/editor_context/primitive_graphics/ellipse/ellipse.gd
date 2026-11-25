@@ -11,7 +11,8 @@ extends PrimitiveGraphics2D
 	set = set_start_angle
 @export_range(-360.0, 360.0, 0.1, "suffix:°") var end_angle: float = 360.0:
 	set = set_end_angle
-@export var filled: bool = false
+@export var filled: bool = false:
+	set = set_filled
 var _arc_table: Dictionary = {}
 var _arc_table_key: Vector4 = Vector4(INF, INF, INF, INF)
 
@@ -25,7 +26,7 @@ func _draw() -> void:
 	_draw_debug_bounding_box()
 	var major_px: float = Units.mm_to_px(major)
 	var minor_px: float = Units.mm_to_px(minor)
-
+	
 	var context: DrawEllipseContext = DrawEllipseContext.new()
 	context.canvas_item = self
 	if is_selected:
@@ -42,9 +43,9 @@ func _draw() -> void:
 	context.filled = filled
 	context.start_angle = get_start_angle_rad()
 	context.end_angle = get_end_angle_rad()
-
+	context.closed = is_closed()
+	
 	if is_empty_arc():
-		# Nothing to draw, but still draw decorations if user wants them? Skip.
 		pass
 	else:
 		line_style.line_style_definition.draw_segment(
@@ -69,7 +70,7 @@ func get_sweep_rad() -> float:
 	return get_end_angle_rad() - get_start_angle_rad()
 
 
-func is_full() -> bool:
+func is_closed() -> bool:
 	return absf(get_sweep_rad()) >= TAU - 0.0001
 
 
@@ -100,6 +101,11 @@ func set_start_angle(_start: float) -> void:
 func set_end_angle(_end: float) -> void:
 	end_angle = _end
 	_update_bounding_box()
+	queue_redraw()
+
+
+func set_filled(_filled: bool) -> void:
+	filled = _filled
 	queue_redraw()
 #endregion
 
@@ -201,7 +207,7 @@ func _update_bounding_box() -> void:
 	var major_px: float = Units.mm_to_px(major)
 	var minor_px: float = Units.mm_to_px(minor)
 
-	if is_full() or is_empty_arc():
+	if is_closed() or is_empty_arc():
 		bounding_box = Rect2(
 			-major_px,
 			-minor_px,
@@ -244,21 +250,21 @@ func build_ellipse(
 	minor_radius: float,
 	ellipse_rotation: float = 0.0,
 	segments: int = 64,
-	t0: float = 0.0,
-	t1: float = TAU
+	_start_angle: float = 0.0,
+	_end_angle: float = TAU
 ) -> PackedVector2Array:
 	segments = max(segments, 3)
-	var full: bool = absf(t1 - t0) >= TAU - 0.0001
+	var full: bool = absf(_end_angle - _start_angle) >= TAU - 0.0001
 	var count: int = segments if full else segments + 1
 	var points: PackedVector2Array = PackedVector2Array()
 	points.resize(count)
 
 	var cos_rot: float = cos(ellipse_rotation)
 	var sin_rot: float = sin(ellipse_rotation)
-	var sweep: float = t1 - t0
+	var sweep: float = _end_angle - _start_angle
 
 	for i: int in count:
-		var t: float = t0 + sweep * float(i) / float(segments)
+		var t: float = _start_angle + sweep * float(i) / float(segments)
 		var x: float = major_radius * cos(t)
 		var y: float = minor_radius * sin(t)
 		var rx: float = x * cos_rot - y * sin_rot
@@ -286,7 +292,7 @@ func _draw_decorations(context: DrawEllipseContext, a: float, b: float) -> void:
 	# For a partial arc, keep discrete steps (no closing constraint).
 	var count: int
 	var actual_step: float
-	if is_full():
+	if is_closed():
 		# Closed ellipse: snap spacing so the ring closes cleanly.
 		count = maxi(1, roundi(total_length / step_px))
 		actual_step = total_length / float(count)

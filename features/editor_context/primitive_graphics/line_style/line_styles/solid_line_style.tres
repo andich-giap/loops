@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="LineStyle" format=3 uid="uid://x7up8gjmus1e"]
+
+[ext_resource type="Script" uid="uid://m3t8ey5gmu0u" path="res://features/editor_context/primitive_graphics/line_style/line_decoration.gd" id="1_1yndg"]
+[ext_resource type="Resource" uid="uid://djogojtvrl0i5" path="res://features/editor_context/primitive_graphics/line_style/line_styles/line_style_definitions/solid_line_style_definition.tres" id="2_1yndg"]
+[ext_resource type="Script" uid="uid://r4m2vd7k2x4b" path="res://features/editor_context/primitive_graphics/line_style/line_style.gd" id="3_hcxdl"]
+
+[resource]
+script = ExtResource("3_hcxdl")
+metadata/_custom_type_script = "uid://r4m2vd7k2x4b"
