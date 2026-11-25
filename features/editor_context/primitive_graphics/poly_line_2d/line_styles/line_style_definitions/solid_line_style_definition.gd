@@ -6,15 +6,19 @@ extends LineStyleDefinition
 func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 	if context is DrawEllipseContext:
 		var ellipse_context: DrawEllipseContext = context
-		ellipse_context.canvas_item.draw_ellipse(
+		ellipse_context.canvas_item.draw_ellipse_arc(
 			Vector2.ZERO,
 			ellipse_context.major,
 			ellipse_context.minor,
+			ellipse_context.start_angle,
+			ellipse_context.end_angle,
+			128,
 			ellipse_context.color,
-			ellipse_context.filled,
 			ellipse_context.width,
 			ellipse_context.antialiased
 		)
+		if ellipse_context.filled:
+			pass # TODO: add filler
 		
 		return
 	

@@ -18,7 +18,9 @@ func draw_segment(context: DrawLineContext, from: Vector2, to: Vector2) -> void:
 			dash_size_px,
 			ellipse_context.width,
 			ellipse_context.color,
-			ellipse_context.antialiased
+			ellipse_context.antialiased,
+			ellipse_context.start_angle,
+			ellipse_context.end_angle
 		)
 		return
 	
@@ -107,62 +109,120 @@ func _draw_dashed_ellipse(
 	dash_length: float,
 	line_width: float,
 	line_color: Color,
-	antialiased: bool
+	antialiased: bool,
+	start_angle: float = 0.0,
+	end_angle: float = TAU
 ) -> void:
 	if dash_length <= 0.0 or major <= 0.0 or minor <= 0.0:
 		return
-	# 1. Build cumulative arc-length table mapped to parametric angle t
+	
+	var sweep: float = end_angle - start_angle
+	if absf(sweep) < 0.0001:
+		return
+	var full: bool = absf(sweep) >= TAU - 0.0001
+	
+	# 1. Build cumulative arc-length table over [start_angle, end_angle].
 	var samples: int = 512
 	var angles: PackedFloat32Array = PackedFloat32Array()
 	var lengths: PackedFloat32Array = PackedFloat32Array()
 	angles.resize(samples + 1)
 	lengths.resize(samples + 1)
+	angles[0] = start_angle
 	
-	var prev_pt: Vector2 = Vector2(major, 0.0)
-	
+	var prev_pt: Vector2 = Ellipse.point_at(major, minor, start_angle)
 	for i: int in range(1, samples + 1):
-		var t: float = TAU * float(i) / float(samples)
-		var pt: Vector2 = Vector2(major * cos(t), minor * sin(t))
+		var t: float = start_angle + sweep * float(i) / float(samples)
+		var pt: Vector2 = Ellipse.point_at(major, minor, t)
 		angles[i] = t
 		lengths[i] = lengths[i - 1] + prev_pt.distance_to(pt)
 		prev_pt = pt
 	
 	var total_length: float = lengths[samples]
+	if total_length <= 0.0:
+		return
 	
-	# 2. Snap dash length so dash+gap pairs close the loop cleanly
-	var dash_count: float = maxi(1, roundi(total_length / (dash_length * 2.0)))
-	var step: float = total_length / float(dash_count * 2)
+	# 2. Snap dash+gap pairs only for a full ellipse so the ring closes
+	#    cleanly. For an open arc we walk at the requested dash length so
+	#    dash/gap spacing stays uniform end-to-end.
+	var step: float
+	var dash_count: int
+	if full:
+		dash_count = maxi(1, roundi(total_length / (dash_length * 2.0)))
+		step = total_length / float(dash_count * 2)
+	else:
+		step = dash_length
+		dash_count = int(floori(total_length / (dash_length * 2.0)))
+	
 	var arc_points: int = maxi(4, ceili(step / 4.0))
-
-	# 3. Interpolate start/end angles for each dash and draw the curved arc
+	
+	# 3. Draw each complete dash.
 	for d: int in range(dash_count):
 		var start_dist: float = float(d * 2) * step
 		var end_dist: float = start_dist + step
-
-		var i0: float = lengths.bsearch(start_dist)
-		var a0: float = 0.0
-		if i0 >= samples:
-			a0 = TAU
-		elif i0 > 0:
-			var w0: float = (start_dist - lengths[i0 - 1]) / maxf(lengths[i0] - lengths[i0 - 1], 0.00001)
-			a0 = lerpf(angles[i0 - 1], angles[i0], w0)
-
-		var i1: float = lengths.bsearch(end_dist)
-		var a1: float = 0.0
-		if i1 >= samples:
-			a1 = TAU
-		elif i1 > 0:
-			var w1: float = (end_dist - lengths[i1 - 1]) / maxf(lengths[i1] - lengths[i1 - 1], 0.00001)
-			a1 = lerpf(angles[i1 - 1], angles[i1], w1)
-		
-		canvas_item.draw_ellipse_arc(
-			Vector2.ZERO,
-			major,
-			minor,
-			a0,
-			a1,
-			arc_points,
-			line_color,
-			line_width,
-			antialiased
+		_draw_dash_arc(
+			canvas_item, major, minor, line_color, line_width, antialiased,
+			start_dist, end_dist, angles, lengths, samples, arc_points
 		)
+	
+	# 4. For open arcs, optionally draw a trailing partial dash (mirrors the
+	#    straight-line behaviour which also draws the leftover at the end).
+	if not full:
+		var consumed: float = float(dash_count) * 2.0 * step
+		if consumed < total_length:
+			var end_dist: float = minf(consumed + step, total_length)
+			_draw_dash_arc(
+				canvas_item, major, minor, line_color, line_width, antialiased,
+				consumed, end_dist, angles, lengths, samples, arc_points
+			)
+
+
+func _draw_dash_arc(
+	canvas_item: CanvasItem,
+	major: float,
+	minor: float,
+	line_color: Color,
+	line_width: float,
+	antialiased: bool,
+	start_dist: float,
+	end_dist: float,
+	angles: PackedFloat32Array,
+	lengths: PackedFloat32Array,
+	samples: int,
+	arc_points: int
+) -> void:
+	if end_dist <= start_dist:
+		return
+	var a0: float = _angle_at_distance(start_dist, angles, lengths, samples)
+	var a1: float = _angle_at_distance(end_dist, angles, lengths, samples)
+	canvas_item.draw_ellipse_arc(
+		Vector2.ZERO,
+		major,
+		minor,
+		a0,
+		a1,
+		arc_points,
+		line_color,
+		line_width,
+		antialiased
+	)
+
+
+func _angle_at_distance(
+	dist: float,
+	angles: PackedFloat32Array,
+	lengths: PackedFloat32Array,
+	samples: int
+) -> float:
+	if dist <= 0.0:
+		return angles[0]
+	if dist >= lengths[samples]:
+		return angles[samples]
+	var idx: int = lengths.bsearch(dist)
+	if idx <= 0:
+		return angles[0]
+	if idx > samples:
+		return angles[samples]
+	var s0: float = lengths[idx - 1]
+	var s1: float = lengths[idx]
+	var w: float = (dist - s0) / maxf(s1 - s0, 0.00001)
+	return lerpf(angles[idx - 1], angles[idx], w)
